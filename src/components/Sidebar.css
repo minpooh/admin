@@ -15,6 +15,7 @@
   display: flex;
   width: auto;
   min-height: 100vh;
+  border-radius: 0 var(--radius) var(--radius) 0;
   background: #fff;
   transition: width 0.25s ease;
 }
@@ -26,7 +27,6 @@
   min-height: 800px;
   background: #fff;
   border-right: var(--border);
-  border-radius: var(--radius) 0 0 var(--radius);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -113,8 +113,6 @@
 .sidebar-panel {
   width: var(--panel-width);
   min-height: 800px;
-  background: #fff;
-  border-radius: 0 var(--radius) var(--radius) 0;
   display: flex;
   flex-direction: column;
   padding: 14px;

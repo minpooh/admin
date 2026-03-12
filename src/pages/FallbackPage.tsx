@@ -1,13 +1,12 @@
-import { useParams } from 'react-router-dom';
+type FallbackPageProps = {
+  pageKey?: string;
+  navId?: string;
+  sectionId?: string;
+  itemId?: string;
+  subId?: string;
+};
 
-export default function Page() {
-  const { navId, sectionId, itemId, subId } = useParams<{
-    navId?: string;
-    sectionId?: string;
-    itemId?: string;
-    subId?: string;
-  }>();
-
+export default function FallbackPage({ pageKey, navId, sectionId, itemId, subId }: FallbackPageProps) {
   if (!navId) {
     return (
       <div className="page">
@@ -25,7 +24,7 @@ export default function Page() {
         {itemId && ` / ${itemId}`}
         {subId && ` / ${decodeURIComponent(subId)}`}
       </h2>
-      <p>해당 페이지 컴포넌트가 여기에 렌더링됩니다.</p>
+      <p>이 페이지는 아직 준비 중입니다. {pageKey && `(라우트: ${pageKey})`}</p>
     </div>
   );
 }

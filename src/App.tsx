@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import Page from './pages/Page';
+import PageRouter from './pages/PageRouter';
 import './App.css';
 
 function Layout() {
@@ -20,9 +20,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/feelmaker" replace />} />
-          <Route path=":navId" element={<Page />} />
-          <Route path=":navId/:sectionId/:itemId" element={<Page />} />
-          <Route path=":navId/:sectionId/:itemId/:subId" element={<Page />} />
+          <Route path=":navId" element={<PageRouter />} />
+          <Route path=":navId/:sectionId/:itemId" element={<PageRouter />} />
+          <Route path=":navId/:sectionId/:itemId/:subId" element={<PageRouter />} />
         </Route>
       </Routes>
     </BrowserRouter>
