@@ -439,3 +439,9 @@
   background: #e5e7eb;
   color: var(--text-primary);
 }
+
+.panel-subitem.active {
+  background: #e0e7ff;
+  color: var(--sidebar-accent);
+  font-weight: 500;
+}

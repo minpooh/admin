@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { IconType } from 'react-icons';
 import {
   HiFilm,
@@ -21,10 +22,9 @@ import {
   FEELFRAME_SECTION_IDS,
   FEELFRAME_SECTION_CONFIG,
 } from './sidebarFeelFrameConfig';
+import { dashboardPath, isItemActive, type NavId } from '../routes';
 import './DashboardSidebar.css';
 import logo from '../assets/FEEL_logo.png';
-
-type NavId = 'feelmaker' | 'feelframe' | 'feelmotion' | 'admins';
 
 /** feelmaker / feelframe 패널에서 공통으로 쓰는 섹션 ID 타입 */
 type SectionId = FeelMakerSectionId | FeelFrameSectionId;
@@ -92,38 +92,74 @@ function PanelSection({ id, title, icon: Icon, isOpen, onToggle, children }: Pan
   );
 }
 
+const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
+  orderManagement: false,
+  crawling: false,
+  customerManagement: false,
+  reviewManagement: false,
+  errorManagement: false,
+  productManagement: false,
+  homepageManagement: false,
+  enterpriseManagement: false,
+  creatorManagement: false,
+  uploadManagement: false,
+  deliveryManagement: false,
+  salesManagement: false,
+  questionManagement: false,
+};
+
 export default function DashboardSidebar() {
-  const [openSections, setOpenSections] = useState<Record<SectionId, boolean>>({
-    // feelmaker
-    orderManagement: false,
-    crawling: false,
-    customerManagement: false,
-    reviewManagement: false,
-    errorManagement: false,
-    productManagement: false,
-    homepageManagement: false,
-    enterpriseManagement: false,
-    creatorManagement: false,
-    // feelframe
-    uploadManagement: false,
-    deliveryManagement: false,
-    salesManagement: false,
-    questionManagement: false,
-  });
+  const navigate = useNavigate();
+  const { navId: paramNavId, sectionId: paramSectionId, itemId: paramItemId, subId: paramSubId } = useParams<{
+    navId?: string;
+    sectionId?: string;
+    itemId?: string;
+    subId?: string;
+  }>();
+
+  const activeNavId: NavId = (paramNavId as NavId) || 'feelmaker';
+  const currentParams = {
+    navId: activeNavId,
+    sectionId: paramSectionId,
+    itemId: paramItemId,
+    subId: paramSubId,
+  };
+
+  const [openSections, setOpenSections] = useState<Record<SectionId, boolean>>(INITIAL_OPEN_SECTIONS);
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
-  const [activeNavId, setActiveNavId] = useState<NavId>('feelmaker');
   const togglePanel = () => setIsPanelOpen((prev) => !prev);
 
   const currentPanelConfig = PANEL_SECTIONS_CONFIG[activeNavId];
   const collapsedSectionList = currentPanelConfig?.sectionConfig ?? [];
 
+  useEffect(() => {
+    if (paramSectionId) {
+      setOpenSections((prev) => ({ ...prev, [paramSectionId as SectionId]: true }));
+    }
+  }, [paramSectionId]);
+
+  useEffect(() => {
+    if (paramSubId && paramSectionId && paramItemId) {
+      const subItemKeyPrefix = currentPanelConfig?.sectionConfig.find((s) => s.id === paramSectionId)?.subItemKeyPrefix ?? paramSectionId;
+      setExpandedItem(`${subItemKeyPrefix}-${paramItemId}`);
+    }
+  }, [paramSubId, paramSectionId, paramItemId, currentPanelConfig?.sectionConfig]);
+
   const toggleSection = (id: SectionId) => {
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleItem = (itemId: string) => {
-    setExpandedItem((prev) => (prev === itemId ? null : itemId));
+  const handleNavClick = (navId: NavId) => {
+    navigate(dashboardPath({ navId }));
+  };
+
+  const handlePanelItemClick = (sectionId: string, itemId: string) => {
+    navigate(dashboardPath({ navId: activeNavId, sectionId, itemId }));
+  };
+
+  const handleSubItemClick = (sectionId: string, itemId: string, subLabel: string) => {
+    navigate(dashboardPath({ navId: activeNavId, sectionId, itemId, subId: subLabel }));
   };
 
   return (
@@ -141,7 +177,7 @@ export default function DashboardSidebar() {
               className={`sidebar-nav-item ${activeNavId === item.id ? 'active' : ''}`}
               aria-label={item.label}
               aria-current={activeNavId === item.id ? 'true' : undefined}
-              onClick={() => setActiveNavId(item.id)}
+              onClick={() => handleNavClick(item.id)}
             >
               <item.icon size={16} />
               <span className="sidebar-nav-item-label">{item.label}</span>
@@ -213,42 +249,67 @@ export default function DashboardSidebar() {
                 onToggle={() => toggleSection(sectionId)}
               >
                 <ul className="panel-list">
-                  {section.items.map((item) => (
-                    <li key={item.id}>
-                      {section.expandable ? (
-                        <div className="panel-item-wrapper">
-                          <button
-                            type="button"
-                            className={`panel-item ${item.active ? 'active' : ''}`}
-                            onClick={() => !item.active && item.subItems && toggleItem(`${subItemKeyPrefix}-${item.id}`)}
-                          >
-                            <item.icon size={16} />
-                            <span>{item.label}</span>
-                            {!item.active && item.subItems && (
-                              <HiChevronRight
-                                size={14}
-                                className={`panel-item-chevron ${expandedItem === `${subItemKeyPrefix}-${item.id}` ? 'open' : ''}`}
-                              />
+                  {section.items.map((item) => {
+                    const itemActive = isItemActive(currentParams, activeNavId, sectionId, item.id);
+                    const itemKey = `${subItemKeyPrefix}-${item.id}`;
+                    const isExpanded = expandedItem === itemKey;
+                    return (
+                      <li key={item.id}>
+                        {section.expandable ? (
+                          <div className="panel-item-wrapper">
+                            <button
+                              type="button"
+                              className={`panel-item ${itemActive && !paramSubId ? 'active' : ''}`}
+                              onClick={() => {
+                                handlePanelItemClick(sectionId, item.id);
+                                if (item.subItems) {
+                                  setExpandedItem((prev) => (prev === itemKey ? null : itemKey));
+                                }
+                              }}
+                            >
+                              <item.icon size={16} />
+                              <span>{item.label}</span>
+                              {item.subItems && (
+                                <HiChevronRight
+                                  size={14}
+                                  className={`panel-item-chevron ${isExpanded ? 'open' : ''}`}
+                                />
+                              )}
+                            </button>
+                            {isExpanded && item.subItems && (
+                              <ul className="panel-sublist">
+                                {item.subItems.map((sub) => {
+                                  const subActive = isItemActive(currentParams, activeNavId, sectionId, item.id, sub.label);
+                                  return (
+                                    <li key={sub.label}>
+                                      <button
+                                        type="button"
+                                        className={`panel-subitem ${subActive ? 'active' : ''}`}
+                                        onClick={() => handleSubItemClick(sectionId, item.id, sub.label)}
+                                      >
+                                        {sub.label}
+                                      </button>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
                             )}
-                          </button>
-                          {!item.active && expandedItem === `${subItemKeyPrefix}-${item.id}` && item.subItems && (
-                            <ul className="panel-sublist">
-                              {item.subItems.map((sub) => (
-                                <li key={sub.label}><button type="button" className="panel-subitem">{sub.label}</button></li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      ) : (
-                        <div>
-                          <button type="button" className="panel-item">
-                            <item.icon size={14} />
-                            <span>{item.label}</span>
-                          </button>
-                        </div>
-                      )}
-                    </li>
-                  ))}
+                          </div>
+                        ) : (
+                          <div>
+                            <button
+                              type="button"
+                              className={`panel-item ${itemActive ? 'active' : ''}`}
+                              onClick={() => handlePanelItemClick(sectionId, item.id)}
+                            >
+                              <item.icon size={14} />
+                              <span>{item.label}</span>
+                            </button>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </PanelSection>
             );
