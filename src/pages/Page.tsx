@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-export default function DashboardPage() {
+export default function Page() {
   const { navId, sectionId, itemId, subId } = useParams<{
     navId?: string;
     sectionId?: string;
@@ -10,7 +10,7 @@ export default function DashboardPage() {
 
   if (!navId) {
     return (
-      <div className="dashboard-page">
+      <div className="page">
         <h2>대시보드</h2>
         <p>왼쪽 메뉴에서 항목을 선택하세요.</p>
       </div>
@@ -18,7 +18,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="dashboard-page">
+    <div className="page">
       <h2>
         {navId}
         {sectionId && ` / ${sectionId}`}

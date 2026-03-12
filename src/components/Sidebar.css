@@ -1,4 +1,4 @@
-.dashboard-sidebar {
+.sidebar {
   --sidebar-icon-width: 60px;
   --panel-width: 280px;
   --radius: 14px;
@@ -13,15 +13,12 @@
   font-family: 'Lexend', sans-serif;
   position: relative;
   display: flex;
-  width: calc(var(--sidebar-icon-width) + var(--panel-width));
+  width: auto;
   min-height: 100vh;
   background: #fff;
   transition: width 0.25s ease;
 }
 
-.dashboard-sidebar.panel-collapsed {
-  width: calc(var(--sidebar-icon-width) + 48px);
-}
 
 /* Left icon bar */
 .sidebar-icon-bar {

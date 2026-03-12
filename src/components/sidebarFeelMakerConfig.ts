@@ -128,7 +128,7 @@ export const FEELMAKER_SECTION_IDS: FeelMakerSectionId[] = [
 ];
 
 export const FEELMAKER_SECTION_CONFIG: FeelMakerSectionConfigItem[] = [
-  { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'dashboard' },
+  { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'page' },
   { id: 'crawling', title: '크롤링', icon: HiGlobeAlt, items: CRAWLING, expandable: true, subItemKeyPrefix: 'report' },
   { id: 'errorManagement', title: '오류관리', icon: HiNoSymbol, items: ERROR_MANAGEMENT, expandable: true },
   { id: 'reviewManagement', title: '문의/후기관리', icon: HiQuestionMarkCircle, items: REVIEW_MANAGEMENT, expandable: false },

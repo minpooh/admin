@@ -1,12 +1,12 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import DashboardSidebar from './components/DashboardSidebar';
-import DashboardPage from './pages/DashboardPage';
+import Sidebar from './components/Sidebar';
+import Page from './pages/Page';
 import './App.css';
 
 function Layout() {
   return (
     <main className="app">
-      <DashboardSidebar />
+      <Sidebar />
       <div className="main-content">
         <Outlet />
       </div>
@@ -20,9 +20,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/feelmaker" replace />} />
-          <Route path=":navId" element={<DashboardPage />} />
-          <Route path=":navId/:sectionId/:itemId" element={<DashboardPage />} />
-          <Route path=":navId/:sectionId/:itemId/:subId" element={<DashboardPage />} />
+          <Route path=":navId" element={<Page />} />
+          <Route path=":navId/:sectionId/:itemId" element={<Page />} />
+          <Route path=":navId/:sectionId/:itemId/:subId" element={<Page />} />
         </Route>
       </Routes>
     </BrowserRouter>

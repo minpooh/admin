@@ -1,13 +1,13 @@
 export type NavId = 'feelmaker' | 'feelframe' | 'feelmotion' | 'admins';
 
-export type DashboardParams = {
+export type PageParams = {
   navId: NavId;
   sectionId?: string;
   itemId?: string;
   subId?: string;
 };
 
-export function dashboardPath(params: {
+export function pagePath(params: {
   navId: NavId;
   sectionId?: string;
   itemId?: string;
@@ -20,7 +20,7 @@ export function dashboardPath(params: {
   return '/' + parts.join('/');
 }
 
-export function parseDashboardPath(pathname: string): DashboardParams {
+export function parsePagePath(pathname: string): PageParams {
   const normalized = pathname.replace(/^\//, '').replace(/\/$/, '');
   const parts = normalized ? normalized.split('/') : [];
   const [navId, sectionId, itemId, subId] = parts;
@@ -33,7 +33,7 @@ export function parseDashboardPath(pathname: string): DashboardParams {
 }
 
 export function isItemActive(
-  current: DashboardParams,
+  current: PageParams,
   navId: NavId,
   sectionId: string,
   itemId: string,

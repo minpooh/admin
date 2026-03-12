@@ -121,7 +121,7 @@ export const FEELFRAME_SECTION_IDS: FeelFrameSectionId[] = [
 ];
 
 export const FEELFRAME_SECTION_CONFIG: FeelFrameSectionConfigItem[] = [
-  { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'dashboard' },
+  { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'page' },
   { id: 'uploadManagement', title: '업로드관리', icon: HiPhoto, items: UPLOAD_MANAGEMENT, expandable: true, subItemKeyPrefix: 'report' },
   { id: 'deliveryManagement', title: '배송관리', icon: HiTruck, items: DELIVERY_MANAGEMENT, expandable: true },
   { id: 'productManagement', title: '상품관리', icon: HiArchiveBox, items: PRODUCT_MANAGEMENT, expandable: false },

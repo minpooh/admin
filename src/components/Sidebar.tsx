@@ -22,8 +22,8 @@ import {
   FEELFRAME_SECTION_IDS,
   FEELFRAME_SECTION_CONFIG,
 } from './sidebarFeelFrameConfig';
-import { dashboardPath, isItemActive, type NavId } from '../routes';
-import './DashboardSidebar.css';
+import { pagePath, isItemActive, type NavId } from '../routes';
+import './Sidebar.css';
 import logo from '../assets/FEEL_logo.png';
 
 /** feelmaker / feelframe 패널에서 공통으로 쓰는 섹션 ID 타입 */
@@ -108,7 +108,7 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   questionManagement: false,
 };
 
-export default function DashboardSidebar() {
+export default function Sidebar() {
   const navigate = useNavigate();
   const { navId: paramNavId, sectionId: paramSectionId, itemId: paramItemId, subId: paramSubId } = useParams<{
     navId?: string;
@@ -151,19 +151,19 @@ export default function DashboardSidebar() {
   };
 
   const handleNavClick = (navId: NavId) => {
-    navigate(dashboardPath({ navId }));
+    navigate(pagePath({ navId }));
   };
 
   const handlePanelItemClick = (sectionId: string, itemId: string) => {
-    navigate(dashboardPath({ navId: activeNavId, sectionId, itemId }));
+    navigate(pagePath({ navId: activeNavId, sectionId, itemId }));
   };
 
   const handleSubItemClick = (sectionId: string, itemId: string, subLabel: string) => {
-    navigate(dashboardPath({ navId: activeNavId, sectionId, itemId, subId: subLabel }));
+    navigate(pagePath({ navId: activeNavId, sectionId, itemId, subId: subLabel }));
   };
 
   return (
-    <div className={`dashboard-sidebar ${!isPanelOpen ? 'panel-collapsed' : ''}`} data-name="Container">
+    <div className={`sidebar ${!isPanelOpen ? 'panel-collapsed' : ''}`} data-name="Container">
       {/* Left icon bar */}
       <aside className="sidebar-icon-bar">
         <div className="sidebar-logo">
