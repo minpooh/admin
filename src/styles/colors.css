@@ -1,0 +1,53 @@
+/**
+ * 색상 토큰 — primary / secondary / gray
+ * Primary 기준: #dbeafe
+ * Secondary 기준: #e5f8ed
+ * Gray: Tailwind gray 스케일 (--gray-50 ~)
+ */
+:root {
+  /* Primary — 블루 */
+  --primary-color-50: #eff6ff;
+  --primary-color-100: #dbeafe;
+  --primary-color-200: #bfdbfe;
+  --primary-color-300: #93c5fd;
+  --primary-color-400: #60a5fa;
+  --primary-color-500: #3b82f6;
+
+  /* Secondary — 민트/그린 (#e5f8ed 기준) */
+  --secondary-color-50: #f2fcf8;
+  --secondary-color-100: #e5f8ed;
+  --secondary-color-200: #ceeee0;
+  --secondary-color-300: #a8e3cd;
+  --secondary-color-400: #6ccf9f;
+  --secondary-color-500: #3bb87a;
+
+  /* Warning — 옐로/앰버 (#fef3c7 기준) */
+  --warning-color-50: #fffbeb;
+  --warning-color-100: #fef3c7;
+  --warning-color-200: #fde68a;
+  --warning-color-300: #fcd34d;
+  --warning-color-400: #fbbf24;
+  --warning-color-500: #f59e0b;
+  
+  /* Danger — 레드/코랄 (#ff4c51 기준) */
+  --danger-color-50: #fff0f1;
+  --danger-color-100: #ffd9db;
+  --danger-color-200: #ffb1b5;
+  --danger-color-300: #ff7e84;
+  --danger-color-400: #ff5a5f;
+  --danger-color-500: #ff4c51;
+
+  /* Gray */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+
+}

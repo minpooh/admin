@@ -2,14 +2,15 @@
   --sidebar-icon-width: 60px;
   --panel-width: 280px;
   --radius: 14px;
-  --border: 1px solid #e5e7eb;
-  --bg-active: #e5e7eb;
-  --bg-search: #f3f4f6;
-  --text-muted: #6a7282;
-  --text-placeholder: #99a1af;
-  --text-primary: #000;
-  --icon-color: #6a7282;
-  --arrow-color: ##f9fafb;
+  --border: 1px solid var(--gray-200);
+  --bg-active: var(--gray-200);
+  --bg-search: var(--gray-100);
+  --text-muted: var(--gray-500);
+  --text-placeholder: var(--gray-400);
+  --text-primary: var(--gray-900);
+  --icon-color: var(--gray-500);
+  --arrow-color: var(--gray-500);
+  --sidebar-accent: var(--primary-color-500);
   font-family: 'Lexend', sans-serif;
   position: relative;
   display: flex;
@@ -75,7 +76,7 @@
 }
 
 .sidebar-nav-item:hover {
-  background: #f3f4f6;
+  background: var(--gray-100);
 }
 
 .sidebar-nav-item.active {
@@ -95,7 +96,7 @@
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  border: 1px solid #d1d5dc;
+  border: 1px solid var(--gray-300);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,7 +107,7 @@
 }
 
 .sidebar-user:hover {
-  background: #d1d5dc;
+  background: var(--gray-300);
 }
 
 /* Right panel */
@@ -216,7 +217,7 @@
 }
 
 .panel-back:hover {
-  background: #f3f4f6;
+  background: var(--gray-100);
 }
 
 .panel-search {
@@ -224,7 +225,7 @@
   align-items: center;
   height: 35px;
   background: var(--bg-search);
-  border: 1px solid #d1d5dc;
+  border: 1px solid var(--gray-300);
   border-radius: 8.75px;
   margin-bottom: 14px;
   padding: 0 0 0 10px;
@@ -289,7 +290,7 @@
 }
 
 .panel-section-header:hover {
-  background: #f3f4f6;
+  background: var(--gray-100);
   color: var(--text-primary);
 }
 
@@ -371,7 +372,7 @@
 }
 
 .panel-item:hover {
-  background: #f3f4f6;
+  background: var(--gray-100);
   color: var(--text-primary);
 }
 
@@ -411,7 +412,7 @@
 
 .panel-sublist li {
   margin-bottom: 4px;
-  background: #f9fafb;
+  background: var(--gray-50);
   border-radius: 8.75px;
 }
 
@@ -431,12 +432,12 @@
 }
 
 .panel-subitem:hover {
-  background: #e5e7eb;
+  background: var(--gray-200);
   color: var(--text-primary);
 }
 
 .panel-subitem.active {
-  background: #e0e7ff;
+  background: var(--primary-color-100);
   color: var(--sidebar-accent);
   font-weight: 500;
 }
