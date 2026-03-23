@@ -980,6 +980,32 @@
   z-index: 50;
 }
 
+/* order-table-wrap overflow에 잘리지 않도록 body에 포털로 렌더 */
+/* fixed 블록 가로 풀림 방지: grid + minmax(160px, max-content)로 컨텐츠 너비에 딱 맞춤 */
+.row-options__menu-portal {
+  position: fixed;
+  left: auto;
+  display: grid;
+  grid-template-columns: minmax(160px, max-content);
+  gap: 0;
+  box-sizing: border-box;
+  padding: 6px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  z-index: 10000;
+  max-width: min(280px, calc(100vw - 24px));
+}
+
+.row-options__menu-portal .row-options__item {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
 .row-options__item {
   width: 100%;
   text-align: left;

@@ -1,10 +1,12 @@
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useMemo, useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Mail, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/modal';
+import Confirm from '../../../components/confirm';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 
@@ -569,6 +571,15 @@ type AppliedSearch = {
   purchaseChannel: string;
 };
 
+type ConfirmDialogState = {
+  title?: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  danger?: boolean;
+  onConfirm: () => void;
+};
+
 function matchOrderCondition(order: OrderItem, condition: string): boolean {
   switch (condition) {
     case '결제전주문':
@@ -673,6 +684,12 @@ export default function OrderListPage() {
   );
   const [openOptionsOrderId, setOpenOptionsOrderId] = useState<string | null>(null);
   const [openVideoOptionsOrderId, setOpenVideoOptionsOrderId] = useState<string | null>(null);
+  /** 테이블 overflow에 잘리지 않도록 드롭다운을 body에 고정 배치할 때 사용 */
+  const rowDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
+  const [rowDropdownPos, setRowDropdownPos] = useState<{
+    top: number;
+    right: number;
+  } | null>(null);
   const [videoPreviewOrderId, setVideoPreviewOrderId] = useState<string | null>(null);
   const [optionModal, setOptionModal] = useState<{
     orderId: string;
@@ -687,36 +704,56 @@ export default function OrderListPage() {
   const [amountChangeModalOrderId, setAmountChangeModalOrderId] = useState<string | null>(null);
   const [changedAmount, setChangedAmount] = useState<string>('');
   const [changedPartner, setChangedPartner] = useState<string>('');
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
 
   const smsHistoryLen = smsModalOrderId ? (smsHistoryByOrderId[smsModalOrderId]?.length ?? 0) : 0;
 
+  const openConfirmDialog = (config: ConfirmDialogState) => setConfirmDialog(config);
+  const closeConfirmDialog = () => setConfirmDialog(null);
+  const handleConfirmDialogConfirm = () => {
+    if (!confirmDialog) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  };
+
   const handleVideoPublicClick = (orderId: string, isCurrentlyPublic: boolean) => {
     const msg = isCurrentlyPublic ? '미공개로 변경할까요?' : '공개로 변경할까요?';
-    if (!window.confirm(msg)) return;
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.id === orderId
-          ? { ...o, videoPublic: isCurrentlyPublic ? '영상미공개' : '영상공개' }
-          : o
-      )
-    );
+    openConfirmDialog({
+      message: msg,
+      onConfirm: () => {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? { ...o, videoPublic: isCurrentlyPublic ? '영상미공개' : '영상공개' }
+              : o
+          )
+        );
+      },
+    });
   };
 
   const handleDeleteOrder = (orderId: string) => {
-    if (!window.confirm('삭제 하시겠습니까?')) return;
-    setOrders((prev) => prev.filter((o) => o.id !== orderId));
-    setSmsHistoryByOrderId((prev) => {
-      const next = { ...prev };
-      delete next[orderId];
-      return next;
+    openConfirmDialog({
+      title: '주문 삭제',
+      message: '삭제 하시겠습니까?',
+      confirmText: '삭제',
+      danger: true,
+      onConfirm: () => {
+        setOrders((prev) => prev.filter((o) => o.id !== orderId));
+        setSmsHistoryByOrderId((prev) => {
+          const next = { ...prev };
+          delete next[orderId];
+          return next;
+        });
+        if (openOptionsOrderId === orderId) setOpenOptionsOrderId(null);
+        if (openVideoOptionsOrderId === orderId) setOpenVideoOptionsOrderId(null);
+        if (videoPreviewOrderId === orderId) setVideoPreviewOrderId(null);
+        if (optionModal?.orderId === orderId) setOptionModal(null);
+        if (smsModalOrderId === orderId) setSmsModalOrderId(null);
+        if (paymentModalOrderId === orderId) setPaymentModalOrderId(null);
+        if (amountChangeModalOrderId === orderId) setAmountChangeModalOrderId(null);
+      },
     });
-    if (openOptionsOrderId === orderId) setOpenOptionsOrderId(null);
-    if (openVideoOptionsOrderId === orderId) setOpenVideoOptionsOrderId(null);
-    if (videoPreviewOrderId === orderId) setVideoPreviewOrderId(null);
-    if (optionModal?.orderId === orderId) setOptionModal(null);
-    if (smsModalOrderId === orderId) setSmsModalOrderId(null);
-    if (paymentModalOrderId === orderId) setPaymentModalOrderId(null);
-    if (amountChangeModalOrderId === orderId) setAmountChangeModalOrderId(null);
   };
 
   const handleOptionMenuClick = (orderId: string, type: 'makerService' | 'dvd' | 'usb') => {
@@ -800,13 +837,34 @@ export default function OrderListPage() {
     return out;
   };
 
+  useLayoutEffect(() => {
+    if (!openOptionsOrderId && !openVideoOptionsOrderId) return;
+    const update = () => {
+      const el = rowDropdownAnchorRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setRowDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [openOptionsOrderId, openVideoOptionsOrderId]);
+
+  useEffect(() => {
+    if (!openOptionsOrderId && !openVideoOptionsOrderId) setRowDropdownPos(null);
+  }, [openOptionsOrderId, openVideoOptionsOrderId]);
+
   useEffect(() => {
     if (!openOptionsOrderId && !openVideoOptionsOrderId) return;
 
     const handlePointerDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
-      if (target.closest('.row-options')) return;
+      if (target.closest('.row-options') || target.closest('.row-options__menu-portal')) return;
       setOpenOptionsOrderId(null);
       setOpenVideoOptionsOrderId(null);
     };
@@ -841,6 +899,19 @@ export default function OrderListPage() {
     () => applyFilters(orders, appliedSearch),
     [orders, appliedSearch]
   );
+  const totalOrderAmount = useMemo(() => orders.reduce((sum, order) => sum + order.amount, 0), [orders]);
+  const totalUnpaidCount = useMemo(
+    () => orders.filter((order) => order.paymentStatus !== '결제완료').length,
+    [orders]
+  );
+  const filteredOrderAmount = useMemo(
+    () => filteredOrders.reduce((sum, order) => sum + order.amount, 0),
+    [filteredOrders]
+  );
+  const filteredUnpaidCount = useMemo(
+    () => filteredOrders.filter((order) => order.paymentStatus !== '결제완료').length,
+    [filteredOrders]
+  );
 
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
@@ -850,6 +921,16 @@ export default function OrderListPage() {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredOrders.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredOrders, currentPage]);
+
+  const portalOptionsOrder = useMemo(
+    () => (openOptionsOrderId ? orders.find((o) => o.id === openOptionsOrderId) ?? null : null),
+    [openOptionsOrderId, orders]
+  );
+  const portalVideoOrder = useMemo(
+    () =>
+      openVideoOptionsOrderId ? orders.find((o) => o.id === openVideoOptionsOrderId) ?? null : null,
+    [openVideoOptionsOrderId, orders]
+  );
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) setCurrentPage(totalPages);
@@ -1027,8 +1108,8 @@ export default function OrderListPage() {
       <section className="order-list-box">
         <p className="order-list-result">
           {appliedSearch
-            ? `총 ${filteredOrders.length}개 / ${filteredOrders.reduce((s, o) => s + o.amount, 0).toLocaleString()}원 의 주문이 검색되었습니다.`
-            : '총 222,578개 / 1,936,744,609원 의 주문이 검색되었습니다. 미결제건은 26개 입니다.'}
+            ? `총 ${filteredOrders.length}개 / ${filteredOrderAmount.toLocaleString()}원 의 주문이 검색되었습니다. 미결제건은 ${filteredUnpaidCount}개 입니다.`
+            : `총 ${orders.length}개 / ${totalOrderAmount.toLocaleString()}원 의 주문이 검색되었습니다. 미결제건은 ${totalUnpaidCount}개 입니다.`}
         </p>
       </section>
 
@@ -1489,7 +1570,11 @@ export default function OrderListPage() {
                         aria-label="기간추가"
                         title="기간추가"
                         onClick={() => {
-                          window.confirm('추가하시겠습니까?');
+                          openConfirmDialog({
+                            title: '기간 추가',
+                            message: '추가하시겠습니까?',
+                            onConfirm: () => {},
+                          });
                         }}
                       >
                         <Plus size={12} aria-hidden="true" />
@@ -1555,40 +1640,25 @@ export default function OrderListPage() {
                         aria-label="추가옵션"
                         onClick={(e) => {
                           e.stopPropagation();
+                          const closing = openOptionsOrderId === order.id;
                           setOpenVideoOptionsOrderId(null);
-                          setOpenOptionsOrderId((prev) => (prev === order.id ? null : order.id));
+                          if (closing) {
+                            setOpenOptionsOrderId(null);
+                            rowDropdownAnchorRef.current = null;
+                            setRowDropdownPos(null);
+                            return;
+                          }
+                          rowDropdownAnchorRef.current = e.currentTarget;
+                          const r = e.currentTarget.getBoundingClientRect();
+                          setRowDropdownPos({
+                            top: r.bottom + 6,
+                            right: window.innerWidth - r.right,
+                          });
+                          setOpenOptionsOrderId(order.id);
                         }}
                       >
                         <MoreHorizontal size={16} aria-hidden="true" />
                       </button>
-                      {openOptionsOrderId === order.id && (
-                        <div className="row-options__menu" role="menu">
-                          <button
-                            type="button"
-                            className="row-options__item"
-                            role="menuitem"
-                            onClick={() => handleOptionMenuClick(order.id, 'makerService')}
-                          >
-                            메이커서비스 {order.makerServiceAdded ? '현황보기' : '추가'}
-                          </button>
-                          <button
-                            type="button"
-                            className="row-options__item"
-                            role="menuitem"
-                            onClick={() => handleOptionMenuClick(order.id, 'dvd')}
-                          >
-                            DVD {order.dvdAdded ? '현황보기' : '추가'}
-                          </button>
-                          <button
-                            type="button"
-                            className="row-options__item"
-                            role="menuitem"
-                            onClick={() => handleOptionMenuClick(order.id, 'usb')}
-                          >
-                            USB {order.usbAdded ? '현황보기' : '추가'}
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </td>
                   <td>
@@ -1601,60 +1671,25 @@ export default function OrderListPage() {
                         aria-label="영상"
                         onClick={(e) => {
                           e.stopPropagation();
+                          const closing = openVideoOptionsOrderId === order.id;
                           setOpenOptionsOrderId(null);
-                          setOpenVideoOptionsOrderId((prev) =>
-                            prev === order.id ? null : order.id
-                          );
+                          if (closing) {
+                            setOpenVideoOptionsOrderId(null);
+                            rowDropdownAnchorRef.current = null;
+                            setRowDropdownPos(null);
+                            return;
+                          }
+                          rowDropdownAnchorRef.current = e.currentTarget;
+                          const r = e.currentTarget.getBoundingClientRect();
+                          setRowDropdownPos({
+                            top: r.bottom + 6,
+                            right: window.innerWidth - r.right,
+                          });
+                          setOpenVideoOptionsOrderId(order.id);
                         }}
                       >
                         <MoreHorizontal size={16} aria-hidden="true" />
                       </button>
-                      {openVideoOptionsOrderId === order.id && (
-                        <div className="row-options__menu" role="menu">
-                          {order.progress === '제작완료' && (
-                            <>
-                              <button
-                                type="button"
-                                className="row-options__item"
-                                role="menuitem"
-                                onClick={() => {
-                                  setVideoPreviewOrderId(order.id);
-                                  setOpenVideoOptionsOrderId(null);
-                                }}
-                              >
-                                영상확인
-                              </button>
-                              <button
-                                type="button"
-                                className="row-options__item"
-                                role="menuitem"
-                                onClick={() => {
-                                  handleVideoDownload(order);
-                                  setOpenVideoOptionsOrderId(null);
-                                }}
-                              >
-                                영상다운로드
-                              </button>
-                            </>
-                          )}
-                          <button
-                            type="button"
-                            className="row-options__item"
-                            role="menuitem"
-                            onClick={() => setOpenVideoOptionsOrderId(null)}
-                          >
-                            에디터
-                          </button>
-                          <button
-                            type="button"
-                            className="row-options__item"
-                            role="menuitem"
-                            onClick={() => setOpenVideoOptionsOrderId(null)}
-                          >
-                            에디터복사
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </td>
                   <td>
@@ -1720,6 +1755,106 @@ export default function OrderListPage() {
           </div>
         </div>
       </section>
+
+      {portalOptionsOrder &&
+        rowDropdownPos &&
+        createPortal(
+          <div
+            className="row-options__menu-portal"
+            role="menu"
+            style={{
+              position: 'fixed',
+              top: rowDropdownPos.top,
+              right: rowDropdownPos.right,
+              zIndex: 10000,
+            }}
+          >
+            <button
+              type="button"
+              className="row-options__item"
+              role="menuitem"
+              onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'makerService')}
+            >
+              메이커서비스 {portalOptionsOrder.makerServiceAdded ? '현황보기' : '추가'}
+            </button>
+            <button
+              type="button"
+              className="row-options__item"
+              role="menuitem"
+              onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'dvd')}
+            >
+              DVD {portalOptionsOrder.dvdAdded ? '현황보기' : '추가'}
+            </button>
+            <button
+              type="button"
+              className="row-options__item"
+              role="menuitem"
+              onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'usb')}
+            >
+              USB {portalOptionsOrder.usbAdded ? '현황보기' : '추가'}
+            </button>
+          </div>,
+          document.body
+        )}
+
+      {portalVideoOrder &&
+        rowDropdownPos &&
+        createPortal(
+          <div
+            className="row-options__menu-portal"
+            role="menu"
+            style={{
+              position: 'fixed',
+              top: rowDropdownPos.top,
+              right: rowDropdownPos.right,
+              zIndex: 10000,
+            }}
+          >
+            {portalVideoOrder.progress === '제작완료' && (
+              <>
+                <button
+                  type="button"
+                  className="row-options__item"
+                  role="menuitem"
+                  onClick={() => {
+                    setVideoPreviewOrderId(portalVideoOrder.id);
+                    setOpenVideoOptionsOrderId(null);
+                  }}
+                >
+                  영상확인
+                </button>
+                <button
+                  type="button"
+                  className="row-options__item"
+                  role="menuitem"
+                  onClick={() => {
+                    handleVideoDownload(portalVideoOrder);
+                    setOpenVideoOptionsOrderId(null);
+                  }}
+                >
+                  영상다운로드
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              className="row-options__item"
+              role="menuitem"
+              onClick={() => setOpenVideoOptionsOrderId(null)}
+            >
+              에디터
+            </button>
+            <button
+              type="button"
+              className="row-options__item"
+              role="menuitem"
+              onClick={() => setOpenVideoOptionsOrderId(null)}
+            >
+              에디터복사
+            </button>
+          </div>,
+          document.body
+        )}
 
       {optionModal && (() => {
         const order = orders.find((o) => o.id === optionModal.orderId);
@@ -2109,6 +2244,17 @@ export default function OrderListPage() {
           </Modal>
         );
       })()}
+
+      <Confirm
+        open={Boolean(confirmDialog)}
+        title={confirmDialog?.title}
+        message={confirmDialog?.message ?? ''}
+        confirmText={confirmDialog?.confirmText}
+        cancelText={confirmDialog?.cancelText}
+        danger={confirmDialog?.danger}
+        onClose={closeConfirmDialog}
+        onConfirm={handleConfirmDialogConfirm}
+      />
     </div>
   );
 }
