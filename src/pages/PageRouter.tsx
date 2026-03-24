@@ -11,7 +11,10 @@ export default function PageRouter() {
   }>();
 
   const pageKey = getPageKey(navId, sectionId, itemId, subId);
-  const PageComponent = pageKey ? getPage(pageKey) : undefined;
+  const fallbackKeyWithoutSub = getPageKey(navId, sectionId, itemId);
+  const PageComponent =
+    (pageKey ? getPage(pageKey) : undefined) ||
+    (subId ? getPage(fallbackKeyWithoutSub) : undefined);
 
   if (PageComponent) {
     return <PageComponent />;

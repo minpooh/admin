@@ -33,8 +33,13 @@ export function getPage(key: string): PageComponent | undefined {
 import FeelmakerDashboardPage from './feelmaker/DashboardPage.tsx';
 registerPage('feelmaker', FeelmakerDashboardPage);
 
-import FeelmakerOrderListPage from './feelmaker/orderManagement/OrderListPage';
-registerPage('feelmaker/orderManagement/orderList', FeelmakerOrderListPage);
+import FeelmakerOrderVideoPage from './feelmaker/orderManagement/OrderVideoPage';
+import FeelmakerOrderVideoTestPage from './feelmaker/orderManagement/OrderVideoTestPage';
+import FeelmakerOrderInviPage from './feelmaker/orderManagement/orderInviPage';
+registerPage('feelmaker/orderManagement/orderVideo', FeelmakerOrderVideoPage);
+registerPage('feelmaker/orderManagement/orderTestVideo', FeelmakerOrderVideoTestPage);
+registerPage('feelmaker/orderManagement/orderInvi', FeelmakerOrderInviPage);
+
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

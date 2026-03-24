@@ -7,6 +7,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
+import ListSelect from './components/ListSelect';
+import { MOCK_ORDERS, type OrderItem } from './mock/orderVideo.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 
@@ -93,130 +95,6 @@ const PARTNER_CHANNELS = [
 /** 구매채널(목업 `purchaseChannel` 필드 값) */
 const PURCHASE_CHANNELS = ['필메이커', '스토어팜'] as const;
 
-type ListSelectOption = { value: string; label: string };
-
-function ListSelect({
-  value,
-  onChange,
-  options,
-  ariaLabel,
-  className,
-}: {
-  value: string;
-  onChange: (next: string) => void;
-  options: ListSelectOption[];
-  ariaLabel: string;
-  className?: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  const selectedLabel = options.find((o) => o.value === value)?.label ?? '';
-
-  useEffect(() => {
-    if (!open) return;
-
-    const handlePointerDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-      if (!wrapRef.current) return;
-      if (wrapRef.current.contains(target)) return;
-      setOpen(false);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
-
-  return (
-    <div ref={wrapRef} className={`listselect ${className ?? ''}`.trim()}>
-      <button
-        type="button"
-        className={`listselect__trigger ${open ? 'is-open' : ''}`}
-        aria-label={ariaLabel}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span className="listselect__value">{selectedLabel}</span>
-        <svg
-          className="listselect__chevron"
-          aria-hidden="true"
-          viewBox="0 0 16 16"
-          width="12"
-          height="12"
-          fill="none"
-        >
-          <path
-            d="M4.5 6.75L8 10.25L11.5 6.75"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
-      {open && (
-        <ul className="listselect__menu" role="listbox" aria-label={ariaLabel}>
-          {options.map((opt) => {
-            const isSelected = opt.value === value;
-            return (
-              <li
-                key={opt.value}
-                className={`listselect__item ${isSelected ? 'is-selected' : ''}`}
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => {
-                  onChange(opt.value);
-                  setOpen(false);
-                }}
-              >
-                {opt.label}
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-type OrderItem = {
-  id: string;
-  no: string;
-  noSub: string;
-  purchaseChannel: '필메이커' | '스토어팜';
-  category: string;
-  productName: string;
-  videoPublic: string;
-  orderDate: string;
-  firstProductionDate: string;
-  customerName: string;
-  customerId: string;
-  customerPhone: string;
-  paymentMethod: string;
-  depositor: string;
-  paymentStatus: string;
-  purchasePath: string;
-  amount: number;
-  progress: string;
-  couponType: string;
-  pgCompany: string;
-  option: string;
-  partner: string;
-  makerServiceAdded?: boolean;
-  dvdAdded?: boolean;
-  usbAdded?: boolean;
-};
-
 // 주문일 문자열에서 Date 추출 (YYYY-MM-DD HH:mm:ss/ 형식)
 function parseOrderDate(orderDate: string): Date {
   const dateStr = orderDate.replace(/\/$/, '').trim().slice(0, 19);
@@ -252,307 +130,6 @@ function isInDateRange(orderDate: string, dateRange: string): boolean {
       return true;
   }
 }
-
-// 목업 주문 목록 (검색 필터링용)
-const MOCK_ORDERS: OrderItem[] = [
-  {
-    id: '1',
-    no: '478402',
-    noSub: '(864269)',
-    purchaseChannel: '필메이커',
-    category: '영상편지',
-    productName: 'My Romance: 나의 로맨스',
-    videoPublic: '영상미공개',
-    orderDate: '2026-03-13 10:52:28',
-    firstProductionDate: '2026-03-14 09:10:00',
-    customerName: '이민정',
-    customerId: 'minjeong123',
-    customerPhone: '010-1111-2222',
-    paymentMethod: '무통장 입금',
-    depositor: '이로운',
-    paymentStatus: '결제취소됨',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 0,
-    progress: '주문완료',
-    couponType: '미사용',
-    pgCompany: '',
-    option: '기본',
-    partner: 'feelmaker',
-    makerServiceAdded: true,
-    dvdAdded: false,
-    usbAdded: false,
-  },
-  {
-    id: '2',
-    no: '478401',
-    noSub: '(864268)',
-    purchaseChannel: '스토어팜',
-    category: '식전영상',
-    productName: '식전영상 패키지',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-12 15:20:00',
-    firstProductionDate: '2026-03-13 13:05:00',
-    customerName: '김철수',
-    customerId: 'kimcs',
-    customerPhone: '010-1234-5678',
-    paymentMethod: 'PG결제',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 189000,
-    progress: '제작중',
-    couponType: '%할인쿠폰',
-    pgCompany: '토스',
-    option: '프리미엄',
-    partner: 'feelmotioncard',
-    makerServiceAdded: false,
-    dvdAdded: true,
-    usbAdded: false,
-  },
-  {
-    id: '3',
-    no: '478400',
-    noSub: '(864267)',
-    purchaseChannel: '필메이커',
-    category: '영상편지',
-    productName: '영상편지 단품',
-    videoPublic: '영상미공개',
-    orderDate: '2026-03-11 09:00:00',
-    firstProductionDate: '2026-03-12 11:30:00',
-    customerName: '박영희',
-    customerId: 'parkyh',
-    customerPhone: '010-9876-5432',
-    paymentMethod: '무통장 입금',
-    depositor: '박영희',
-    paymentStatus: '결제전',
-    purchasePath: 'mobile 주문',
-    amount: 45000,
-    progress: '제작전',
-    couponType: '무료쿠폰',
-    pgCompany: '',
-    option: '기본',
-    partner: 'baruncompany',
-    makerServiceAdded: false,
-    dvdAdded: false,
-    usbAdded: true,
-  },
-  {
-    id: '4',
-    no: '478399',
-    noSub: '(864266)',
-    purchaseChannel: '스토어팜',
-    category: '부모님감사영상',
-    productName: '부모님 감사 영상',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-10 14:00:00',
-    firstProductionDate: '2026-03-11 16:20:00',
-    customerName: '최민수',
-    customerId: 'choims',
-    customerPhone: '010-5555-6666',
-    paymentMethod: '실시간계좌이체',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 79000,
-    progress: '제작완료',
-    couponType: '금액할인쿠폰',
-    pgCompany: '나이스',
-    option: '기본',
-    partner: 'barunsonmall',
-    makerServiceAdded: false,
-    dvdAdded: false,
-    usbAdded: false,
-  },
-  {
-    id: '5',
-    no: '478398',
-    noSub: '(864265)',
-    purchaseChannel: '필메이커',
-    category: '모바일초대영상',
-    productName: '모바일 초대장 클래식',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-09 13:12:00',
-    firstProductionDate: '2026-03-10 10:00:00',
-    customerName: '정유진',
-    customerId: 'jyj1024',
-    customerPhone: '010-3232-8899',
-    paymentMethod: 'PG결제',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'mobile 주문',
-    amount: 59000,
-    progress: '제작중',
-    couponType: '미사용',
-    pgCompany: '토스',
-    option: '기본',
-    partner: 'bhandscard',
-    makerServiceAdded: false,
-    dvdAdded: false,
-    usbAdded: false,
-  },
-  {
-    id: '6',
-    no: '478397',
-    noSub: '(864264)',
-    purchaseChannel: '스토어팜',
-    category: '성장영상',
-    productName: '성장영상 스탠다드',
-    videoPublic: '영상미공개',
-    orderDate: '2026-03-08 11:05:00',
-    firstProductionDate: '2026-03-09 09:25:00',
-    customerName: '한지민',
-    customerId: 'hanjm',
-    customerPhone: '010-7777-8181',
-    paymentMethod: '무통장 입금',
-    depositor: '한지민',
-    paymentStatus: '결제완료',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 119000,
-    progress: '제작전',
-    couponType: '금액할인쿠폰',
-    pgCompany: '',
-    option: '프리미엄',
-    partner: 'deardeer',
-    makerServiceAdded: true,
-    dvdAdded: false,
-    usbAdded: true,
-  },
-  {
-    id: '7',
-    no: '478396',
-    noSub: '(864263)',
-    purchaseChannel: '필메이커',
-    category: '오프닝영상',
-    productName: '오프닝영상 시그니처',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-07 17:43:00',
-    firstProductionDate: '2026-03-08 14:22:00',
-    customerName: '유승호',
-    customerId: 'ysh88',
-    customerPhone: '010-2020-4545',
-    paymentMethod: '실시간계좌이체',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 99000,
-    progress: '제작완료',
-    couponType: '%할인쿠폰',
-    pgCompany: '나이스',
-    option: '프리미엄',
-    partner: 'premierpaper',
-    makerServiceAdded: false,
-    dvdAdded: true,
-    usbAdded: false,
-  },
-  {
-    id: '8',
-    no: '478395',
-    noSub: '(864262)',
-    purchaseChannel: '스토어팜',
-    category: '행사영상',
-    productName: '행사영상 원스텝',
-    videoPublic: '영상미공개',
-    orderDate: '2026-03-06 12:24:00',
-    firstProductionDate: '2026-03-07 08:40:00',
-    customerName: '김연아',
-    customerId: 'kimya',
-    customerPhone: '010-4141-5252',
-    paymentMethod: 'PG결제',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'mobile 주문',
-    amount: 85000,
-    progress: '고객자료완료',
-    couponType: '미사용',
-    pgCompany: '토스',
-    option: '기본',
-    partner: 'thecard',
-    makerServiceAdded: false,
-    dvdAdded: false,
-    usbAdded: false,
-  },
-  {
-    id: '9',
-    no: '478394',
-    noSub: '(864261)',
-    purchaseChannel: '필메이커',
-    category: '사진보정',
-    productName: '사진보정 30컷',
-    videoPublic: '영상미공개',
-    orderDate: '2026-03-05 09:50:00',
-    firstProductionDate: '2026-03-05 15:35:00',
-    customerName: '박소담',
-    customerId: 'psd03',
-    customerPhone: '010-9191-4747',
-    paymentMethod: '무통장 입금',
-    depositor: '박소담',
-    paymentStatus: '결제전',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 39000,
-    progress: '제작전',
-    couponType: '무료쿠폰',
-    pgCompany: '',
-    option: '기본',
-    partner: 'hallchuu',
-    makerServiceAdded: false,
-    dvdAdded: false,
-    usbAdded: false,
-  },
-  {
-    id: '10',
-    no: '478393',
-    noSub: '(864260)',
-    purchaseChannel: '스토어팜',
-    category: '식전영상',
-    productName: '식전영상 프리셋',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-04 20:10:00',
-    firstProductionDate: '2026-03-05 10:10:00',
-    customerName: '장동건',
-    customerId: 'jdg777',
-    customerPhone: '010-8383-6262',
-    paymentMethod: 'PG결제',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'mobile 주문',
-    amount: 109000,
-    progress: '제작중',
-    couponType: '금액할인쿠폰',
-    pgCompany: '토스',
-    option: '프리미엄',
-    partner: 'bom',
-    makerServiceAdded: true,
-    dvdAdded: true,
-    usbAdded: false,
-  },
-  {
-    id: '11',
-    no: '478392',
-    noSub: '(864259)',
-    purchaseChannel: '필메이커',
-    category: '영상편지',
-    productName: '영상편지 프리미엄',
-    videoPublic: '영상공개',
-    orderDate: '2026-03-03 08:20:00',
-    firstProductionDate: '2026-03-04 09:30:00',
-    customerName: '서현진',
-    customerId: 'shj321',
-    customerPhone: '010-5656-7373',
-    paymentMethod: '실시간계좌이체',
-    depositor: '',
-    paymentStatus: '결제완료',
-    purchasePath: 'pc / 크롬 주문',
-    amount: 129000,
-    progress: 'dvd확정미출고',
-    couponType: '%할인쿠폰',
-    pgCompany: '나이스',
-    option: '프리미엄',
-    partner: 'NAVER_STORE',
-    makerServiceAdded: false,
-    dvdAdded: true,
-    usbAdded: true,
-  },
-];
 
 type AppliedSearch = {
   dateRange: string;
@@ -653,7 +230,7 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
   });
 }
 
-export default function OrderListPage() {
+export default function OrderVideoPage() {
   const [filterExpanded, setFilterExpanded] = useState(false);
   // 주문일을 아직 선택하지 않았을 때는 어떤 프리셋도 활성화하지 않음.
   // (isInDateRange의 default 처리로 필터링이 걸리지 않도록 함)
@@ -1102,7 +679,7 @@ export default function OrderListPage() {
 
   return (
     <div className="order-list-page">
-      <h1 className="page-title">전체 목록</h1>
+      <h1 className="page-title">구매영상 목록</h1>
 
       {/* 검색 결과 문구 */}
       <section className="order-list-box">
@@ -1520,10 +1097,10 @@ export default function OrderListPage() {
                       <div className="product-name-with-public">
                         <button
                           type="button"
-                          className={`video-public-square ${
+                          className={`badge-square ${
                             order.videoPublic === '영상공개'
-                              ? 'video-public-square--open'
-                              : 'video-public-square--private'
+                              ? 'badge-square--open'
+                              : 'badge-square--private'
                           }`}
                           title={
                             order.videoPublic === '영상공개'

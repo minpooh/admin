@@ -1,6 +1,5 @@
 import type { IconType } from 'react-icons';
 import {
-  HiViewColumns,
   HiVideoCamera,
   HiDevicePhoneMobile,
   HiPencil,
@@ -36,9 +35,24 @@ import {
 } from 'react-icons/hi2';
 
 export const ORDER_MANAGEMENT = [
-  { id: 'orderList', icon: HiViewColumns, label: '전체리스트', active: true },
-  { id: 'orderVideo', icon: HiVideoCamera, label: '영상', subItems: [{ label: '구매영상' }, { label: '체험영상' }] },
-  { id: 'orderInvi', icon: HiDevicePhoneMobile, label: '모바일청첩장', subItems: [{ label: '웨딩청첩장' }, { label: '돌잔치초대장' }] },
+  {
+    id: 'orderVideo',
+    icon: HiVideoCamera,
+    label: '영상',
+    subItems: [
+      { id: 'orderVideo', label: '구매영상' },
+      { id: 'orderTestVideo', label: '체험영상' },
+    ],
+  },
+  {
+    id: 'orderInvi',
+    icon: HiDevicePhoneMobile,
+    label: '모바일초대장',
+    subItems: [
+      { id: 'wedding', label: '웨딩청첩장' },
+      { id: 'baby', label: '돌잔치초대장' },
+    ],
+  },
   { id: 'orderPhoto', icon: HiPencil, label: '보정', subItems: [{ label: '필메이커' }, { label: '스팜 필모션' }, { label: '스팜 샘플' }] },
   { id: 'videoMix', icon: HiPlay, label: '비디오믹스' },
 ];
@@ -109,7 +123,7 @@ export type FeelMakerSectionConfigItem = {
   title: string;
   icon: IconType;
   /** 있으면 feelmaker 패널에서 아코디언 + 리스트로 표시 */
-  items?: { id: string; icon: IconType; label: string; active?: boolean; subItems?: { label: string }[] }[];
+  items?: { id: string; icon: IconType; label: string; active?: boolean; subItems?: { id?: string; label: string }[] }[];
   expandable?: boolean;
   subItemKeyPrefix?: string;
 };

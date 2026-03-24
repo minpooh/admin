@@ -140,11 +140,16 @@ export default function Sidebar() {
   }, [paramSectionId]);
 
   useEffect(() => {
-    if (paramSubId && paramSectionId && paramItemId) {
-      const subItemKeyPrefix = currentPanelConfig?.sectionConfig.find((s) => s.id === paramSectionId)?.subItemKeyPrefix ?? paramSectionId;
-      setExpandedItem(`${subItemKeyPrefix}-${paramItemId}`);
-    }
-  }, [paramSubId, paramSectionId, paramItemId, currentPanelConfig?.sectionConfig]);
+    if (!paramSectionId || !paramItemId) return;
+    const subItemKeyPrefix =
+      currentPanelConfig?.sectionConfig.find((s) => s.id === paramSectionId)?.subItemKeyPrefix ??
+      paramSectionId;
+    const parentItemId =
+      paramSectionId === 'orderManagement' && paramItemId === 'orderTestVideo'
+        ? 'orderVideo'
+        : paramItemId;
+    setExpandedItem(`${subItemKeyPrefix}-${parentItemId}`);
+  }, [paramSectionId, paramItemId, currentPanelConfig?.sectionConfig]);
 
   const toggleSection = (id: SectionId) => {
     setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -158,8 +163,15 @@ export default function Sidebar() {
     navigate(pagePath({ navId: activeNavId, sectionId, itemId }));
   };
 
-  const handleSubItemClick = (sectionId: string, itemId: string, subLabel: string) => {
-    navigate(pagePath({ navId: activeNavId, sectionId, itemId, subId: subLabel }));
+  const handleSubItemClick = (sectionId: string, parentItemId: string, targetSubId: string) => {
+    // 모바일초대장만 subId 기반 라우팅 사용
+    if (sectionId === 'orderManagement' && parentItemId === 'orderInvi') {
+      navigate(pagePath({ navId: activeNavId, sectionId, itemId: parentItemId, subId: targetSubId }));
+      return;
+    }
+
+    // 그 외 메뉴(예: 영상)는 기존처럼 itemId 전환
+    navigate(pagePath({ navId: activeNavId, sectionId, itemId: targetSubId }));
   };
 
   return (
@@ -250,9 +262,15 @@ export default function Sidebar() {
               >
                 <ul className="panel-list">
                   {section.items.map((item) => {
-                    const itemActive = isItemActive(currentParams, activeNavId, sectionId, item.id);
+                    const isOrderVideoGroup =
+                      sectionId === 'orderManagement' &&
+                      item.id === 'orderVideo' &&
+                      (paramItemId === 'orderVideo' || paramItemId === 'orderTestVideo');
+                    const itemActive =
+                      isOrderVideoGroup ||
+                      isItemActive(currentParams, activeNavId, sectionId, item.id);
                     const itemKey = `${subItemKeyPrefix}-${item.id}`;
-                    const isExpanded = expandedItem === itemKey;
+                    const isExpanded = expandedItem === itemKey || isOrderVideoGroup;
                     return (
                       <li key={item.id}>
                         {section.expandable ? (
@@ -279,13 +297,24 @@ export default function Sidebar() {
                             {isExpanded && item.subItems && (
                               <ul className="panel-sublist">
                                 {item.subItems.map((sub) => {
-                                  const subActive = isItemActive(currentParams, activeNavId, sectionId, item.id, sub.label);
+                                  const resolvedSubId = sub.id ?? sub.label;
+                                  const isOrderInviSubRoute =
+                                    sectionId === 'orderManagement' && item.id === 'orderInvi';
+                                  const subActive = isOrderInviSubRoute
+                                    ? paramSectionId === sectionId &&
+                                      paramItemId === item.id &&
+                                      paramSubId === resolvedSubId
+                                    : !paramSubId &&
+                                      paramSectionId === sectionId &&
+                                      paramItemId === resolvedSubId;
                                   return (
-                                    <li key={sub.label}>
+                                    <li key={resolvedSubId}>
                                       <button
                                         type="button"
                                         className={`panel-subitem ${subActive ? 'active' : ''}`}
-                                        onClick={() => handleSubItemClick(sectionId, item.id, sub.label)}
+                                        onClick={() =>
+                                          handleSubItemClick(sectionId, item.id, resolvedSubId)
+                                        }
                                       >
                                         {sub.label}
                                       </button>

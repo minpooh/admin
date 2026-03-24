@@ -37,13 +37,13 @@ export function isItemActive(
   navId: NavId,
   sectionId: string,
   itemId: string,
-  subLabel?: string
+  subId?: string
 ): boolean {
   if (current.navId !== navId || current.sectionId !== sectionId || current.itemId !== itemId) {
     return false;
   }
-  if (subLabel !== undefined) {
-    return current.subId === subLabel;
+  if (subId !== undefined) {
+    return current.subId === subId;
   }
   return !current.subId;
 }
