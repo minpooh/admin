@@ -53,8 +53,17 @@ export const ORDER_MANAGEMENT = [
       { id: 'baby', label: '돌잔치초대장' },
     ],
   },
-  { id: 'orderPhoto', icon: HiPencil, label: '보정', subItems: [{ label: '필메이커' }, { label: '스팜 필모션' }, { label: '스팜 샘플' }] },
-  { id: 'videoMix', icon: HiPlay, label: '비디오믹스' },
+  {
+    id: 'orderPhoto',
+    icon: HiPencil,
+    label: '보정',
+    subItems: [
+      { id: 'orderEditPage', label: '필메이커' },
+      { id: 'orderEditStorePage', label: '스팜 필모션' },
+      { id: 'orderEditSamplePage', label: '스팜 샘플' },
+    ],
+  },
+  { id: 'orderVideoMixPage', icon: HiPlay, label: '비디오믹스' },
 ];
 
 export const CRAWLING = [

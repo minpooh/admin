@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo, useEffect, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { Mail, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -954,7 +954,23 @@ export default function OrderVideoTestPage() {
                   </td>
                   <td>{order.customerName}</td>
                   <td>{order.customerId}</td>
-                  <td>{order.customerPhone}</td>
+                  <td>
+                    <div className="phone-with-sms">
+                      <button
+                        type="button"
+                        className="row-icon-btn row-icon-btn--sms"
+                        aria-label="문자 발송"
+                        title="문자 발송"
+                        onClick={() => {
+                          setSmsModalOrderId(order.id);
+                          setSmsText('');
+                        }}
+                      >
+                        <Mail size={12} aria-hidden="true" />
+                      </button>
+                      <span className="phone-with-sms__number">{order.customerPhone}</span>
+                    </div>
+                  </td>
                   <td>
                     <div className="date-with-add">
                       <button
@@ -1302,7 +1318,99 @@ export default function OrderVideoTestPage() {
         );
       })()}
 
-      
+      {smsModalOrderId && (() => {
+        const order = orders.find((o) => o.id === smsModalOrderId);
+        if (!order) return null;
+        const byteCount = getUtf8Bytes(smsText);
+        const history = smsHistoryByOrderId[order.id] ?? [];
+
+        return (
+          <Modal open onClose={closeSmsModal} ariaLabel="문자 발송" variant="sms">
+            <Modal.Header>
+              <Modal.Title>문자 발송</Modal.Title>
+              <Modal.Close />
+            </Modal.Header>
+
+            <Modal.Body>
+              <div className="sms-modal__content">
+                <div className="sms-modal__preview" aria-label="휴대폰 미리보기">
+                  <div className="phone-mock">
+                    <div className="phone-mock__bezel">
+                      <div className="phone-mock__notch" aria-hidden="true" />
+                      <div className="phone-mock__screen">
+                        <div className="phone-mock__top">
+                          <div className="phone-mock__to">To: {order.customerName}</div>
+                          <div className="phone-mock__to-sub">{order.customerPhone}</div>
+                        </div>
+                        <div className="phone-mock__messages" ref={phoneMessagesRef}>
+                          {history.map((m, idx) => (
+                            <div
+                              key={`${order.id}-sms-${idx}`}
+                              className="phone-mock__bubble phone-mock__bubble--history"
+                            >
+                              {m}
+                            </div>
+                          ))}
+                          <div
+                            className={`phone-mock__bubble phone-mock__bubble--draft ${
+                              smsText.trim() ? '' : 'is-empty'
+                            }`}
+                          >
+                            {smsText.trim() ? smsText : '메시지를 입력하면 이곳에 미리보기가 표시됩니다.'}
+                          </div>
+                        </div>
+                        <div className="phone-mock__composer">
+                          <textarea
+                            id="sms-text"
+                            className="phone-mock__textarea"
+                            value={smsText}
+                            onChange={(e) => setSmsText(trimToMaxBytes(e.target.value, 80))}
+                            placeholder="내용을 입력하세요. (최대 80byte)"
+                            rows={2}
+                          />
+                          <div className={`phone-mock__counter ${byteCount > 80 ? 'is-over' : ''}`}>
+                            {byteCount}/80byte
+                          </div>
+                        </div>
+                        <div className="phone-mock__home-indicator" aria-hidden="true" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <button
+                type="button"
+                className="sms-modal__btn sms-modal__btn--ghost"
+                onClick={() => closeSmsModal()}
+              >
+                닫기
+              </button>
+              <button
+                type="button"
+                className="sms-modal__btn sms-modal__btn--primary"
+                onClick={() => {
+                  if (!smsText.trim()) {
+                    window.alert('문자내용을 입력해주세요.');
+                    return;
+                  }
+                  setSmsHistoryByOrderId((prev) => ({
+                    ...prev,
+                    [order.id]: [...(prev[order.id] ?? []), smsText.trim()],
+                  }));
+                  window.alert('문자 발송(목업)');
+                  closeSmsModal();
+                }}
+              >
+                발송
+              </button>
+            </Modal.Footer>
+          </Modal>
+        );
+      })()}
+
 
       {partnerModalOrderId && (() => {
         const order = orders.find((o) => o.id === partnerModalOrderId);

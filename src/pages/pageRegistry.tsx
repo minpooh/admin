@@ -35,11 +35,19 @@ registerPage('feelmaker', FeelmakerDashboardPage);
 
 import FeelmakerOrderVideoPage from './feelmaker/orderManagement/OrderVideoPage';
 import FeelmakerOrderVideoTestPage from './feelmaker/orderManagement/OrderVideoTestPage';
-import FeelmakerOrderInviPage from './feelmaker/orderManagement/orderInviPage';
+import FeelmakerOrderInviPage from './feelmaker/orderManagement/OrderInviPage';
+import FeelmakerOrderEditPage from './feelmaker/orderManagement/OrderEditPage.tsx';
+import FeelmakerOrderEditStorePage from './feelmaker/orderManagement/OrderEditStorePage.tsx';
+import FeelmakerOrderEditSamplePage from './feelmaker/orderManagement/OrderEditSamplePage.tsx';
+import FeelmakerOrderVideoMixPage from './feelmaker/orderManagement/OrderVideoMixPage.tsx';
+
 registerPage('feelmaker/orderManagement/orderVideo', FeelmakerOrderVideoPage);
 registerPage('feelmaker/orderManagement/orderTestVideo', FeelmakerOrderVideoTestPage);
 registerPage('feelmaker/orderManagement/orderInvi', FeelmakerOrderInviPage);
-
+registerPage('feelmaker/orderManagement/orderEditPage', FeelmakerOrderEditPage);
+registerPage('feelmaker/orderManagement/orderEditStorePage', FeelmakerOrderEditStorePage);
+registerPage('feelmaker/orderManagement/orderEditSamplePage', FeelmakerOrderEditSamplePage);
+registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoMixPage);
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

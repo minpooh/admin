@@ -147,6 +147,9 @@ export default function Sidebar() {
     const parentItemId =
       paramSectionId === 'orderManagement' && paramItemId === 'orderTestVideo'
         ? 'orderVideo'
+        : paramSectionId === 'orderManagement' &&
+            ['orderEditPage', 'orderEditStorePage', 'orderEditSamplePage'].includes(paramItemId)
+          ? 'orderPhoto'
         : paramItemId;
     setExpandedItem(`${subItemKeyPrefix}-${parentItemId}`);
   }, [paramSectionId, paramItemId, currentPanelConfig?.sectionConfig]);
@@ -266,11 +269,18 @@ export default function Sidebar() {
                       sectionId === 'orderManagement' &&
                       item.id === 'orderVideo' &&
                       (paramItemId === 'orderVideo' || paramItemId === 'orderTestVideo');
+                    const isOrderPhotoGroup =
+                      sectionId === 'orderManagement' &&
+                      item.id === 'orderPhoto' &&
+                      ['orderEditPage', 'orderEditStorePage', 'orderEditSamplePage'].includes(
+                        paramItemId ?? ''
+                      );
                     const itemActive =
                       isOrderVideoGroup ||
+                      isOrderPhotoGroup ||
                       isItemActive(currentParams, activeNavId, sectionId, item.id);
                     const itemKey = `${subItemKeyPrefix}-${item.id}`;
-                    const isExpanded = expandedItem === itemKey || isOrderVideoGroup;
+                    const isExpanded = expandedItem === itemKey || isOrderVideoGroup || isOrderPhotoGroup;
                     return (
                       <li key={item.id}>
                         {section.expandable ? (
@@ -279,7 +289,15 @@ export default function Sidebar() {
                               type="button"
                               className={`panel-item ${itemActive && !paramSubId ? 'active' : ''}`}
                               onClick={() => {
-                                handlePanelItemClick(sectionId, item.id);
+                                if (
+                                  sectionId === 'orderManagement' &&
+                                  item.id === 'orderPhoto' &&
+                                  item.subItems?.[0]?.id
+                                ) {
+                                  handleSubItemClick(sectionId, item.id, item.subItems[0].id);
+                                } else {
+                                  handlePanelItemClick(sectionId, item.id);
+                                }
                                 if (item.subItems) {
                                   setExpandedItem((prev) => (prev === itemKey ? null : itemKey));
                                 }
