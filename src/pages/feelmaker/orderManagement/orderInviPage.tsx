@@ -849,7 +849,7 @@ export default function OrderInviPage() {
                     <div className="phone-with-sms">
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--sms"
+                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
                         aria-label="문자 발송"
                         title="문자 발송"
                         onClick={() => {
@@ -868,7 +868,7 @@ export default function OrderInviPage() {
                       {order.paymentStatus === '사용완료(평생소장중)' ? (
                         <button
                           type="button"
-                          className="row-icon-btn row-icon-btn--sms"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
                           aria-label="워터마크 제거 복구"
                           title="워터마크 제거 복구"
                           onClick={() =>
@@ -915,7 +915,7 @@ export default function OrderInviPage() {
                       {order.paymentStatus === '사용완료(평생소장중)' ? (
                         <button
                           type="button"
-                          className="row-icon-btn row-icon-btn--sms"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
                           aria-label="옵션 복구"
                           title="옵션 복구"
                           onClick={() =>
@@ -947,7 +947,7 @@ export default function OrderInviPage() {
                   <td className="col-center">
                     <button
                       type="button"
-                      className="row-icon-btn row-icon-btn--editor"
+                      className="row-icon-btn row-icon-btn--tone-primary"
                       aria-label="에디터"
                       title="에디터"
                     >
@@ -957,7 +957,7 @@ export default function OrderInviPage() {
                   <td className="col-center">
                     <button
                       type="button"
-                      className="row-icon-btn row-icon-btn--qr"
+                      className="row-icon-btn row-icon-btn--tone-purple"
                       aria-label="QR코드"
                       title="QR코드"
                     >

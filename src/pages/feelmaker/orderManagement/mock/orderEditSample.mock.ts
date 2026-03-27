@@ -1,0 +1,161 @@
+export type SampleEditWorkStatus = '고객업로드' | '관리자업로드' | '원본업로드';
+export type SampleEditReviewStatus = '작성' | '미작성';
+export type SampleEditStrength = '강' | '중' | '약' | '디자이너임의';
+
+export type SampleEditItem = {
+  id: string;
+  no: string;
+  orderNo: string;
+  customerName: string;
+  customerId: string;
+  customerPhone: string;
+  requestDate: string;
+  correctionStrength: SampleEditStrength;
+  workStatus: SampleEditWorkStatus;
+  reviewStatus: SampleEditReviewStatus;
+  reviewUrl: string | null;
+  originalDeliveryUrl: string | null;
+};
+
+export const MOCK_SAMPLE_EDIT_ORDERS: SampleEditItem[] = [
+  {
+    id: 'ses-1',
+    no: 'S820114',
+    orderNo: '2026032745506601',
+    customerName: '김민지',
+    customerId: 'minji_k',
+    customerPhone: '010-1234-2345',
+    requestDate: '2026-03-27 10:12:00',
+    correctionStrength: '강',
+    workStatus: '고객업로드',
+    reviewStatus: '작성',
+    reviewUrl: 'https://example.com/reviews/ses-1',
+    originalDeliveryUrl: 'https://example.com/delivery/ses-1',
+  },
+  {
+    id: 'ses-2',
+    no: 'S820113',
+    orderNo: '2026032745506602',
+    customerName: '박서윤',
+    customerId: 'sy_park',
+    customerPhone: '010-5678-6543',
+    requestDate: '2026-03-27 09:28:00',
+    correctionStrength: '중',
+    workStatus: '관리자업로드',
+    reviewStatus: '미작성',
+    reviewUrl: null,
+    originalDeliveryUrl: null,
+  },
+  {
+    id: 'ses-3',
+    no: 'S820112',
+    orderNo: '2026032645506603',
+    customerName: '최유진',
+    customerId: 'yjin_choi',
+    customerPhone: '010-8765-1122',
+    requestDate: '2026-03-26 16:30:00',
+    correctionStrength: '약',
+    workStatus: '원본업로드',
+    reviewStatus: '작성',
+    reviewUrl: 'https://example.com/reviews/ses-3',
+    originalDeliveryUrl: 'https://example.com/delivery/ses-3',
+  },
+  {
+    id: 'ses-4',
+    no: 'S820111',
+    orderNo: '2026032645506604',
+    customerName: '정하늘',
+    customerId: 'sky_jung',
+    customerPhone: '010-1100-3322',
+    requestDate: '2026-03-26 13:19:00',
+    correctionStrength: '디자이너임의',
+    workStatus: '관리자업로드',
+    reviewStatus: '미작성',
+    reviewUrl: null,
+    originalDeliveryUrl: null,
+  },
+  {
+    id: 'ses-5',
+    no: 'S820110',
+    orderNo: '2026032545506605',
+    customerName: '이하린',
+    customerId: 'harin_lee',
+    customerPhone: '010-9401-1055',
+    requestDate: '2026-03-25 11:45:00',
+    correctionStrength: '강',
+    workStatus: '고객업로드',
+    reviewStatus: '작성',
+    reviewUrl: 'https://example.com/reviews/ses-5',
+    originalDeliveryUrl: 'https://example.com/delivery/ses-5',
+  },
+  {
+    id: 'ses-6',
+    no: 'S820109',
+    orderNo: '2026032445506606',
+    customerName: '윤지수',
+    customerId: 'jisu_y',
+    customerPhone: '010-6654-2200',
+    requestDate: '2026-03-24 17:12:00',
+    correctionStrength: '중',
+    workStatus: '원본업로드',
+    reviewStatus: '미작성',
+    reviewUrl: null,
+    originalDeliveryUrl: null,
+  },
+  {
+    id: 'ses-7',
+    no: 'S820108',
+    orderNo: '2026032345506607',
+    customerName: '한유정',
+    customerId: 'uj_han',
+    customerPhone: '010-3800-9911',
+    requestDate: '2026-03-23 10:05:00',
+    correctionStrength: '약',
+    workStatus: '관리자업로드',
+    reviewStatus: '작성',
+    reviewUrl: 'https://example.com/reviews/ses-7',
+    originalDeliveryUrl: 'https://example.com/delivery/ses-7',
+  },
+  {
+    id: 'ses-8',
+    no: 'S820107',
+    orderNo: '2026032245506608',
+    customerName: '강다은',
+    customerId: 'daeun_k',
+    customerPhone: '010-7771-8844',
+    requestDate: '2026-03-22 14:20:00',
+    correctionStrength: '디자이너임의',
+    workStatus: '고객업로드',
+    reviewStatus: '미작성',
+    reviewUrl: null,
+    originalDeliveryUrl: null,
+  },
+  {
+    id: 'ses-9',
+    no: 'S820106',
+    orderNo: '2026032145506609',
+    customerName: '오지민',
+    customerId: 'jimin_o',
+    customerPhone: '010-2229-1001',
+    requestDate: '2026-03-21 19:04:00',
+    correctionStrength: '중',
+    workStatus: '원본업로드',
+    reviewStatus: '작성',
+    reviewUrl: 'https://example.com/reviews/ses-9',
+    originalDeliveryUrl: 'https://example.com/delivery/ses-9',
+  },
+  {
+    id: 'ses-10',
+    no: 'S820105',
+    orderNo: '2026032045506610',
+    customerName: '임나연',
+    customerId: 'nayeon_im',
+    customerPhone: '010-4419-0202',
+    requestDate: '2026-03-20 08:50:00',
+    correctionStrength: '강',
+    workStatus: '관리자업로드',
+    reviewStatus: '미작성',
+    reviewUrl: null,
+    originalDeliveryUrl: null,
+  },
+];

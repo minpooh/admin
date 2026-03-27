@@ -37,6 +37,14 @@
   --danger-color-400: #ff5a5f;
   --danger-color-500: #ff4c51;
 
+  /* Purple — 퍼플 (#4f46e5 기준) */
+  --purple-color-50: #f5f3ff;
+  --purple-color-100: #ede9fe;
+  --purple-color-200: #dcd8fe;
+  --purple-color-300: #b9b5fc;
+  --purple-color-400: #9992f2;
+  --purple-color-500: #4f46e5;
+
   /* Gray */
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;

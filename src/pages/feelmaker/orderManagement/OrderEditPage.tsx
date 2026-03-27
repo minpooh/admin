@@ -809,7 +809,7 @@ export default function OrderEditPage() {
                       <div className="phone-with-sms">
                         <button
                           type="button"
-                          className="row-icon-btn row-icon-btn--sms"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
                           aria-label="문자 발송"
                           title="문자 발송"
                           onClick={() => {

@@ -379,7 +379,7 @@ export default function OrderVideoMixPage() {
                     {order.video1Url ? (
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--preview"
+                        className="row-icon-btn row-icon-btn--tone-primary"
                         aria-label="영상1 보기"
                         title="영상1 보기"
                         onClick={() => setPreview({ orderId: order.id, type: 'video1' })}
@@ -394,7 +394,7 @@ export default function OrderVideoMixPage() {
                     {order.video2Url ? (
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--preview"
+                        className="row-icon-btn row-icon-btn--tone-primary"
                         aria-label="영상2 보기"
                         title="영상2 보기"
                         onClick={() => setPreview({ orderId: order.id, type: 'video2' })}
@@ -409,7 +409,7 @@ export default function OrderVideoMixPage() {
                     {order.mergedVideoUrl ? (
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--preview"
+                        className="row-icon-btn row-icon-btn--tone-primary"
                         aria-label="병합영상 보기"
                         title="병합영상 보기"
                         onClick={() => setPreview({ orderId: order.id, type: 'merged' })}

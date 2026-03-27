@@ -1126,7 +1126,7 @@ export default function OrderVideoPage() {
                     <div className="phone-with-sms">
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--sms"
+                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
                         aria-label="문자 발송"
                         title="문자 발송"
                         onClick={() => {
@@ -1143,7 +1143,7 @@ export default function OrderVideoPage() {
                     <div className="date-with-add">
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--sms date-with-add__btn"
+                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact date-with-add__btn"
                         aria-label="기간추가"
                         title="기간추가"
                         onClick={() => {
