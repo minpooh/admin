@@ -8,6 +8,7 @@ import './OrderListPage.css';
 import ListSelect from './components/ListSelect';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
+import Alert from '../../../components/alert';
 import Toast from '../../../components/toast';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderEdit.mock';
 
@@ -354,6 +355,7 @@ export default function OrderEditPage() {
   const [managerModalOrderId, setManagerModalOrderId] = useState<string | null>(null);
   const [changedManager, setChangedManager] = useState<(typeof MANAGERS)[number]>('담당자1');
   const [toastMessage, setToastMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
   const closeManagerModal = () => setManagerModalOrderId(null);
   const confirmManagerChange = (orderId: string) => {
     setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, manager: changedManager } : o)));
@@ -372,7 +374,7 @@ export default function OrderEditPage() {
   const confirmAmountChange = (orderId: string) => {
     const nextAmount = Number(changedAmount);
     if (!Number.isFinite(nextAmount) || nextAmount < 0) {
-      window.alert('변경 금액을 올바르게 입력해주세요.');
+      setAlertMessage('변경 금액을 올바르게 입력해주세요.');
       return;
     }
     setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, amount: nextAmount } : o)));
@@ -1166,14 +1168,14 @@ export default function OrderEditPage() {
                 className="sms-modal__btn sms-modal__btn--primary"
                 onClick={() => {
                   if (!smsText.trim()) {
-                    window.alert('문자내용을 입력해주세요.');
+                    setAlertMessage('문자내용을 입력해주세요.');
                     return;
                   }
                   setSmsHistoryByOrderId((prev) => ({
                     ...prev,
                     [order.id]: [...(prev[order.id] ?? []), smsText.trim()],
                   }));
-                  window.alert('문자 발송(목업)');
+                  setAlertMessage('문자 발송(목업)');
                   closeSmsModal();
                 }}
               >
@@ -1364,6 +1366,7 @@ export default function OrderEditPage() {
         onClose={closeConfirmDialog}
         onConfirm={handleConfirmDialogConfirm}
       />
+      <Alert open={Boolean(alertMessage)} message={alertMessage} onClose={() => setAlertMessage('')} />
       <Toast
         open={Boolean(toastMessage)}
         message={toastMessage}

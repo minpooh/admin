@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import ListSelect from './components/ListSelect';
 import Confirm from '../../../components/confirm';
+import Alert from '../../../components/alert';
 import { MOCK_SAMPLE_EDIT_ORDERS, type SampleEditItem } from './mock/orderEditSample.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -149,6 +150,7 @@ export default function OrderEditSamplePage() {
   const [photoDropdownPos, setPhotoDropdownPos] = useState<{ top: number; right: number } | null>(null);
   const photoDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
@@ -437,7 +439,7 @@ export default function OrderEditSamplePage() {
                               className="row-icon-btn row-icon-btn--tone-purple"
                               aria-label="원본 전달하기"
                               onClick={() => {
-                                window.alert('원본이 전달되었습니다.');
+                                setAlertMessage('원본이 전달되었습니다.');
                               }}
                             >
                               <Send size={18} aria-hidden="true" />
@@ -555,6 +557,7 @@ export default function OrderEditSamplePage() {
           setConfirmDialog(null);
         }}
       />
+      <Alert open={Boolean(alertMessage)} message={alertMessage} onClose={() => setAlertMessage('')} />
     </div>
   );
 }
