@@ -25,7 +25,7 @@
 /* Left icon bar */
 .sidebar-icon-bar {
   width: var(--sidebar-icon-width);
-  min-height: 800px;
+  min-height: 100vh;
   background: #fff;
   border-right: var(--border);
   display: flex;
@@ -113,7 +113,7 @@
 /* Right panel */
 .sidebar-panel {
   width: var(--panel-width);
-  min-height: 800px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 14px;
