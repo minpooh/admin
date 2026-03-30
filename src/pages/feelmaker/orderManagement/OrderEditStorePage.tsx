@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
-import ListSelect from './components/ListSelect';
+import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
 import Toast from '../../../components/toast';
@@ -312,14 +312,14 @@ export default function OrderEditStorePage() {
   };
 
   return (
-    <div className="order-list-page order-list-page--edit-store">
+    <div className="admin-list-page admin-list-page--edit-store">
       <h1 className="page-title">스토어팜 보정 주문 목록</h1>
 
-      <section className="order-list-box">
-        <p className="order-list-result">총 {filteredOrders.length}개의 스토어팜 보정 주문이 검색되었습니다.</p>
+      <section className="admin-list-box">
+        <p className="admin-list-result">총 {filteredOrders.length}개의 스토어팜 보정 주문이 검색되었습니다.</p>
       </section>
 
-      <section className="order-list-box">
+      <section className="admin-list-box">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">업로드일</span>
@@ -349,7 +349,7 @@ export default function OrderEditStorePage() {
 
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
-            <div className="condition-search-wrap">
+            <div className="admin-search-field">
               <ListSelect ariaLabel="조건검색 타입" className="listselect--condition-type" value={conditionType} onChange={(next) => setConditionType(next as '이름' | '아이디' | '주문번호')} options={[{ value: '이름', label: '이름' }, { value: '아이디', label: '아이디' }, { value: '주문번호', label: '주문번호' }]} />
               <input type="text" placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             </div>
@@ -402,9 +402,9 @@ export default function OrderEditStorePage() {
         </div>
       </section>
 
-      <section className="order-list-box order-list-box--table">
-        <div className="order-table-wrap">
-          <table className="order-table">
+      <section className="admin-list-box admin-list-box--table">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>NO</th>
@@ -462,7 +462,7 @@ export default function OrderEditStorePage() {
                         {'담당자: '}
                         <button
                           type="button"
-                          className="channel-partner-btn"
+                          className="admin-link"
                           onClick={() => {
                             setManagerModalOrderId(order.id);
                             setChangedManager(order.manager);
@@ -579,7 +579,7 @@ export default function OrderEditStorePage() {
           </table>
         </div>
 
-        <div className="order-table-pagination">
+        <div className="admin-table-pagination">
           <div className="pagination-inner">
             <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">&laquo;</button>
             <button type="button" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage <= 1} aria-label="이전 페이지">&lsaquo;</button>

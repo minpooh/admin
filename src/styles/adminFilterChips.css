@@ -1,0 +1,80 @@
+/**
+ * 적용된 검색/필터 조건 칩 (목록 테이블 상단)
+ */
+
+.admin-applied-filters {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+.admin-list-box--table .admin-applied-filters {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  padding: 1rem 1.5rem;
+  background: #fff;
+}
+
+.admin-applied-filters__left {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-applied-filters__right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.admin-applied-search-btn {
+  white-space: nowrap;
+}
+
+.admin-applied-filters__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.5rem;
+}
+
+.admin-applied-filters__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.admin-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--gray-100);
+  color: var(--gray-900);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.admin-filter-chip__text {
+  line-height: 1;
+}
+
+.admin-filter-chip__x {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--gray-400);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  font-size: 1.15rem;
+}
+
+.admin-filter-chip__x:hover {
+  color: var(--gray-900);
+}

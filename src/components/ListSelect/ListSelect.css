@@ -1,0 +1,93 @@
+/**
+ * ListSelect 커스텀 드롭다운
+ */
+
+.listselect {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+/* 주문일 프리셋 등: 날짜 행 안에서의 ListSelect */
+.date-range-wrap .listselect--date-range {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.listselect__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 33px;
+  background: #ffffff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--gray-900);
+}
+
+.listselect__trigger.is-open {
+  border-color: var(--gray-300);
+}
+
+.listselect__trigger:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.listselect__value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listselect__chevron {
+  flex: 0 0 auto;
+  color: var(--gray-500);
+  transition: transform 0.15s;
+}
+
+.listselect__trigger.is-open .listselect__chevron {
+  transform: rotate(-180deg);
+}
+
+.listselect__menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 50;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+  padding: 0.25rem 0;
+  margin: 0;
+  list-style: none;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.listselect__item {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--gray-900);
+  cursor: pointer;
+}
+
+.listselect__item:hover {
+  background: var(--gray-100);
+}
+
+.listselect__item.is-selected {
+  background: var(--gray-100);
+  font-weight: 600;
+}

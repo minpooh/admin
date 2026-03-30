@@ -49,5 +49,8 @@ registerPage('feelmaker/orderManagement/orderEditStorePage', FeelmakerOrderEditS
 registerPage('feelmaker/orderManagement/orderEditSamplePage', FeelmakerOrderEditSamplePage);
 registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoMixPage);
 
+import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
+registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
+
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

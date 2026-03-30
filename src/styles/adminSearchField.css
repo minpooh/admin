@@ -1,0 +1,44 @@
+/**
+ * 공통 검색 필드: 조건 타입(셀렉트/ListSelect) + 검색어 입력
+ */
+
+.admin-search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.admin-search-field select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  min-width: 100px;
+}
+
+.admin-search-field input {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  min-width: 0;
+  width: 100%;
+  flex: 2 1 0;
+  box-sizing: border-box;
+}
+
+.admin-search-field input:focus,
+.admin-search-field input:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+/* 커스텀 드롭다운(ListSelect) 조건 타입 */
+.admin-search-field .listselect--condition-type {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+}

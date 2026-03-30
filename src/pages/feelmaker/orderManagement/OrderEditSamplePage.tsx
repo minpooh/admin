@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
-import ListSelect from './components/ListSelect';
+import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/confirm';
 import Alert from '../../../components/alert';
 import { MOCK_SAMPLE_EDIT_ORDERS, type SampleEditItem } from './mock/orderEditSample.mock';
@@ -227,14 +227,14 @@ export default function OrderEditSamplePage() {
   };
 
   return (
-    <div className="order-list-page order-list-page--edit-sample">
+    <div className="admin-list-page admin-list-page--edit-sample">
       <h1 className="page-title">샘플 보정 목록</h1>
 
-      <section className="order-list-box">
-        <p className="order-list-result">총 {filteredRows.length}개의 샘플 보정이 검색되었습니다.</p>
+      <section className="admin-list-box">
+        <p className="admin-list-result">총 {filteredRows.length}개의 샘플 보정이 검색되었습니다.</p>
       </section>
 
-      <section className="order-list-box">
+      <section className="admin-list-box">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">요청일</span>
@@ -287,7 +287,7 @@ export default function OrderEditSamplePage() {
 
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
-            <div className="condition-search-wrap">
+            <div className="admin-search-field">
               <ListSelect
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
@@ -353,9 +353,9 @@ export default function OrderEditSamplePage() {
         </div>
       </section>
 
-      <section className="order-list-box order-list-box--table">
-        <div className="order-table-wrap">
-          <table className="order-table">
+      <section className="admin-list-box admin-list-box--table">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>NO</th>
@@ -474,7 +474,7 @@ export default function OrderEditSamplePage() {
           </table>
         </div>
 
-        <div className="order-table-pagination">
+        <div className="admin-table-pagination">
           <div className="pagination-inner">
             <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
               &laquo;

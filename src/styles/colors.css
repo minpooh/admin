@@ -5,6 +5,8 @@
  * Gray: Tailwind gray 스케일 (--gray-50 ~)
  */
 :root {
+  --bg-color: var(--gray-50);
+  
   /* Primary — 블루 */
   --primary-color-50: #eff6ff;
   --primary-color-100: #dbeafe;

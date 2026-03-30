@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import './ListSelect.css';
 
 export type ListSelectOption = { value: string; label: string };
 

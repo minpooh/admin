@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
-import ListSelect from './components/ListSelect';
+import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
 import Alert from '../../../components/alert';
@@ -505,14 +505,14 @@ export default function OrderEditPage() {
   }, [appliedSearch]);
 
   return (
-    <div className="order-list-page order-list-page--edit">
+    <div className="admin-list-page admin-list-page--edit">
       <h1 className="page-title">보정 주문 목록</h1>
 
-      <section className="order-list-box">
-        <p className="order-list-result">총 {filteredOrders.length}개의 보정 주문이 검색되었습니다.</p>
+      <section className="admin-list-box">
+        <p className="admin-list-result">총 {filteredOrders.length}개의 보정 주문이 검색되었습니다.</p>
       </section>
 
-      <section className="order-list-box">
+      <section className="admin-list-box">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">주문일</span>
@@ -626,7 +626,7 @@ export default function OrderEditPage() {
 
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
-            <div className="condition-search-wrap">
+            <div className="admin-search-field">
               <ListSelect
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
@@ -720,17 +720,17 @@ export default function OrderEditPage() {
         </div>
       </section>
 
-      <section className="order-list-box order-list-box--table">
+      <section className="admin-list-box admin-list-box--table">
         {appliedChips.length > 0 && (
-          <section className="applied-filters">
-            <div className="applied-filters__left">
-              <div className="applied-filters__list">
+          <section className="admin-applied-filters">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
                 {appliedChips.map((chip) => (
-                  <div key={chip.key} className="applied-chip">
-                    <span className="applied-chip__text">{chip.label}</span>
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
                     <button
                       type="button"
-                      className="applied-chip__x"
+                      className="admin-filter-chip__x"
                       aria-label={`${chip.label} 해제`}
                       onClick={() => clearAppliedFilter(chip.key)}
                     >
@@ -743,8 +743,8 @@ export default function OrderEditPage() {
           </section>
         )}
 
-        <div className="order-table-wrap">
-          <table className="order-table">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>NO</th>
@@ -792,7 +792,7 @@ export default function OrderEditPage() {
                           {'담당자: '}
                           <button
                             type="button"
-                            className="channel-partner-btn"
+                            className="admin-link"
                             onClick={() => {
                               setManagerModalOrderId(order.id);
                               setChangedManager(order.manager);
@@ -949,7 +949,7 @@ export default function OrderEditPage() {
           </table>
         </div>
 
-        <div className="order-table-pagination">
+        <div className="admin-table-pagination">
           <div className="pagination-inner">
             <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
               &laquo;

@@ -1,0 +1,573 @@
+/* 1:1 문의 전용: 목록 필터 그리드 */
+.inquiry-stat-cards-wrap {
+  margin-bottom: 1.5rem;
+}
+
+.inquiry-stat-cards-wrap .admin-stat-card {
+  position: relative;
+  padding-right: 3.25rem; /* 아이콘이 우측에 겹치지 않도록 여백 */
+}
+
+.admin-list-page--inquiry .filter-top-row {
+  grid-template-columns: minmax(440px, 2.2fr) minmax(320px, 1.6fr) minmax(150px, 1fr) 92px;
+  align-items: end;
+}
+
+.admin-list-page--inquiry .filter-section--search-btn .filter-btn {
+  width: 100%;
+}
+
+/* 키워드 분석: 6개 버튼 + 클릭 시 툴팁 박스 */
+.inquiry-keyword-panel {
+  position: relative;
+}
+
+.inquiry-keyword-buttons {
+  display: flex;
+  flex-wrap: nowrap; /* "한 줄" 배치 */
+  gap: 0.5rem;
+  align-items: center;
+  overflow-x: auto; /* 6개가 너무 길면 스크롤 */
+  padding: 0.15rem 0;
+}
+
+.inquiry-keyword-button {
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.inquiry-keyword-button:hover:not(.inquiry-keyword-button--active) {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.inquiry-keyword-button--active {
+  background: var(--primary-color-100, #dbeafe);
+  border-color: var(--primary-color-500, #3b82f6);
+  color: var(--primary-color-500, #3b82f6);
+}
+
+.inquiry-keyword-button__count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.inquiry-keyword-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  z-index: 50;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  pointer-events: none;
+}
+
+.inquiry-keyword-tooltip--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.inquiry-keyword-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: var(--inquiry-keyword-arrow-x, 50%);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid #e5e7eb; /* border */
+}
+
+.inquiry-keyword-tooltip::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: var(--inquiry-keyword-arrow-x, 50%);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #fff; /* background */
+}
+
+.inquiry-keyword-tooltip__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.inquiry-keyword-tooltip__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.inquiry-keyword-tooltip__close {
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1rem 0.25rem;
+}
+
+.inquiry-keyword-tooltip__close:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.inquiry-keyword-tooltip__empty {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.inquiry-keyword-helper {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.inquiry-keyword-tooltip__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 150px;
+  overflow: auto;
+}
+
+.inquiry-keyword-tooltip__item-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.inquiry-keyword-tooltip__item-snippet {
+  font-size: 0.75rem;
+  color: #374151;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+/* 스레드·댓글 영역 */
+.inquiry-thread-section .admin-detail-section-title {
+  margin-bottom: 0.35rem;
+}
+
+.inquiry-thread-hint {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.inquiry-thread-empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.inquiry-thread-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  /* 댓글/답변 내역이 너무 길어지면 섹션 높이를 제한하고 스크롤 처리 */
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.inquiry-thread-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  background: #fafafa;
+}
+
+.inquiry-thread-item--admin {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.inquiry-thread-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.inquiry-thread-item__author {
+  font-weight: 600;
+  color: #111827;
+}
+
+.inquiry-thread-item__badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #047857;
+  background: #d1fae5;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.inquiry-thread-item__date {
+  margin-left: auto;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.inquiry-thread-item__head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.inquiry-thread-item__head-actions .inquiry-thread-item__date {
+  margin-left: 0;
+}
+
+.inquiry-thread-item__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #fff;
+  color: #047857;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.inquiry-thread-item__edit-btn:hover {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+
+.inquiry-reply-editor-wrap--inline .inquiry-reply-editor {
+  margin-bottom: 0;
+  margin-top: 0.35rem;
+}
+
+.inquiry-thread-item__body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.inquiry-thread-item__body--rich {
+  white-space: normal;
+}
+
+.inquiry-thread-item__body--rich img {
+  /* 답변 저장 후 렌더링되는 이미지도 에디터처럼 넘치지 않게 */
+  max-width: 50%;
+  margin: 0 auto;
+  height: auto;
+  display: block;
+}
+
+.inquiry-thread-item__body--rich p {
+  margin: 0 0 0.5rem;
+}
+
+.inquiry-thread-item__body--rich p:last-child {
+  margin-bottom: 0;
+}
+
+.inquiry-thread-item__body--rich ul,
+.inquiry-thread-item__body--rich ol {
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.inquiry-thread-item__body--rich h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #111827;
+}
+
+.inquiry-reply-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.inquiry-reply-section__title {
+  margin-bottom: 0;
+}
+
+.inquiry-reply-section__open-btn {
+  flex-shrink: 0;
+}
+
+.inquiry-reply-editor {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.inquiry-reply-editor__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.inquiry-reply-editor__mode-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.inquiry-reply-editor__link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary-color-500, #2563eb);
+  font-size: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.inquiry-reply-editor__link:hover {
+  color: var(--primary-color-600, #1d4ed8);
+}
+
+.inquiry-reply-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.inquiry-reply-editor__tool {
+  padding: 0.35rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.inquiry-reply-editor__tool svg {
+  display: block;
+}
+
+.inquiry-reply-editor__tool:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.inquiry-reply-editor__tool:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.inquiry-reply-editor__tool.is-active {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.inquiry-reply-editor__toolbar-sep {
+  width: 1px;
+  height: 1.1rem;
+  background: #e5e7eb;
+  margin: 0 0.15rem;
+}
+
+.inquiry-reply-editor__surface {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+  min-height: 200px;
+}
+
+.inquiry-reply-editor__surface .inquiry-reply-editor__prose {
+  outline: none;
+  min-height: 180px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.inquiry-reply-editor__surface .inquiry-reply-editor__prose img {
+  /* 이미지가 에디터 너비를 넘어 커지는 것 방지 */
+  max-width: 50%;
+  margin: 0 auto;
+  height: auto;
+  display: block;
+}
+
+.inquiry-image-with-delete {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.inquiry-image-with-delete img {
+  max-width: 50%;
+  margin: 0 auto;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 0;
+}
+
+.inquiry-image-delete-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 120ms ease;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+.inquiry-image-delete-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: #ffffff;
+  color: var(--danger-color-500, #ff4c51);
+  font-size: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.inquiry-image-with-delete--active .inquiry-image-delete-overlay {
+  opacity: 1;
+}
+
+.inquiry-image-with-delete--active .inquiry-image-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.inquiry-image-delete-btn:hover {
+  background: var(--danger-color-500, #ff4c51);
+  color: #ffffff;
+}
+
+.inquiry-image-delete-btn svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.inquiry-file-attachment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+  vertical-align: middle;
+}
+
+.inquiry-file-attachment__name {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.inquiry-file-attachment__download {
+  flex-shrink: 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.inquiry-file-attachment__download:hover {
+  background: #f3f4f6;
+  border-color: #cbd5e1;
+}
+
+.inquiry-reply-editor__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}

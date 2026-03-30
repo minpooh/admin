@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
-import ListSelect from './components/ListSelect';
+import ListSelect from '../../../components/ListSelect';
 import { MOCK_VIDEO_MIX_ORDERS, type VideoMixItem } from './mock/orderVideoMix.mock';
 
 function getStatusVariantClass(status: VideoMixItem['status']) {
@@ -188,14 +188,14 @@ export default function OrderVideoMixPage() {
   }, [appliedSearch]);
 
   return (
-    <div className="order-list-page order-list-page--test-video order-list-page--video-mix">
+    <div className="admin-list-page admin-list-page--test-video admin-list-page--video-mix">
       <h1 className="page-title">비디오믹스</h1>
 
-      <section className="order-list-box">
-        <p className="order-list-result">총 {filteredOrders.length}개의 비디오믹스가 존재합니다.</p>
+      <section className="admin-list-box">
+        <p className="admin-list-result">총 {filteredOrders.length}개의 비디오믹스가 존재합니다.</p>
       </section>
 
-      <section className="order-list-box">
+      <section className="admin-list-box">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">제작일</span>
@@ -278,7 +278,7 @@ export default function OrderVideoMixPage() {
 
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
-            <div className="condition-search-wrap">
+            <div className="admin-search-field">
               <ListSelect
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
@@ -323,17 +323,17 @@ export default function OrderVideoMixPage() {
         </div>
       </section>
 
-      <section className="order-list-box order-list-box--table">
+      <section className="admin-list-box admin-list-box--table">
         {appliedChips.length > 0 && (
-          <section className="applied-filters">
-            <div className="applied-filters__left">
-              <div className="applied-filters__list">
+          <section className="admin-applied-filters">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
                 {appliedChips.map((chip) => (
-                  <div key={chip.key} className="applied-chip">
-                    <span className="applied-chip__text">{chip.label}</span>
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
                     <button
                       type="button"
-                      className="applied-chip__x"
+                      className="admin-filter-chip__x"
                       aria-label={`${chip.label} 해제`}
                       onClick={() => clearAppliedFilter(chip.key)}
                     >
@@ -345,8 +345,8 @@ export default function OrderVideoMixPage() {
             </div>
           </section>
         )}
-        <div className="order-table-wrap">
-          <table className="order-table">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>제작일</th>
@@ -443,7 +443,7 @@ export default function OrderVideoMixPage() {
           </table>
         </div>
 
-        <div className="order-table-pagination">
+        <div className="admin-table-pagination">
           <div className="pagination-inner">
             <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
               &laquo;

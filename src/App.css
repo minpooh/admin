@@ -3,20 +3,20 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  background: #f9fafb;
+  background: var(--bg-color);
 }
 
 .main-content {
   flex: 1;
   min-width: 0;
-  padding: 1.5rem;
+  padding: 2.5rem;
 }
 
 .page {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.01);
 }
 
 .page h2 {

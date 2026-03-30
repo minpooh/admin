@@ -7,7 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/modal';
 import Confirm from '../../../components/confirm';
-import ListSelect from './components/ListSelect';
+import ListSelect from '../../../components/ListSelect';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderVideoTest.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -580,12 +580,12 @@ export default function OrderVideoTestPage() {
   })();
 
   return (
-    <div className="order-list-page order-list-page--test-video">
+    <div className="admin-list-page admin-list-page--test-video">
       <h1 className="page-title">체험영상 목록</h1>
 
       {/* 검색 결과 문구 */}
-      <section className="order-list-box">
-        <p className="order-list-result">
+      <section className="admin-list-box">
+        <p className="admin-list-result">
           {appliedSearch
             ? `총 ${filteredOrders.length}개의 체험영상이 검색되었습니다.`
             : `총 ${orders.length}개의 체험영상이 존재합니다.`}
@@ -593,7 +593,7 @@ export default function OrderVideoTestPage() {
       </section>
 
       {/* 검색/필터 영역 */}
-      <section className="order-list-box">
+      <section className="admin-list-box">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">최초제작일</span>
@@ -646,7 +646,7 @@ export default function OrderVideoTestPage() {
                   dropdownMode="scroll"
                   maxDate={new Date()}
                   calendarContainer={({ className, children }) => (
-                    <div className={`${className ?? ''} order-list-datepicker-container`.trim()}>
+                    <div className={`${className ?? ''} admin-list-datepicker-container`.trim()}>
                       {children}
                       <div className="react-datepicker-custom-footer">
                         <button
@@ -695,7 +695,7 @@ export default function OrderVideoTestPage() {
                   dropdownMode="scroll"
                   maxDate={new Date()}
                   calendarContainer={({ className, children }) => (
-                    <div className={`${className ?? ''} order-list-datepicker-container`.trim()}>
+                    <div className={`${className ?? ''} admin-list-datepicker-container`.trim()}>
                       {children}
                       <div className="react-datepicker-custom-footer">
                         <button
@@ -722,7 +722,7 @@ export default function OrderVideoTestPage() {
 
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
-            <div className="condition-search-wrap">
+            <div className="admin-search-field">
               <ListSelect
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
@@ -831,17 +831,17 @@ export default function OrderVideoTestPage() {
       </section>
 
       {/* 주문 리스트 (좌우 스크롤) - 박스 패딩 없이 테이블로 꽉 채움 */}
-      <section className="order-list-box order-list-box--table">
+      <section className="admin-list-box admin-list-box--table">
       {appliedChips.length > 0 && (
-        <section className="applied-filters">
-          <div className="applied-filters__left">
-            <div className="applied-filters__list">
+        <section className="admin-applied-filters">
+          <div className="admin-applied-filters__left">
+            <div className="admin-applied-filters__list">
               {appliedChips.map((chip) => (
-                <div key={chip.key} className="applied-chip">
-                  <span className="applied-chip__text">{chip.label}</span>
+                <div key={chip.key} className="admin-filter-chip">
+                  <span className="admin-filter-chip__text">{chip.label}</span>
                   <button
                     type="button"
-                    className="applied-chip__x"
+                    className="admin-filter-chip__x"
                     aria-label={`${chip.label} 해제`}
                     onClick={() => clearAppliedFilter(chip.key)}
                   >
@@ -854,8 +854,8 @@ export default function OrderVideoTestPage() {
         </section>
       )}
 
-        <div className="order-table-wrap">
-          <table className="order-table">
+        <div className="admin-table-wrap">
+          <table className="admin-table">
             <thead>
               <tr>
                 <th>NO</th>
@@ -888,7 +888,7 @@ export default function OrderVideoTestPage() {
                         <span className="channel-label">가입</span>
                         <button
                           type="button"
-                          className="channel-partner-btn"
+                          className="admin-link"
                           onClick={() => {
                             setPartnerModalOrderId(order.id);
                             setChangedPartner(order.partner);
@@ -1041,7 +1041,7 @@ export default function OrderVideoTestPage() {
             </tbody>
           </table>
         </div>
-        <div className="order-table-pagination">
+        <div className="admin-table-pagination">
           <div className="pagination-inner">
             <button
               type="button"
