@@ -3,8 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { BarChart3, Clock3, MessageSquareText } from 'lucide-react';
+import { BarChart3, Clock3, MessageSquareText, Trash2 } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
+import Confirm from '../../../components/confirm';
 import { pagePath } from '../../../routes';
 import '../orderManagement/OrderListPage.css';
 import './InquiryPage.css';
@@ -69,6 +70,8 @@ export default function InquiryPage() {
   const [searchScope, setSearchScope] = useState('all');
   const [keyword, setKeyword] = useState('');
   const [answerFilter, setAnswerFilter] = useState<AnswerFilterValue>('');
+  const [inquiryRows, setInquiryRows] = useState<InquiryRow[]>(() => [...MOCK_INQUIRIES]);
+  const [deleteTargetInquiryId, setDeleteTargetInquiryId] = useState<string | null>(null);
 
   const [appliedSearch, setAppliedSearch] = useState<{
     dateRange: string;
@@ -82,7 +85,7 @@ export default function InquiryPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredRows = useMemo(() => {
-    if (!appliedSearch) return MOCK_INQUIRIES;
+    if (!appliedSearch) return inquiryRows;
 
     const keywordTrim = appliedSearch.keyword.trim().toLowerCase();
     const startBoundary = appliedSearch.startDate
@@ -108,7 +111,7 @@ export default function InquiryPage() {
         )
       : null;
 
-    return MOCK_INQUIRIES.filter((row) => {
+    return inquiryRows.filter((row) => {
       const createdAt = new Date(row.createdAt.replace(' ', 'T'));
       if (startBoundary && createdAt < startBoundary) return false;
       if (endBoundary && createdAt > endBoundary) return false;
@@ -153,7 +156,7 @@ export default function InquiryPage() {
 
       return true;
     });
-  }, [appliedSearch]);
+  }, [appliedSearch, inquiryRows]);
 
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
@@ -179,6 +182,10 @@ export default function InquiryPage() {
       keyword,
       answerFilter,
     });
+  };
+
+  const handleDeleteRow = (id: string) => {
+    setDeleteTargetInquiryId(id);
   };
 
   const formatYmd = (d: Date | null) => {
@@ -252,6 +259,10 @@ export default function InquiryPage() {
   );
 
   const keywordStats = useMemo(() => keywordStatsFromRows(filteredRows), [filteredRows]);
+  const deleteTargetInquiry = useMemo(
+    () => (deleteTargetInquiryId ? inquiryRows.find((row) => row.id === deleteTargetInquiryId) ?? null : null),
+    [deleteTargetInquiryId, inquiryRows]
+  );
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const keywordPanelRef = useRef<HTMLDivElement | null>(null);
   const [keywordArrowX, setKeywordArrowX] = useState<number>(0);
@@ -346,7 +357,7 @@ export default function InquiryPage() {
     <div className="admin-list-page admin-list-page--inquiry">
       <h1 className="page-title">1:1 문의</h1>
 
-      <section className="inquiry-stat-cards-wrap">
+      <section className="inquiry-stat-cards-wrap admin-stat-section">
         <div className="admin-stat-cards admin-stat-cards--1-1-2">
           <div className="admin-stat-card">
             <div className="admin-stat-card__icon admin-stat-card__icon--primary" aria-hidden>
@@ -453,7 +464,7 @@ export default function InquiryPage() {
       </section>
 
       <section className="admin-list-box">
-        <div className="filter-top-row">
+        <div className="filter-top-row admin-filter-row--no-detail">
           <div className="filter-section">
             <span className="filter-label">작성일</span>
             <div className="date-range-wrap">
@@ -607,14 +618,16 @@ export default function InquiryPage() {
                 <th scope="col">작성자</th>
                 <th scope="col">이메일</th>
                 <th scope="col">답변자</th>
+                <th scope="col">답변일</th>
+                <th scope="col">삭제</th>
               </tr>
             </thead>
             <tbody>
               {paginatedRows.map((row) => (
                 <tr key={row.id}>
                   <td>{row.createdAt}</td>
-                  <td>
-                    <Link to={inquiryDetailPath(row.id)} className="admin-link">
+                  <td className="inquiry-table-col-title">
+                    <Link to={inquiryDetailPath(row.id)} className="admin-link inquiry-table-title-link">
                       {row.title}
                     </Link>
                   </td>
@@ -624,11 +637,23 @@ export default function InquiryPage() {
                   <td>{row.authorName}</td>
                   <td>{row.email}</td>
                   <td>{row.answeredBy ?? '—'}</td>
+                  <td>{row.answeredAt ?? '—'}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="row-icon-btn row-icon-btn--danger"
+                      onClick={() => handleDeleteRow(row.id)}
+                      aria-label={`${row.title} 문의 삭제`}
+                      title="삭제"
+                    >
+                      <Trash2 size={18} aria-hidden="true" />
+                    </button>
+                  </td>
                 </tr>
               ))}
               {paginatedRows.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '20px' }}>
                     데이터가 없습니다.
                   </td>
                 </tr>
@@ -674,6 +699,20 @@ export default function InquiryPage() {
           </div>
         </div>
       </section>
+
+      <Confirm
+        open={Boolean(deleteTargetInquiry)}
+        title="문의 삭제"
+        message={deleteTargetInquiry ? `"${deleteTargetInquiry.title}" 문의를 삭제할까요?` : ''}
+        confirmText="삭제"
+        danger
+        onClose={() => setDeleteTargetInquiryId(null)}
+        onConfirm={() => {
+          if (!deleteTargetInquiryId) return;
+          setInquiryRows((prev) => prev.filter((row) => row.id !== deleteTargetInquiryId));
+          setDeleteTargetInquiryId(null);
+        }}
+      />
     </div>
   );
 }

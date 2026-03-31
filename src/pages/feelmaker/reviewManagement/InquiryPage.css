@@ -8,15 +8,6 @@
   padding-right: 3.25rem; /* 아이콘이 우측에 겹치지 않도록 여백 */
 }
 
-.admin-list-page--inquiry .filter-top-row {
-  grid-template-columns: minmax(440px, 2.2fr) minmax(320px, 1.6fr) minmax(150px, 1fr) 92px;
-  align-items: end;
-}
-
-.admin-list-page--inquiry .filter-section--search-btn .filter-btn {
-  width: 100%;
-}
-
 /* 키워드 분석: 6개 버튼 + 클릭 시 툴팁 박스 */
 .inquiry-keyword-panel {
   position: relative;
@@ -177,6 +168,64 @@
   color: #374151;
   line-height: 1.45;
   white-space: pre-wrap;
+}
+
+/* 문의 리스트(8열) 컬럼 폭 재정의 */
+.admin-list-page--inquiry .admin-table {
+  min-width: 1280px;
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(1),
+.admin-list-page--inquiry .admin-table td:nth-child(1) {
+  min-width: 140px; /* 작성일 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(2),
+.admin-list-page--inquiry .admin-table td:nth-child(2) {
+  min-width: 300px; /* 제목 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(3),
+.admin-list-page--inquiry .admin-table td:nth-child(3) {
+  min-width: 110px; /* 답변 여부 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(4),
+.admin-list-page--inquiry .admin-table td:nth-child(4) {
+  min-width: 120px; /* 작성자 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(5),
+.admin-list-page--inquiry .admin-table td:nth-child(5) {
+  min-width: 220px; /* 이메일 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(6),
+.admin-list-page--inquiry .admin-table td:nth-child(6) {
+  min-width: 110px; /* 답변자 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(7),
+.admin-list-page--inquiry .admin-table td:nth-child(7) {
+  min-width: 140px; /* 답변일 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(8),
+.admin-list-page--inquiry .admin-table td:nth-child(8) {
+  min-width: 72px; /* 삭제 */
+}
+
+/* 제목 컬럼: 한 줄 + 말줄임 */
+.inquiry-table-col-title {
+  max-width: 300px;
+}
+
+.inquiry-table-title-link {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 스레드·댓글 영역 */

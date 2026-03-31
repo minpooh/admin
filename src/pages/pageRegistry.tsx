@@ -50,7 +50,9 @@ registerPage('feelmaker/orderManagement/orderEditSamplePage', FeelmakerOrderEdit
 registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoMixPage);
 
 import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
+import FaqPage from './feelmaker/reviewManagement/FaqPage';
 registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
+registerPage('feelmaker/reviewManagement/faq', FaqPage);
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

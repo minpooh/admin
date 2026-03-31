@@ -196,7 +196,7 @@ export default function OrderVideoMixPage() {
       </section>
 
       <section className="admin-list-box">
-        <div className="filter-top-row">
+        <div className="filter-top-row admin-filter-row--no-detail">
           <div className="filter-section">
             <span className="filter-label">제작일</span>
             <div className="date-range-wrap">

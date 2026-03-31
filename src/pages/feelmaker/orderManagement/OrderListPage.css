@@ -987,15 +987,6 @@
   border-radius: 4px;
 }
 
-.admin-list-page--video-mix .filter-top-row {
-  grid-template-columns: minmax(440px, 2.2fr) minmax(320px, 1.6fr) minmax(150px, 1fr) 92px;
-  align-items: end;
-}
-
-.admin-list-page--video-mix .filter-section--search-btn .filter-btn {
-  width: 100%;
-}
-
 .admin-list-page--video-mix .admin-table {
   min-width: 1280px;
 }

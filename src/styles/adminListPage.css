@@ -27,6 +27,11 @@
   margin-bottom: 1.5rem;
   box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.01);
   border: 1px solid var(--gray-100);
+  min-width: 0;
+}
+
+.admin-list-box > * {
+  min-width: 0;
 }
 
 /* 검색 결과 문구 */
@@ -50,6 +55,10 @@
   align-items: stretch;
 }
 
+.admin-stat-cards > * {
+  min-width: 0;
+}
+
 .admin-stat-cards--1-1-2 {
   grid-template-columns: 1fr 1fr 2fr;
 }
@@ -58,6 +67,11 @@
   .admin-stat-cards--1-1-2 {
     grid-template-columns: 1fr;
   }
+}
+
+/* 공통 카드 섹션 래퍼 (페이지별 카드영역 재사용) */
+.admin-stat-section {
+  margin-bottom: 1.5rem;
 }
 
 .admin-stat-card {
@@ -194,12 +208,57 @@
   align-items: flex-end;
 }
 
+.filter-top-row > * {
+  min-width: 0;
+}
+
+/* 공통: 상세조건 없는 검색조건 박스(4열) */
+.filter-top-row.admin-filter-row--no-detail {
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
+}
+
+/* 하위 호환: 기존 클래스도 동일 동작 */
+.filter-top-row.admin-filter-row--wide {
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
+}
+
+.filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn {
+  width: 100%;
+}
+
+/* 중간 해상도: 2열로 줄여 박스 밖 넘침 방지 */
+@media (max-width: 1280px) {
+  .filter-top-row.admin-filter-row--no-detail,
+  .filter-top-row.admin-filter-row--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail .date-range-wrap,
+  .filter-top-row.admin-filter-row--wide .date-range-wrap {
+    flex-wrap: wrap;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail .filter-section--search-btn,
+  .filter-top-row.admin-filter-row--wide .filter-section--search-btn {
+    grid-column: 1 / -1;
+  }
+}
+
 .filter-top-row .filter-section {
   margin-bottom: 0;
 }
 
 @media (max-width: 900px) {
   .filter-top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-top-row.admin-filter-row--wide {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail {
     grid-template-columns: 1fr;
   }
 }
