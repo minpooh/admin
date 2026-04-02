@@ -186,9 +186,17 @@ export default function OrderEditStorePage() {
     return filteredOrders.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredOrders, currentPage]);
 
-  useEffect(() => setCurrentPage(1), [appliedSearch]);
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
+  }, [appliedSearch]);
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
 
   const handleSearch = () => {

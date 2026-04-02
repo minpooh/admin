@@ -32,12 +32,16 @@ export default function Toast({
 
   useEffect(() => {
     if (open) {
-      setIsRendered(true);
-      setIsLeaving(false);
+      queueMicrotask(() => {
+        setIsRendered(true);
+        setIsLeaving(false);
+      });
       return;
     }
     if (!isRendered) return;
-    setIsLeaving(true);
+    queueMicrotask(() => {
+      setIsLeaving(true);
+    });
     const leaveId = window.setTimeout(() => {
       setIsRendered(false);
       setIsLeaving(false);

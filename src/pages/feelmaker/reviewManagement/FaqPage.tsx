@@ -191,7 +191,10 @@ export default function FaqPage() {
   const [editCategoryIconKey, setEditCategoryIconKey] = useState<IconKey>('creditCard');
   const [iconPickerOpen, setIconPickerOpen] = useState(false);
 
-  const activeFaqItems = faqByCategory[activeCategoryId] ?? [];
+  const activeFaqItems = useMemo(
+    () => faqByCategory[activeCategoryId] ?? [],
+    [faqByCategory, activeCategoryId]
+  );
   const displayFaqItems = useMemo(() => {
     if (!creatingFaqId) return activeFaqItems;
     return [...activeFaqItems, { id: creatingFaqId, question: '', answer: '' }];
@@ -207,7 +210,9 @@ export default function FaqPage() {
   );
 
   useEffect(() => {
-    setIsCategorySwitching(true);
+    queueMicrotask(() => {
+      setIsCategorySwitching(true);
+    });
     const timer = window.setTimeout(() => setIsCategorySwitching(false), 240);
     return () => window.clearTimeout(timer);
   }, [activeCategoryId]);

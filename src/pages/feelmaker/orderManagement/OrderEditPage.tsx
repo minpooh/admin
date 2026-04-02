@@ -209,11 +209,17 @@ export default function OrderEditPage() {
   }, [filteredOrders, currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
   }, [appliedSearch]);
 
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
 
   const handleSearch = () => {

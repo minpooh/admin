@@ -97,10 +97,10 @@ export const PRODUCT_MANAGEMENT = [
 ];
 
 export const HOMEPAGE_MANAGEMENT = [
-  { id: 'bannerList', icon: HiRectangleGroup, label: '배너 리스트' },
-  { id: 'popupList', icon: HiArrowsPointingOut, label: '팝업 리스트' },
-  { id: 'eventList', icon: HiCake, label: '이벤트 리스트' },
-  { id: 'noticeList', icon: HiMegaphone, label: '공지 리스트' },
+  { id: 'bannerList', icon: HiRectangleGroup, label: '배너 관리' },
+  { id: 'popupList', icon: HiArrowsPointingOut, label: '팝업 관리' },
+  { id: 'eventList', icon: HiCake, label: '이벤트 관리' },
+  { id: 'noticeList', icon: HiMegaphone, label: '공지 관리' },
 ];
 
 export const ENTERPRISE_MANAGEMENT = [

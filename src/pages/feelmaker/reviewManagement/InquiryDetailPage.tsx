@@ -62,9 +62,11 @@ export default function InquiryDetailPage() {
   const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
-    setLocalDetail(cloneDetail(subId));
-    setReplyEditor({ status: 'idle' });
-    setAlertMessage('');
+    queueMicrotask(() => {
+      setLocalDetail(cloneDetail(subId));
+      setReplyEditor({ status: 'idle' });
+      setAlertMessage('');
+    });
   }, [subId]);
 
   const adminSorted = useMemo(

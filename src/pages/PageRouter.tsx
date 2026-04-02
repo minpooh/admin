@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/static-components */
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPageKey, getPage } from './pageRegistry';
 import FallbackPage from './FallbackPage';
@@ -12,15 +14,16 @@ export default function PageRouter() {
 
   const pageKey = getPageKey(navId, sectionId, itemId, subId);
   const fallbackKeyWithoutSub = getPageKey(navId, sectionId, itemId);
-  const PageComponent =
-    (pageKey ? getPage(pageKey) : undefined) ||
-    (subId ? getPage(fallbackKeyWithoutSub) : undefined);
+  const PageComponent = useMemo(
+    () =>
+      (pageKey ? getPage(pageKey) : undefined) ||
+      (subId ? getPage(fallbackKeyWithoutSub) : undefined),
+    [pageKey, fallbackKeyWithoutSub, subId]
+  );
 
-  if (PageComponent) {
-    return <PageComponent />;
-  }
-
-  return (
+  return PageComponent ? (
+    <PageComponent />
+  ) : (
     <FallbackPage
       pageKey={pageKey || undefined}
       navId={navId}

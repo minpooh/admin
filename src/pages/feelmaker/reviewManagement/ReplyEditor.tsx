@@ -21,10 +21,35 @@ import {
 import Modal from '../../../components/modal';
 import './ReplyEditor.css';
 
+type ImageNodeAttrs = { src?: string; alt?: string };
+type ImageNodeLike = {
+  attrs: ImageNodeAttrs;
+  nodeSize: number;
+  type: { name: string };
+};
+type ProseMirrorDocLike = {
+  content: { size: number };
+};
+type TransactionLike = {
+  setSelection: (selection: unknown) => unknown;
+  delete: (from: number, to: number) => unknown;
+};
+type ImageEditorLike = {
+  view: {
+    state: { doc: ProseMirrorDocLike; tr: TransactionLike };
+    dispatch: (tr: unknown) => void;
+    focus: () => void;
+  };
+};
+
 const ImageWithDeleteButton = ImageExtension.extend({
   addNodeView() {
-    return (props: any) => {
-      const { node, getPos, editor } = props as { node: any; getPos: () => number; editor: any };
+    return (props: unknown) => {
+      const { node, getPos, editor } = props as {
+        node: ImageNodeLike;
+        getPos?: () => number;
+        editor: ImageEditorLike;
+      };
 
       const dom = document.createElement('div');
       dom.className = 'reply-editor-image';
@@ -118,7 +143,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
 
       return {
         dom,
-        update: (updatedNode: any) => {
+        update: (updatedNode: ImageNodeLike) => {
           if (updatedNode.type.name !== node.type.name) return false;
           img.src = updatedNode.attrs.src;
           img.alt = updatedNode.attrs.alt || '';
@@ -386,8 +411,9 @@ export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }:
     const textOnly = editor.getText({ blockSeparator: '\n' }).trim();
     const hasImage = (() => {
       let found = false;
-      editor.state.doc.descendants((node: any) => {
-        if (node.type?.name === 'image') found = true;
+      editor.state.doc.descendants((node: unknown) => {
+        const maybe = node as { type?: { name?: string } };
+        if (maybe.type?.name === 'image') found = true;
       });
       return found;
     })();

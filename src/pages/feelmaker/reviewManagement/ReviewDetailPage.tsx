@@ -85,20 +85,36 @@ export default function ReviewDetailPage() {
   const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
-    setLocalDetail(cloneDetail(subId));
-    setReplyEditor({ status: 'idle' });
-    setAlertMessage('');
+    queueMicrotask(() => {
+      setLocalDetail(cloneDetail(subId));
+      setReplyEditor({ status: 'idle' });
+      setAlertMessage('');
+    });
   }, [subId]);
 
+  const productId = localDetail?.productId;
+
   const productReviewStats = useMemo(() => {
-    if (!localDetail) return { average: 0, count: 0 };
-    return getProductReviewStats(localDetail.productId);
-  }, [localDetail?.productId]);
+    if (!productId) return { average: 0, count: 0 };
+    return getProductReviewStats(productId);
+  }, [productId]);
 
   const productPageTo = useMemo(() => {
-    if (!localDetail) return PRODUCT_LIST_PATH;
-    return `${PRODUCT_LIST_PATH}?productId=${encodeURIComponent(localDetail.productId)}`;
-  }, [localDetail?.productId]);
+    if (!productId) return PRODUCT_LIST_PATH;
+    return `${PRODUCT_LIST_PATH}?productId=${encodeURIComponent(productId)}`;
+  }, [productId]);
+
+  const adminReplies = useMemo(
+    () =>
+      localDetail ? sortThreadByDate(localDetail.thread.filter((t) => t.role === 'admin')) : [],
+    [localDetail]
+  );
+
+  const userComments = useMemo(
+    () =>
+      localDetail ? sortThreadByDate(localDetail.thread.filter((t) => t.role === 'user')) : [],
+    [localDetail]
+  );
 
   const openNewReplyEditor = useCallback(() => {
     setReplyEditor({ status: 'new' });
@@ -171,14 +187,6 @@ export default function ReviewDetailPage() {
   }
 
   const detail = localDetail;
-  const adminReplies = useMemo(
-    () => sortThreadByDate(detail.thread.filter((t) => t.role === 'admin')),
-    [detail.thread]
-  );
-  const userComments = useMemo(
-    () => sortThreadByDate(detail.thread.filter((t) => t.role === 'user')),
-    [detail.thread]
-  );
 
   const showRegisterBtn = replyEditor.status !== 'new';
 

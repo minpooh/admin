@@ -408,11 +408,17 @@ export default function OrderInviPage() {
   }, [smsModalOrderId, smsHistoryLen, smsText]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
   }, [appliedSearch, routeType]);
 
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
 
   const title = routeType ? `${INVITE_TYPE_LABEL[routeType]} 목록` : '모바일초대장 목록';

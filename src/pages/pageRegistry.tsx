@@ -41,6 +41,11 @@ import FeelmakerOrderEditStorePage from './feelmaker/orderManagement/OrderEditSt
 import FeelmakerOrderEditSamplePage from './feelmaker/orderManagement/OrderEditSamplePage.tsx';
 import FeelmakerOrderVideoMixPage from './feelmaker/orderManagement/OrderVideoMixPage.tsx';
 
+import BannerPage from './feelmaker/homepageManagement/BannerPage';
+import PopupPage from './feelmaker/homepageManagement/PopupPage';
+import EventPage from './feelmaker/homepageManagement/EventPage';
+import NoticePage from './feelmaker/homepageManagement/NoticePage';
+
 registerPage('feelmaker/orderManagement/orderVideo', FeelmakerOrderVideoPage);
 registerPage('feelmaker/orderManagement/orderTestVideo', FeelmakerOrderVideoTestPage);
 registerPage('feelmaker/orderManagement/orderInvi', FeelmakerOrderInviPage);
@@ -48,6 +53,11 @@ registerPage('feelmaker/orderManagement/orderEditPage', FeelmakerOrderEditPage);
 registerPage('feelmaker/orderManagement/orderEditStorePage', FeelmakerOrderEditStorePage);
 registerPage('feelmaker/orderManagement/orderEditSamplePage', FeelmakerOrderEditSamplePage);
 registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoMixPage);
+
+registerPage('feelmaker/homepageManagement/bannerList', BannerPage);
+registerPage('feelmaker/homepageManagement/popupList', PopupPage);
+registerPage('feelmaker/homepageManagement/eventList', EventPage);
+registerPage('feelmaker/homepageManagement/noticeList', NoticePage);
 
 import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
 import FaqPage from './feelmaker/reviewManagement/FaqPage';

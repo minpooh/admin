@@ -135,7 +135,9 @@ export default function Sidebar() {
 
   useEffect(() => {
     if (paramSectionId) {
-      setOpenSections((prev) => ({ ...prev, [paramSectionId as SectionId]: true }));
+      queueMicrotask(() => {
+        setOpenSections((prev) => ({ ...prev, [paramSectionId as SectionId]: true }));
+      });
     }
   }, [paramSectionId]);
 
@@ -151,7 +153,9 @@ export default function Sidebar() {
             ['orderEditPage', 'orderEditStorePage', 'orderEditSamplePage'].includes(paramItemId)
           ? 'orderPhoto'
         : paramItemId;
-    setExpandedItem(`${subItemKeyPrefix}-${parentItemId}`);
+    queueMicrotask(() => {
+      setExpandedItem(`${subItemKeyPrefix}-${parentItemId}`);
+    });
   }, [paramSectionId, paramItemId, currentPanelConfig?.sectionConfig]);
 
   const toggleSection = (id: SectionId) => {

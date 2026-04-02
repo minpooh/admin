@@ -432,7 +432,11 @@ export default function OrderVideoPage() {
   }, [openOptionsOrderId, openVideoOptionsOrderId]);
 
   useEffect(() => {
-    if (!openOptionsOrderId && !openVideoOptionsOrderId) setRowDropdownPos(null);
+    if (!openOptionsOrderId && !openVideoOptionsOrderId) {
+      queueMicrotask(() => {
+        setRowDropdownPos(null);
+      });
+    }
   }, [openOptionsOrderId, openVideoOptionsOrderId]);
 
   useEffect(() => {
@@ -510,11 +514,17 @@ export default function OrderVideoPage() {
   );
 
   useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) setCurrentPage(totalPages);
+    if (currentPage > totalPages && totalPages > 0) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [totalPages, currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
   }, [appliedSearch]);
 
   const handleSearch = () => {

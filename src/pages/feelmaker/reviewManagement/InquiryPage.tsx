@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
@@ -62,7 +62,6 @@ const inquiryDetailPath = (id: string) =>
 
 export default function InquiryPage() {
   const { subId } = useParams<{ subId?: string }>();
-  if (subId) return <InquiryDetailPage />;
 
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -166,11 +165,17 @@ export default function InquiryPage() {
   }, [filteredRows, currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
   }, [appliedSearch]);
 
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
 
   const handleSearch = () => {
@@ -353,6 +358,8 @@ export default function InquiryPage() {
       });
   }, [filteredRows, selectedKeyword]);
 
+  if (subId) return <InquiryDetailPage />;
+
   return (
     <div className="admin-list-page admin-list-page--inquiry">
       <h1 className="page-title">1:1 문의</h1>
@@ -422,7 +429,11 @@ export default function InquiryPage() {
                       className={['inquiry-keyword-tooltip', tooltipOpen ? 'inquiry-keyword-tooltip--open' : ''].join(' ')}
                       role="status"
                       aria-live="polite"
-                      style={{ ['--inquiry-keyword-arrow-x' as any]: `${keywordArrowX}px` }}
+                      style={
+                        {
+                          ['--inquiry-keyword-arrow-x' as string]: `${keywordArrowX}px`,
+                        } as CSSProperties
+                      }
                     >
                       <div className="inquiry-keyword-tooltip__head">
                         <span className="inquiry-keyword-tooltip__label">"{selectedKeyword}" 포함 내용</span>

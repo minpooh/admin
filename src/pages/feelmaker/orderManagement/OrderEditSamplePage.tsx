@@ -166,9 +166,17 @@ export default function OrderEditSamplePage() {
     [openPhotoOrderId, rows]
   );
 
-  useEffect(() => setCurrentPage(1), [appliedSearch]);
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
+  }, [appliedSearch]);
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
   useLayoutEffect(() => {
     if (!openPhotoOrderId || !photoDropdownAnchorRef.current) return;

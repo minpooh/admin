@@ -39,7 +39,6 @@ type ReviewWeekChartPoint = {
 
 export default function ReviewPage() {
   const { subId } = useParams<{ subId?: string }>();
-  if (subId) return <ReviewDetailPage />;
 
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -126,11 +125,17 @@ export default function ReviewPage() {
   }, [filteredRows, currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
   }, [appliedSearch]);
 
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
   }, [currentPage, totalPages]);
 
   const handleSearch = () => {
@@ -253,6 +258,8 @@ export default function ReviewPage() {
     () => (deleteTargetReviewId ? reviewRows.find((row) => row.id === deleteTargetReviewId) ?? null : null),
     [deleteTargetReviewId, reviewRows]
   );
+
+  if (subId) return <ReviewDetailPage />;
 
   return (
     <div className="admin-list-page admin-list-page--review">
