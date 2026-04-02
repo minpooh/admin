@@ -51,8 +51,10 @@ registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoM
 
 import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
 import FaqPage from './feelmaker/reviewManagement/FaqPage';
+import ReviewPage from './feelmaker/reviewManagement/ReviewPage';
 registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
 registerPage('feelmaker/reviewManagement/faq', FaqPage);
+registerPage('feelmaker/reviewManagement/review', ReviewPage);
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

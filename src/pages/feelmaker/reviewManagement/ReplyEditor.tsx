@@ -1,4 +1,4 @@
-import { useRef, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -14,9 +14,12 @@ import {
   List as ListIcon,
   ListOrdered,
   Redo2,
+  Trash2,
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react';
+import Modal from '../../../components/modal';
+import './ReplyEditor.css';
 
 const ImageWithDeleteButton = ImageExtension.extend({
   addNodeView() {
@@ -24,7 +27,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
       const { node, getPos, editor } = props as { node: any; getPos: () => number; editor: any };
 
       const dom = document.createElement('div');
-      dom.className = 'inquiry-image-with-delete';
+      dom.className = 'reply-editor-image';
 
       const img = document.createElement('img');
       img.src = node.attrs.src;
@@ -32,14 +35,13 @@ const ImageWithDeleteButton = ImageExtension.extend({
       dom.appendChild(img);
 
       const overlay = document.createElement('div');
-      overlay.className = 'inquiry-image-delete-overlay';
+      overlay.className = 'reply-editor-image__overlay';
       dom.appendChild(overlay);
 
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'inquiry-image-delete-btn';
+      btn.className = 'reply-editor-image__delete-btn';
       btn.setAttribute('aria-label', '이미지 삭제');
-      // Trash icon (match requested "쓰레기통" icon).
       btn.innerHTML = `
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -51,7 +53,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
         </svg>
       `;
 
-      const activeClass = 'inquiry-image-with-delete--active';
+      const activeClass = 'reply-editor-image--active';
       let outsideMouseDownListener: ((e: MouseEvent) => void) | null = null;
 
       const setActive = (active: boolean) => {
@@ -73,9 +75,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
         }
       };
 
-      // "이미지 클릭" 시 오버레이 + 중앙 삭제버튼 표시.
       img.addEventListener('mousedown', (e) => {
-        // 이미지 클릭으로 에디터 포커스가 사라지는 것을 방지.
         e.preventDefault();
         e.stopPropagation();
       });
@@ -85,9 +85,6 @@ const ImageWithDeleteButton = ImageExtension.extend({
         const nextActive = !dom.classList.contains(activeClass);
         setActive(nextActive);
 
-        // 이미지 노드가 선택 상태로 남으면(커서가 이미지에 잡히면)
-        // 이후 입력/토글 동작에서 이미지가 덮어써지거나 제거될 수 있어서
-        // 커서를 이미지 "바로 뒤"로 옮겨 안정화합니다.
         const pos = getPos?.();
         if (typeof pos === 'number') {
           const afterPos = pos + node.nodeSize;
@@ -100,7 +97,6 @@ const ImageWithDeleteButton = ImageExtension.extend({
         editor.view.focus();
       });
 
-      // Avoid losing editor focus.
       btn.addEventListener('mousedown', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -162,10 +158,10 @@ function MenuBar({
   const canRedo = editor.can().redo();
 
   return (
-    <div className="inquiry-reply-editor__toolbar" role="toolbar" aria-label="답변 서식">
+    <div className="reply-editor__toolbar" role="toolbar" aria-label="답변 서식">
       <button
         type="button"
-        className={`inquiry-reply-editor__tool ${editor.isActive('bold') ? 'is-active' : ''}`}
+        className={`reply-editor__tool ${editor.isActive('bold') ? 'is-active' : ''}`}
         onClick={() => editor.chain().focus().toggleBold().run()}
         aria-pressed={editor.isActive('bold')}
         aria-label="굵게"
@@ -174,9 +170,8 @@ function MenuBar({
       </button>
       <button
         type="button"
-        className={`inquiry-reply-editor__tool ${editor.isActive('underline') ? 'is-active' : ''}`}
+        className={`reply-editor__tool ${editor.isActive('underline') ? 'is-active' : ''}`}
         onMouseDown={(e) => {
-          // Keep focus in the editor so marks/commands apply correctly.
           e.preventDefault();
           onToggleUnderline();
         }}
@@ -185,16 +180,16 @@ function MenuBar({
       >
         <UnderlineIcon size={18} strokeWidth={2} aria-hidden="true" />
       </button>
-      <button type="button" className="inquiry-reply-editor__tool" onClick={onInsertLink} aria-label="링크">
+      <button type="button" className="reply-editor__tool" onClick={onInsertLink} aria-label="링크">
         <LinkIcon size={18} strokeWidth={2} aria-hidden="true" />
       </button>
-      <button type="button" className="inquiry-reply-editor__tool" onClick={onAttachImage} aria-label="이미지">
+      <button type="button" className="reply-editor__tool" onClick={onAttachImage} aria-label="이미지">
         <ImageIcon size={18} strokeWidth={2} aria-hidden="true" />
       </button>
-      <span className="inquiry-reply-editor__toolbar-sep" aria-hidden />
+      <span className="reply-editor__toolbar-sep" aria-hidden />
       <button
         type="button"
-        className={`inquiry-reply-editor__tool ${editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}`}
+        className={`reply-editor__tool ${editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}`}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         aria-pressed={editor.isActive('heading', { level: 2 })}
         aria-label="소제목"
@@ -203,7 +198,7 @@ function MenuBar({
       </button>
       <button
         type="button"
-        className={`inquiry-reply-editor__tool ${editor.isActive('bulletList') ? 'is-active' : ''}`}
+        className={`reply-editor__tool ${editor.isActive('bulletList') ? 'is-active' : ''}`}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         aria-pressed={editor.isActive('bulletList')}
         aria-label="목록"
@@ -212,17 +207,17 @@ function MenuBar({
       </button>
       <button
         type="button"
-        className={`inquiry-reply-editor__tool ${editor.isActive('orderedList') ? 'is-active' : ''}`}
+        className={`reply-editor__tool ${editor.isActive('orderedList') ? 'is-active' : ''}`}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         aria-pressed={editor.isActive('orderedList')}
         aria-label="번호"
       >
         <ListOrdered size={18} strokeWidth={2} aria-hidden="true" />
       </button>
-      <span className="inquiry-reply-editor__toolbar-sep" aria-hidden />
+      <span className="reply-editor__toolbar-sep" aria-hidden />
       <button
         type="button"
-        className="inquiry-reply-editor__tool"
+        className="reply-editor__tool"
         disabled={!canUndo}
         onMouseDown={(e) => {
           e.preventDefault();
@@ -235,7 +230,7 @@ function MenuBar({
       </button>
       <button
         type="button"
-        className="inquiry-reply-editor__tool"
+        className="reply-editor__tool"
         disabled={!canRedo}
         onMouseDown={(e) => {
           e.preventDefault();
@@ -263,15 +258,56 @@ function plainTextToHtml(text: string): string {
 
 function initialBodyToEditorHtml(body: string): string {
   const trimmed = body.trim();
-  // 저장된 Tiptap HTML이 항상 "<p>..." 같은 형태로 시작한다는 보장이 없어서,
-  // 이미지(data:image)나 <img>, <a 가 포함된 경우엔 HTML로 보고 그대로 사용합니다.
   const looksLikeRichHtml =
     trimmed.startsWith('<') || trimmed.includes('<img') || trimmed.includes('data:image') || trimmed.includes('<a ');
   if (looksLikeRichHtml) return body;
   return plainTextToHtml(body);
 }
 
-type InquiryReplyEditorProps = {
+const FREQUENT_REPLIES_STORAGE_KEY = 'admin-reply-editor-frequent-replies';
+const LEGACY_FREQUENT_REPLIES_STORAGE_KEY = 'admin-inquiry-frequent-replies';
+
+const DEFAULT_FREQUENT_REPLIES = [
+  '좋은리뷰 남겨주셔서 감사드립니다!',
+  '고객님 소중한 후기 정말 감사합니다 ^^!',
+  '소중한 리뷰 감사드립니다!',
+  '앞으로도 편리한 서비스로 보답하겠습니다 :)',
+  '앞으로도 좋은 서비스로 보답하겠습니다:)',
+  '불편을 드려 죄송합니다. 조치 후 안내드리겠습니다.',
+  '추가로 궁금하신 점이나 도움이 필요하시면 언제든지 편하게 문의 주세요.',
+];
+
+function loadFrequentReplies(): string[] {
+  try {
+    let raw = localStorage.getItem(FREQUENT_REPLIES_STORAGE_KEY);
+    if (raw === null) {
+      raw = localStorage.getItem(LEGACY_FREQUENT_REPLIES_STORAGE_KEY);
+      if (raw !== null) {
+        try {
+          localStorage.setItem(FREQUENT_REPLIES_STORAGE_KEY, raw);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    if (raw === null) return [...DEFAULT_FREQUENT_REPLIES];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [...DEFAULT_FREQUENT_REPLIES];
+    return parsed.filter((x): x is string => typeof x === 'string' && x.trim().length > 0);
+  } catch {
+    return [...DEFAULT_FREQUENT_REPLIES];
+  }
+}
+
+function saveFrequentReplies(list: string[]) {
+  try {
+    localStorage.setItem(FREQUENT_REPLIES_STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+export type ReplyEditorProps = {
   initialBody: string;
   variant: 'new' | 'edit';
   onCancel: () => void;
@@ -279,15 +315,58 @@ type InquiryReplyEditorProps = {
   onEmpty?: () => void;
 };
 
-export function InquiryReplyEditor({
-  initialBody,
-  variant,
-  onCancel,
-  onSave,
-  onEmpty,
-}: InquiryReplyEditorProps) {
+export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }: ReplyEditorProps) {
   const initialHtml = initialBodyToEditorHtml(initialBody);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const frequentActionsRef = useRef<HTMLDivElement | null>(null);
+  const [frequentOpen, setFrequentOpen] = useState(false);
+  const [frequentPresets, setFrequentPresets] = useState<string[]>(() => loadFrequentReplies());
+  const [manageModalOpen, setManageModalOpen] = useState(false);
+  const [newPresetDraft, setNewPresetDraft] = useState('');
+
+  useEffect(() => {
+    if (!frequentOpen) return;
+    const onDocMouseDown = (e: MouseEvent) => {
+      const el = frequentActionsRef.current;
+      if (!el) return;
+      const target = e.target as Node | null;
+      if (target && !el.contains(target)) setFrequentOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFrequentOpen(false);
+    };
+    document.addEventListener('mousedown', onDocMouseDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onDocMouseDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [frequentOpen]);
+
+  useEffect(() => {
+    if (!manageModalOpen) setNewPresetDraft('');
+  }, [manageModalOpen]);
+
+  const persistFrequentPresets = (next: string[]) => {
+    setFrequentPresets(next);
+    saveFrequentReplies(next);
+  };
+
+  const handleDeletePreset = (index: number) => {
+    persistFrequentPresets(frequentPresets.filter((_, i) => i !== index));
+  };
+
+  const handleAddPreset = () => {
+    const t = newPresetDraft.trim();
+    if (!t) return;
+    persistFrequentPresets([...frequentPresets, t]);
+    setNewPresetDraft('');
+  };
+
+  const openManageModal = () => {
+    setFrequentOpen(false);
+    setManageModalOpen(true);
+  };
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -295,7 +374,7 @@ export function InquiryReplyEditor({
     content: initialHtml,
     editorProps: {
       attributes: {
-        class: 'inquiry-reply-editor__prose',
+        class: 'reply-editor__prose',
         'aria-label': '답변 내용',
       },
     },
@@ -305,7 +384,6 @@ export function InquiryReplyEditor({
     if (!editor) return;
     const html = editor.getHTML();
     const textOnly = editor.getText({ blockSeparator: '\n' }).trim();
-    // 텍스트가 비어있더라도 이미지가 있으면 저장 허용
     const hasImage = (() => {
       let found = false;
       editor.state.doc.descendants((node: any) => {
@@ -353,6 +431,12 @@ export function InquiryReplyEditor({
     imageInputRef.current?.click();
   };
 
+  const handleInsertFrequentReply = (text: string) => {
+    if (!editor) return;
+    editor.chain().focus().insertContent(plainTextToHtml(text)).run();
+    setFrequentOpen(false);
+  };
+
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!editor) return;
     const file = e.target.files?.[0];
@@ -360,8 +444,6 @@ export function InquiryReplyEditor({
     try {
       const dataUrl = await readFileAsDataUrl(file);
       const insertPos = editor.state.selection.to;
-      // selection이 기존 이미지 노드를 포함한 경우 insertContent는 교체될 수 있음.
-      // insertContentAt로 selection 끝 지점에 "삽입"되게 해서 기존 이미지가 유지되도록 처리.
       editor
         .chain()
         .focus()
@@ -372,12 +454,53 @@ export function InquiryReplyEditor({
     }
   };
 
+  const frequentListId = 'reply-editor-frequent-list';
+
   return (
-    <div className="inquiry-reply-editor" data-variant={variant}>
-      <div className="inquiry-reply-editor__meta">
-        <span className="inquiry-reply-editor__mode-label">
+    <div className="reply-editor" data-variant={variant}>
+      <div className="reply-editor__meta">
+        <span className="reply-editor__mode-label">
           {variant === 'edit' ? '이 답변을 수정합니다.' : '새 답변을 등록합니다.'}
         </span>
+        <div className="reply-editor-frequent__actions" ref={frequentActionsRef}>
+          <div className="reply-editor-frequent">
+            <button
+              type="button"
+              className="reply-editor-frequent__trigger"
+              aria-expanded={frequentOpen}
+              aria-haspopup="listbox"
+              aria-controls={frequentListId}
+              disabled={!editor}
+              onClick={() => setFrequentOpen((o) => !o)}
+            >
+              자주 사용하는 답변
+            </button>
+            {frequentOpen && editor && (
+              <div id={frequentListId} className="reply-editor-frequent__panel" role="listbox" aria-label="자주 사용하는 답변">
+                {frequentPresets.length === 0 ? (
+                  <div className="reply-editor-frequent__empty">
+                    등록된 문구가 없습니다. 자주 사용하는 답변 관리에서 등록해 주세요.
+                  </div>
+                ) : (
+                  frequentPresets.map((text, idx) => (
+                    <button
+                      key={`${idx}-${text.slice(0, 48)}`}
+                      type="button"
+                      role="option"
+                      className="reply-editor-frequent__item"
+                      onClick={() => handleInsertFrequentReply(text)}
+                    >
+                      {text}
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+          <button type="button" className="reply-editor-frequent__manage" onClick={openManageModal}>
+            자주 사용하는 답변 관리
+          </button>
+        </div>
       </div>
       <MenuBar
         editor={editor}
@@ -385,10 +508,10 @@ export function InquiryReplyEditor({
         onInsertLink={handleInsertLink}
         onAttachImage={handleAttachImage}
       />
-      <div className="inquiry-reply-editor__surface">
+      <div className="reply-editor__surface">
         <EditorContent editor={editor} />
       </div>
-      <div className="inquiry-reply-editor__actions">
+      <div className="reply-editor__actions">
         <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
           취소
         </button>
@@ -398,6 +521,59 @@ export function InquiryReplyEditor({
       </div>
 
       <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+
+      <Modal open={manageModalOpen} onClose={() => setManageModalOpen(false)} variant="option" ariaLabel="자주 사용하는 답변 관리">
+        <Modal.Header>
+          <Modal.Title>자주 사용하는 답변 관리</Modal.Title>
+          <Modal.Close />
+        </Modal.Header>
+        <Modal.Body>
+          <div className="reply-editor-frequent-manage">
+            <p className="reply-editor-frequent-manage__hint">
+              목록에 추가한 문구는 이 브라우저에 저장되며, 자주 사용하는 답변 메뉴에서 바로 넣을 수 있습니다.
+            </p>
+            <ul className="reply-editor-frequent-manage__list" aria-label="저장된 답변 목록">
+              {frequentPresets.map((text, idx) => (
+                <li key={`${idx}-${text.slice(0, 48)}`} className="reply-editor-frequent-manage__row">
+                  <span className="reply-editor-frequent-manage__text">{text}</span>
+                  <button
+                    type="button"
+                    className="reply-editor-frequent-manage__delete"
+                    onClick={() => handleDeletePreset(idx)}
+                    aria-label={`삭제: ${text.slice(0, 80)}`}
+                  >
+                    <Trash2 size={16} strokeWidth={2} aria-hidden />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {frequentPresets.length === 0 && <p className="reply-editor-frequent-manage__empty">아직 등록된 문구가 없습니다.</p>}
+            <div className="reply-editor-frequent-manage__add">
+              <input
+                type="text"
+                className="reply-editor-frequent-manage__input"
+                placeholder="추가할 답변 문구를 입력하세요"
+                value={newPresetDraft}
+                onChange={(e) => setNewPresetDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddPreset();
+                  }
+                }}
+              />
+              <button type="button" className="reply-editor-frequent-manage__add-btn" onClick={handleAddPreset}>
+                추가
+              </button>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button type="button" className="filter-btn filter-btn--primary" onClick={() => setManageModalOpen(false)}>
+            닫기
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
