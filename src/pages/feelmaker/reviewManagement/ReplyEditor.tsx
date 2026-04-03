@@ -5,6 +5,7 @@ import Underline from '@tiptap/extension-underline';
 import LinkExtension from '@tiptap/extension-link';
 import ImageExtension from '@tiptap/extension-image';
 import type { Editor } from '@tiptap/core';
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
 import {
   Bold,
@@ -55,7 +56,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
       dom.className = 'reply-editor-image';
 
       const img = document.createElement('img');
-      img.src = node.attrs.src;
+      img.src = node.attrs.src ?? '';
       img.alt = node.attrs.alt || '';
       dom.appendChild(img);
 
@@ -115,7 +116,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
           const afterPos = pos + node.nodeSize;
           const { state } = editor.view;
           const clamped = Math.min(afterPos, state.doc.content.size);
-          const selection = TextSelection.create(state.doc, clamped, clamped);
+          const selection = TextSelection.create(state.doc as ProseMirrorNode, clamped, clamped);
           editor.view.dispatch(state.tr.setSelection(selection));
         }
 
@@ -145,7 +146,7 @@ const ImageWithDeleteButton = ImageExtension.extend({
         dom,
         update: (updatedNode: ImageNodeLike) => {
           if (updatedNode.type.name !== node.type.name) return false;
-          img.src = updatedNode.attrs.src;
+          img.src = updatedNode.attrs.src ?? '';
           img.alt = updatedNode.attrs.alt || '';
           return true;
         },

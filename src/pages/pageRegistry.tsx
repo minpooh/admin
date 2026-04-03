@@ -35,7 +35,7 @@ registerPage('feelmaker', FeelmakerDashboardPage);
 
 import FeelmakerOrderVideoPage from './feelmaker/orderManagement/OrderVideoPage';
 import FeelmakerOrderVideoTestPage from './feelmaker/orderManagement/OrderVideoTestPage';
-import FeelmakerOrderInviPage from './feelmaker/orderManagement/OrderInviPage';
+import FeelmakerOrderInviPage from './feelmaker/orderManagement/OrderInviPage.tsx';
 import FeelmakerOrderEditPage from './feelmaker/orderManagement/OrderEditPage.tsx';
 import FeelmakerOrderEditStorePage from './feelmaker/orderManagement/OrderEditStorePage.tsx';
 import FeelmakerOrderEditSamplePage from './feelmaker/orderManagement/OrderEditSamplePage.tsx';
