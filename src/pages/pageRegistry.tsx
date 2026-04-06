@@ -73,5 +73,12 @@ registerPage('feelmaker/crawlingManagement/storefarmMaker', StorefarmVideoPage);
 registerPage('feelmaker/crawlingManagement/storefarmCard', StorefarmCardPage);
 registerPage('feelmaker/crawlingManagement/storefarmMotion', StorefarmMotionPage);
 
+import StorefarmErrorPage from './feelmaker/errorManagement/StorefarmErrorPage';
+import OrderErrorPage from './feelmaker/errorManagement/OrderErrorPage';
+import DelayErrorPage from './feelmaker/errorManagement/DelayErrorPage';
+registerPage('feelmaker/errorManagement/storefarmError', StorefarmErrorPage);
+registerPage('feelmaker/errorManagement/orderError', OrderErrorPage);
+registerPage('feelmaker/errorManagement/delayError', DelayErrorPage);
+
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);
