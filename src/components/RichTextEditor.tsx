@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -9,6 +9,7 @@ import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
 import {
   Bold,
+  Code2,
   Heading2,
   Image as ImageIcon,
   Link as LinkIcon,
@@ -19,8 +20,8 @@ import {
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react';
-import Modal from '../../../components/modal';
-import './ReplyEditor.css';
+import Modal from './modal';
+import './RichTextEditor.css';
 
 type ImageNodeAttrs = { src?: string; alt?: string };
 type ImageNodeLike = {
@@ -167,16 +168,44 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#039;');
 }
 
+const ALLOWED_LINK_PROTOCOLS = new Set(['http:', 'https:']);
+
+/** Rejects javascript:, data:, etc. Entity-encoding href is not sufficient (browsers decode in attributes). */
+function sanitizeEditorLinkHref(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const base =
+    typeof window !== 'undefined' && window.location?.origin
+      ? window.location.origin
+      : 'https://invalid.invalid';
+  let resolved: URL;
+  try {
+    resolved = new URL(trimmed, base);
+  } catch {
+    window.alert('유효한 URL이 아닙니다.');
+    return null;
+  }
+  if (!ALLOWED_LINK_PROTOCOLS.has(resolved.protocol.toLowerCase())) {
+    window.alert('http:// 또는 https:// 주소만 사용할 수 있습니다.');
+    return null;
+  }
+  return resolved.href;
+}
+
 function MenuBar({
   editor,
   onToggleUnderline,
   onInsertLink,
   onAttachImage,
+  sourceMode,
+  onToggleSourceMode,
 }: {
   editor: Editor | null;
   onToggleUnderline: () => void;
   onInsertLink: () => void;
   onAttachImage: () => void;
+  sourceMode: boolean;
+  onToggleSourceMode: () => void;
 }) {
   if (!editor) return null;
 
@@ -239,6 +268,15 @@ function MenuBar({
         aria-label="번호"
       >
         <ListOrdered size={18} strokeWidth={2} aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        className={`reply-editor__tool ${sourceMode ? 'is-active' : ''}`}
+        onClick={onToggleSourceMode}
+        aria-pressed={sourceMode}
+        aria-label="HTML 소스 편집"
+      >
+        <Code2 size={18} strokeWidth={2} aria-hidden="true" />
       </button>
       <span className="reply-editor__toolbar-sep" aria-hidden />
       <button
@@ -333,17 +371,174 @@ function saveFrequentReplies(list: string[]) {
   }
 }
 
-export type ReplyEditorProps = {
+export type RichTextEditorProps = {
   initialBody: string;
-  variant: 'new' | 'edit';
   onCancel: () => void;
   onSave: (html: string) => void;
   onEmpty?: () => void;
+  renderTop?: (helpers: { insertPlainText: (text: string) => void }) => ReactNode;
 };
 
-export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }: ReplyEditorProps) {
+export function RichTextEditor({ initialBody, onCancel, onSave, onEmpty, renderTop }: RichTextEditorProps) {
   const initialHtml = initialBodyToEditorHtml(initialBody);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [sourceMode, setSourceMode] = useState(false);
+  const [htmlSource, setHtmlSource] = useState(initialHtml);
+
+  const editor = useEditor({
+    immediatelyRender: false,
+    extensions: [StarterKit, Underline, LinkExtension.configure({ openOnClick: false }), ImageWithDeleteButton],
+    content: initialHtml,
+    editorProps: {
+      attributes: {
+        class: 'reply-editor__prose',
+        'aria-label': '답변 내용',
+      },
+    },
+  });
+
+  const normalizeHtml = (html: string) => html.trim();
+
+  const hasMeaningfulHtmlContent = (html: string) => {
+    const stripped = html
+      .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
+    const hasImageTag = /<img[\s\S]*?>/i.test(html);
+    return Boolean(stripped) || hasImageTag;
+  };
+
+  const handleSave = () => {
+    if (!editor) return;
+    const html = normalizeHtml(sourceMode ? htmlSource : editor.getHTML());
+    if (!hasMeaningfulHtmlContent(html)) {
+      onEmpty?.();
+      return;
+    }
+    onSave(html);
+  };
+
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+
+  const handleToggleUnderline = () => {
+    editor?.chain().focus().toggleUnderline().run();
+  };
+
+  const handleInsertLink = () => {
+    if (!editor) return;
+    const href = window.prompt('링크 URL을 입력하세요.');
+    if (href == null || !href.trim()) return;
+
+    const safeHrefRaw = sanitizeEditorLinkHref(href);
+    if (safeHrefRaw == null) return;
+
+    const selected =
+      editor.state.selection.empty
+        ? ''
+        : editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, ' ');
+    const label = selected || window.prompt('표시할 텍스트를 입력하세요.') || safeHrefRaw;
+
+    const safeHref = escapeHtml(safeHrefRaw);
+    const safeLabel = escapeHtml(label);
+    editor.chain().focus().insertContent(`<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeLabel}</a>`).run();
+  };
+
+  const handleAttachImage = () => {
+    imageInputRef.current?.click();
+  };
+
+  const insertPlainText = (text: string) => {
+    if (!editor) return;
+    if (sourceMode) {
+      setHtmlSource((prev) => `${prev}${plainTextToHtml(text)}`);
+      return;
+    }
+    editor.chain().focus().insertContent(plainTextToHtml(text)).run();
+  };
+
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!editor) return;
+    if (sourceMode) {
+      e.target.value = '';
+      return;
+    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      const insertPos = editor.state.selection.to;
+      editor
+        .chain()
+        .focus()
+        .insertContentAt(insertPos, { type: 'image', attrs: { src: dataUrl, alt: file.name || '첨부 이미지' } })
+        .run();
+    } finally {
+      e.target.value = '';
+    }
+  };
+
+  const handleToggleSourceMode = () => {
+    if (!editor) return;
+    if (!sourceMode) {
+      setHtmlSource(editor.getHTML());
+      setSourceMode(true);
+      return;
+    }
+    editor.commands.setContent(normalizeHtml(htmlSource) || '<p></p>');
+    setSourceMode(false);
+    queueMicrotask(() => editor.commands.focus('end'));
+  };
+
+  return (
+    <div className="reply-editor">
+      {renderTop ? <div className="reply-editor__meta">{renderTop({ insertPlainText })}</div> : null}
+      <MenuBar
+        editor={editor}
+        onToggleUnderline={handleToggleUnderline}
+        onInsertLink={handleInsertLink}
+        onAttachImage={handleAttachImage}
+        sourceMode={sourceMode}
+        onToggleSourceMode={handleToggleSourceMode}
+      />
+      <div className="reply-editor__surface">
+        {sourceMode ? (
+          <textarea
+            className="reply-editor__source"
+            value={htmlSource}
+            onChange={(e) => setHtmlSource(e.target.value)}
+            aria-label="HTML 소스"
+          />
+        ) : (
+          <EditorContent editor={editor} />
+        )}
+      </div>
+      <div className="reply-editor__actions">
+        <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
+          취소
+        </button>
+        <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
+          저장
+        </button>
+      </div>
+
+      <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+    </div>
+  );
+}
+
+export function RichTextEditorModeLabel({ variant }: { variant: 'new' | 'edit' }) {
+  return <span className="reply-editor__mode-label">{variant === 'edit' ? '이 답변을 수정합니다.' : '새 답변을 등록합니다.'}</span>;
+}
+
+export function RichTextEditorFrequentReplies({ onInsert }: { onInsert: (text: string) => void }) {
   const frequentActionsRef = useRef<HTMLDivElement | null>(null);
   const [frequentOpen, setFrequentOpen] = useState(false);
   const [frequentPresets, setFrequentPresets] = useState<string[]>(() => loadFrequentReplies());
@@ -369,187 +564,70 @@ export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }:
     };
   }, [frequentOpen]);
 
-  useEffect(() => {
-    if (!manageModalOpen) setNewPresetDraft('');
-  }, [manageModalOpen]);
-
   const persistFrequentPresets = (next: string[]) => {
     setFrequentPresets(next);
     saveFrequentReplies(next);
   };
 
-  const handleDeletePreset = (index: number) => {
-    persistFrequentPresets(frequentPresets.filter((_, i) => i !== index));
-  };
-
-  const handleAddPreset = () => {
-    const t = newPresetDraft.trim();
-    if (!t) return;
-    persistFrequentPresets([...frequentPresets, t]);
-    setNewPresetDraft('');
-  };
-
-  const openManageModal = () => {
-    setFrequentOpen(false);
-    setManageModalOpen(true);
-  };
-
-  const editor = useEditor({
-    immediatelyRender: false,
-    extensions: [StarterKit, Underline, LinkExtension.configure({ openOnClick: false }), ImageWithDeleteButton],
-    content: initialHtml,
-    editorProps: {
-      attributes: {
-        class: 'reply-editor__prose',
-        'aria-label': '답변 내용',
-      },
-    },
-  });
-
-  const handleSave = () => {
-    if (!editor) return;
-    const html = editor.getHTML();
-    const textOnly = editor.getText({ blockSeparator: '\n' }).trim();
-    const hasImage = (() => {
-      let found = false;
-      editor.state.doc.descendants((node: unknown) => {
-        const maybe = node as { type?: { name?: string } };
-        if (maybe.type?.name === 'image') found = true;
-      });
-      return found;
-    })();
-
-    if (!textOnly && !hasImage) {
-      onEmpty?.();
-      return;
-    }
-    onSave(html);
-  };
-
-  const readFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(file);
-    });
-
-  const handleToggleUnderline = () => {
-    editor?.chain().focus().toggleUnderline().run();
-  };
-
-  const handleInsertLink = () => {
-    if (!editor) return;
-    const href = window.prompt('링크 URL을 입력하세요.');
-    if (!href) return;
-
-    const selected =
-      editor.state.selection.empty
-        ? ''
-        : editor.state.doc.textBetween(editor.state.selection.from, editor.state.selection.to, ' ');
-    const label = selected || window.prompt('표시할 텍스트를 입력하세요.') || href;
-
-    const safeHref = escapeHtml(href);
-    const safeLabel = escapeHtml(label);
-    editor.chain().focus().insertContent(`<a href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeLabel}</a>`).run();
-  };
-
-  const handleAttachImage = () => {
-    imageInputRef.current?.click();
-  };
-
-  const handleInsertFrequentReply = (text: string) => {
-    if (!editor) return;
-    editor.chain().focus().insertContent(plainTextToHtml(text)).run();
-    setFrequentOpen(false);
-  };
-
-  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!editor) return;
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const dataUrl = await readFileAsDataUrl(file);
-      const insertPos = editor.state.selection.to;
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(insertPos, { type: 'image', attrs: { src: dataUrl, alt: file.name || '첨부 이미지' } })
-        .run();
-    } finally {
-      e.target.value = '';
-    }
-  };
-
-  const frequentListId = 'reply-editor-frequent-list';
+  const frequentListId = 'rich-editor-frequent-list';
 
   return (
-    <div className="reply-editor" data-variant={variant}>
-      <div className="reply-editor__meta">
-        <span className="reply-editor__mode-label">
-          {variant === 'edit' ? '이 답변을 수정합니다.' : '새 답변을 등록합니다.'}
-        </span>
-        <div className="reply-editor-frequent__actions" ref={frequentActionsRef}>
-          <div className="reply-editor-frequent">
-            <button
-              type="button"
-              className="reply-editor-frequent__trigger"
-              aria-expanded={frequentOpen}
-              aria-haspopup="listbox"
-              aria-controls={frequentListId}
-              disabled={!editor}
-              onClick={() => setFrequentOpen((o) => !o)}
-            >
-              자주 사용하는 답변
-            </button>
-            {frequentOpen && editor && (
-              <div id={frequentListId} className="reply-editor-frequent__panel" role="listbox" aria-label="자주 사용하는 답변">
-                {frequentPresets.length === 0 ? (
-                  <div className="reply-editor-frequent__empty">
-                    등록된 문구가 없습니다. 자주 사용하는 답변 관리에서 등록해 주세요.
-                  </div>
-                ) : (
-                  frequentPresets.map((text, idx) => (
-                    <button
-                      key={`${idx}-${text.slice(0, 48)}`}
-                      type="button"
-                      role="option"
-                      className="reply-editor-frequent__item"
-                      onClick={() => handleInsertFrequentReply(text)}
-                    >
-                      {text}
-                    </button>
-                  ))
-                )}
-              </div>
+    <div className="reply-editor-frequent__actions" ref={frequentActionsRef}>
+      <div className="reply-editor-frequent">
+        <button
+          type="button"
+          className="reply-editor-frequent__trigger"
+          aria-expanded={frequentOpen}
+          aria-haspopup="listbox"
+          aria-controls={frequentListId}
+          onClick={() => setFrequentOpen((o) => !o)}
+        >
+          자주 사용하는 답변
+        </button>
+        {frequentOpen && (
+          <div id={frequentListId} className="reply-editor-frequent__panel" role="listbox" aria-label="자주 사용하는 답변">
+            {frequentPresets.length === 0 ? (
+              <div className="reply-editor-frequent__empty">등록된 문구가 없습니다. 자주 사용하는 답변 관리에서 등록해 주세요.</div>
+            ) : (
+              frequentPresets.map((text, idx) => (
+                <button
+                  key={`${idx}-${text.slice(0, 48)}`}
+                  type="button"
+                  role="option"
+                  className="reply-editor-frequent__item"
+                  onClick={() => {
+                    onInsert(text);
+                    setFrequentOpen(false);
+                  }}
+                >
+                  {text}
+                </button>
+              ))
             )}
           </div>
-          <button type="button" className="reply-editor-frequent__manage" onClick={openManageModal}>
-            자주 사용하는 답변 관리
-          </button>
-        </div>
+        )}
       </div>
-      <MenuBar
-        editor={editor}
-        onToggleUnderline={handleToggleUnderline}
-        onInsertLink={handleInsertLink}
-        onAttachImage={handleAttachImage}
-      />
-      <div className="reply-editor__surface">
-        <EditorContent editor={editor} />
-      </div>
-      <div className="reply-editor__actions">
-        <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
-          취소
-        </button>
-        <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
-          저장
-        </button>
-      </div>
+      <button
+        type="button"
+        className="reply-editor-frequent__manage"
+        onClick={() => {
+          setFrequentOpen(false);
+          setNewPresetDraft('');
+          setManageModalOpen(true);
+        }}
+      >
+        자주 사용하는 답변 관리
+      </button>
 
-      <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
-
-      <Modal open={manageModalOpen} onClose={() => setManageModalOpen(false)} variant="option" ariaLabel="자주 사용하는 답변 관리">
+      <Modal
+        open={manageModalOpen}
+        onClose={() => {
+          setManageModalOpen(false);
+          setNewPresetDraft('');
+        }}
+        variant="option"
+        ariaLabel="자주 사용하는 답변 관리"
+      >
         <Modal.Header>
           <Modal.Title>자주 사용하는 답변 관리</Modal.Title>
           <Modal.Close />
@@ -566,7 +644,7 @@ export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }:
                   <button
                     type="button"
                     className="reply-editor-frequent-manage__delete"
-                    onClick={() => handleDeletePreset(idx)}
+                    onClick={() => persistFrequentPresets(frequentPresets.filter((_, i) => i !== idx))}
                     aria-label={`삭제: ${text.slice(0, 80)}`}
                   >
                     <Trash2 size={16} strokeWidth={2} aria-hidden />
@@ -585,18 +663,37 @@ export function ReplyEditor({ initialBody, variant, onCancel, onSave, onEmpty }:
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
-                    handleAddPreset();
+                    const t = newPresetDraft.trim();
+                    if (!t) return;
+                    persistFrequentPresets([...frequentPresets, t]);
+                    setNewPresetDraft('');
                   }
                 }}
               />
-              <button type="button" className="reply-editor-frequent-manage__add-btn" onClick={handleAddPreset}>
+              <button
+                type="button"
+                className="reply-editor-frequent-manage__add-btn"
+                onClick={() => {
+                  const t = newPresetDraft.trim();
+                  if (!t) return;
+                  persistFrequentPresets([...frequentPresets, t]);
+                  setNewPresetDraft('');
+                }}
+              >
                 추가
               </button>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <button type="button" className="filter-btn filter-btn--primary" onClick={() => setManageModalOpen(false)}>
+          <button
+            type="button"
+            className="filter-btn filter-btn--primary"
+            onClick={() => {
+              setManageModalOpen(false);
+              setNewPresetDraft('');
+            }}
+          >
             닫기
           </button>
         </Modal.Footer>

@@ -511,8 +511,8 @@ export default function ReviewPage() {
                     </span>
                     <span className="review-rating-value">{row.rating}.0</span>
                   </td>
-                  <td className="inquiry-table-col-title">
-                    <Link to={reviewDetailPath(row.id)} className="admin-link inquiry-table-title-link">
+                  <td className="admin-table-col-title">
+                    <Link to={reviewDetailPath(row.id)} className="admin-link admin-table-title-link">
                       {row.title}
                     </Link>
                   </td>
@@ -547,40 +547,42 @@ export default function ReviewPage() {
           </table>
         </div>
 
-        <div className="admin-table-pagination">
-          <div className="pagination-inner">
-            <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
-              &laquo;
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage <= 1}
-              aria-label="이전 페이지"
-            >
-              &lsaquo;
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button key={page} type="button" className={currentPage === page ? 'active' : ''} onClick={() => setCurrentPage(page)}>
-                {page}
+        <div className="admin-list-table-footer">
+          <div className="admin-table-pagination">
+            <div className="pagination-inner">
+              <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
+                &laquo;
               </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage >= totalPages}
-              aria-label="다음 페이지"
-            >
-              &rsaquo;
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage >= totalPages}
-              aria-label="마지막 페이지"
-            >
-              &raquo;
-            </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                aria-label="이전 페이지"
+              >
+                &lsaquo;
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button key={page} type="button" className={currentPage === page ? 'active' : ''} onClick={() => setCurrentPage(page)}>
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                aria-label="다음 페이지"
+              >
+                &rsaquo;
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage >= totalPages}
+                aria-label="마지막 페이지"
+              >
+                &raquo;
+              </button>
+            </div>
           </div>
         </div>
       </section>

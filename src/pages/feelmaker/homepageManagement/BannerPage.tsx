@@ -235,7 +235,7 @@ export default function BannerPage() {
     <div className="admin-list-page">
       <div className="banner-page-header">
         <h1 className="page-title">배너관리</h1>
-        <button type="button" className="banner-add-btn" onClick={openAdd} aria-label="배너 추가">
+        <button type="button" className="admin-list-add-btn" onClick={openAdd} aria-label="배너 추가">
           <Plus size={18} aria-hidden="true" />
           배너 추가
         </button>

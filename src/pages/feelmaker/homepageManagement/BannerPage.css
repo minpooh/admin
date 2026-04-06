@@ -12,29 +12,6 @@
   margin: 0;
 }
 
-.banner-add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 8px;
-  background: var(--gray-900);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.banner-add-btn:hover {
-  filter: brightness(1.05);
-}
-
-.banner-add-btn:active {
-  filter: brightness(0.97);
-}
-
 .banner-preview-section {
   padding: 0;
   margin-bottom: 1.5rem;

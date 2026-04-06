@@ -5,7 +5,7 @@ import '../orderManagement/OrderListPage.css';
 import './InquiryPage.css';
 import { pagePath } from '../../../routes';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
-import { ReplyEditor } from './ReplyEditor';
+import { RichTextEditor, RichTextEditorFrequentReplies, RichTextEditorModeLabel } from '../../../components/RichTextEditor';
 import Alert from '../../../components/alert';
 import type { InquiryDetailData, InquiryThreadEntry } from './mock/inquiry.mock';
 import { getInquiryById } from './mock/inquiry.mock';
@@ -223,10 +223,15 @@ export default function InquiryDetailPage() {
           <p className="inquiry-thread-hint">관리자가 등록한 답변만 표시됩니다.</p>
 
           {replyEditor.status === 'new' && (
-            <ReplyEditor
+            <RichTextEditor
               key={`new-${replyEditorNonce}`}
               initialBody=""
-              variant="new"
+              renderTop={({ insertPlainText }) => (
+                <>
+                  <RichTextEditorModeLabel variant="new" />
+                  <RichTextEditorFrequentReplies onInsert={insertPlainText} />
+                </>
+              )}
               onCancel={closeReplyEditor}
               onSave={(html) => commitReply(html, 'new')}
               onEmpty={() => setAlertMessage('답변 내용을 입력해주세요.')}
@@ -260,10 +265,15 @@ export default function InquiryDetailPage() {
                     </div>
                     {isEditingThis ? (
                       <div className="reply-editor-wrap--inline">
-                        <ReplyEditor
+                        <RichTextEditor
                           key={`edit-${item.id}-${replyEditorNonce}`}
                           initialBody={item.body}
-                          variant="edit"
+                          renderTop={({ insertPlainText }) => (
+                            <>
+                              <RichTextEditorModeLabel variant="edit" />
+                              <RichTextEditorFrequentReplies onInsert={insertPlainText} />
+                            </>
+                          )}
                           onCancel={closeReplyEditor}
                           onSave={(html) => commitReply(html, 'edit', item.id)}
                           onEmpty={() => setAlertMessage('답변 수정 내용을 입력해주세요.')}

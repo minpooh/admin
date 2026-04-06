@@ -299,6 +299,24 @@
   min-height: 200px;
 }
 
+.reply-editor__source {
+  width: 100%;
+  min-height: 200px;
+  border: 0;
+  resize: vertical;
+  padding: 0.75rem 1rem;
+  box-sizing: border-box;
+  background: #fff;
+  color: #111827;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+.reply-editor__source:focus {
+  outline: none;
+}
+
 .reply-editor__surface .reply-editor__prose {
   outline: none;
   min-height: 180px;

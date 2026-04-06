@@ -302,6 +302,12 @@
   gap: 0.5rem;
 }
 
+.filter-row--spread {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 /* 필터 버튼: 전체보기/선택 = 검정, 나머지 = 흰색 */
 .filter-btn {
   padding: 0.5rem 1rem;
@@ -480,6 +486,11 @@
   color: #6b7280;
   font-size: 0.875rem;
   flex: 0 0 auto;
+}
+
+/* 상세 메타 등: 날짜 범위가 그리드 셀 너비를 쓰도록 */
+.admin-detail-meta__row .date-range-wrap {
+  width: 100%;
 }
 
 /* react-datepicker 캘린더 디자인 오버라이드 */
@@ -912,6 +923,32 @@
   cursor: not-allowed;
 }
 
+/* 목록 하단 등: 추가 버튼 (배너/이벤트 등 공통) */
+.admin-list-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--gray-900);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  flex-shrink: 0;
+}
+
+.admin-list-add-btn:hover {
+  filter: brightness(1.05);
+}
+
+.admin-list-add-btn:active {
+  filter: brightness(0.97);
+}
+
 .admin-table .col-center {
   text-align: center;
 }
@@ -956,6 +993,20 @@ button.admin-link {
   line-height: inherit;
 }
 
+/* 목록 테이블 제목 열: 너비 제한 + 말줄임 링크와 함께 사용 */
+.admin-table-col-title {
+  max-width: 300px;
+}
+
+/* 목록 테이블 제목 셀: 한 줄 + 말줄임 (문의·리뷰·이벤트·공지 등, .admin-link와 병행) */
+.admin-table-title-link {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* 상세 화면: 헤더·메타·본문 블록 (목록 외 공통) */
 .admin-detail-header {
   margin-bottom: 0.25rem;
@@ -988,6 +1039,28 @@ button.admin-link {
   color: #111827;
 }
 
+/* 상세·모달 등 단일 줄 텍스트 입력 (검색 필드 입력과 동일 토큰) */
+.admin-inline-input {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: #fff;
+  color: #111827;
+}
+
+.admin-inline-input:focus,
+.admin-inline-input:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
 .admin-detail-meta {
   margin: 0;
   display: grid;
@@ -1017,6 +1090,14 @@ button.admin-link {
   font-weight: 600;
   margin: 0 0 0.75rem;
   color: #374151;
+}
+
+.admin-detail-preview-head {
+  margin-bottom: 0.75rem;
+}
+
+.admin-detail-preview-head .admin-detail-section-title {
+  margin-bottom: 0;
 }
 
 .admin-detail-body {
@@ -1064,4 +1145,85 @@ button.admin-link {
 .admin-status-pill--미답변 {
   background: var(--warning-color-100);
   color: var(--warning-color-500);
+}
+
+/* 테이블 직하단: .admin-list-table-footer > .admin-table-pagination > .pagination-inner */
+.admin-list-table-footer {
+  width: 100%;
+}
+
+/* 목록 아래 추가 버튼 행 (이벤트·공지 등) */
+.admin-list-add-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* 상세: 뱃지 + 제목 한 줄 */
+.admin-detail-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.admin-detail-title-row__text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 상세: 제목 편집 — 좁은 ListSelect(7rem) + 제목 입력 */
+.admin-detail-title-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+.admin-detail-title-edit .admin-detail-title-edit__select {
+  flex-shrink: 0;
+  width: 7rem;
+}
+
+.admin-detail-title-edit .admin-detail-title-edit__select .listselect__trigger {
+  min-height: 38px;
+}
+
+.admin-detail-title-edit .admin-detail-title-edit__input {
+  flex: 1;
+  min-width: 12rem;
+  max-width: none;
+  margin: 0;
+}
+
+/* 수정 모드: 첫 줄 선택 너비(7rem)에 맞춘 메타 그리드 */
+.admin-detail-meta--aligned .admin-detail-meta__row {
+  grid-template-columns: 7rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+}
+
+.admin-detail-meta--aligned .admin-detail-meta__row dd {
+  min-width: 0;
+}
+
+.admin-detail-meta--aligned .date-range-wrap {
+  width: 100%;
+}
+
+.admin-detail-meta--aligned .date-range-pickers {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.admin-detail-author-input {
+  margin: 0;
+  max-width: 20rem;
+}
+
+.admin-detail-meta--aligned .admin-detail-author-input {
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
 }

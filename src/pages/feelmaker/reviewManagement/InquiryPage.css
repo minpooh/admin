@@ -215,19 +215,6 @@
   min-width: 72px; /* 삭제 */
 }
 
-/* 제목 컬럼: 한 줄 + 말줄임 */
-.inquiry-table-col-title {
-  max-width: 300px;
-}
-
-.inquiry-table-title-link {
-  display: block;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* 스레드·댓글 영역 */
 .inquiry-thread-section .admin-detail-section-title {
   margin-bottom: 0.35rem;
