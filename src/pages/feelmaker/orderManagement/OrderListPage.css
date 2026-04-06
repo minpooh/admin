@@ -418,35 +418,7 @@
   color: #6b7280;
 }
 
-.option-modal__status-grid {
-  margin-top: 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fafafa;
-}
-
-.option-modal__status-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
-}
-
-.option-modal__status-row + .option-modal__status-row {
-  border-top: 1px solid #e5e7eb;
-}
-
-.option-modal__status-label {
-  font-size: 0.8125rem;
-  color: #6b7280;
-}
-
-.option-modal__status-value {
-  font-size: 0.875rem;
-  color: #111827;
-  font-weight: 600;
-}
+/* 필드 그리드·푸터·기본 버튼: adminListPage.css 의 .admin-modal-field-* / .admin-modal__* 와 공통 정의 */
 
 .option-modal__amount-input {
   width: 160px;
@@ -463,68 +435,6 @@
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-}
-
-.option-modal__partner-select {
-  width: 160px;
-  height: 34px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 0 10px;
-  font-size: 0.875rem;
-  color: #111827;
-  background: #fff;
-}
-
-.option-modal__partner-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-}
-
-.option-modal__footer {
-  padding: 14px 18px 18px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.option-modal__btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.option-modal__btn--ghost {
-  background: #f3f4f6;
-  color: #111827;
-}
-
-.option-modal__btn--ghost:hover {
-  background: #e5e7eb;
-}
-
-.option-modal__btn--primary {
-  background: #111827;
-  color: #fff;
-}
-
-.option-modal__btn--primary:hover {
-  background: #0b1220;
-}
-
-.option-modal__btn--danger {
-  background: #ef4444;
-  color: #fff;
-}
-
-.option-modal__btn--danger:hover {
-  background: #dc2626;
 }
 
 /* 문자 발송 모달 */

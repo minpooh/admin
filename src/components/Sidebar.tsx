@@ -94,7 +94,7 @@ function PanelSection({ id, title, icon: Icon, isOpen, onToggle, children }: Pan
 
 const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   orderManagement: false,
-  crawling: false,
+  crawlingManagement: false,
   customerManagement: false,
   reviewManagement: false,
   errorManagement: false,

@@ -66,5 +66,12 @@ registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
 registerPage('feelmaker/reviewManagement/faq', FaqPage);
 registerPage('feelmaker/reviewManagement/review', ReviewPage);
 
+import StorefarmVideoPage from './feelmaker/crawlingManagement/StorefarmVideoPage';
+import StorefarmCardPage from './feelmaker/crawlingManagement/StorefarmCardPage';
+import StorefarmMotionPage from './feelmaker/crawlingManagement/StorefarmMotionPage';
+registerPage('feelmaker/crawlingManagement/storefarmMaker', StorefarmVideoPage);
+registerPage('feelmaker/crawlingManagement/storefarmCard', StorefarmCardPage);
+registerPage('feelmaker/crawlingManagement/storefarmMotion', StorefarmMotionPage);
+
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

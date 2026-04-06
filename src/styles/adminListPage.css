@@ -953,6 +953,168 @@
   text-align: center;
 }
 
+/* 테이블 셀: 이름·아이디·연락처 3줄 (크롤링 등 공통) */
+.admin-cell-triple {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  min-width: 148px;
+}
+
+.admin-cell-triple span {
+  display: block;
+}
+
+.admin-table .col-center .admin-cell-triple {
+  align-items: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.admin-table .col-center .admin-cell-triple__phone-row {
+  justify-content: center;
+}
+
+/* 테이블 셀: 이슈/플레이스홀더 문구 */
+.admin-cell-issue--empty {
+  color: #94a3b8;
+}
+
+.admin-cell-issue--warn {
+  color: var(--danger-color-500);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* 스팜 보정 등: 이슈 열 동일 너비·가운데 정렬 */
+.admin-table .admin-cell-issue-col {
+  min-width: 132px;
+  width: 132px;
+  max-width: 132px;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.admin-table .admin-cell-issue-col .admin-cell-issue--warn,
+.admin-table .admin-cell-issue-col .admin-cell-issue--empty {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* 옵션형 모달 본문: 라벨·값 2열 그리드 (파트너 변경·연락처 변경 등, option-modal__status-* 와 동일 규칙) */
+.admin-modal-field-grid,
+.option-modal__status-grid {
+  margin-top: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.admin-modal-field-row,
+.option-modal__status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.admin-modal-field-row + .admin-modal-field-row,
+.option-modal__status-row + .option-modal__status-row,
+.admin-modal-field-row + .option-modal__status-row,
+.option-modal__status-row + .admin-modal-field-row {
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-modal-field-label,
+.option-modal__status-label {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.admin-modal-field-value,
+.option-modal__status-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.admin-modal-field-control,
+.option-modal__partner-select {
+  width: 160px;
+  height: 34px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 0.875rem;
+  color: #111827;
+  background: #fff;
+}
+
+.admin-modal-field-control:focus,
+.option-modal__partner-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+/* 옵션형 모달 푸터·버튼 (option-modal__footer / __btn 와 동일) */
+.admin-modal__footer,
+.option-modal__footer {
+  padding: 14px 18px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-modal__btn,
+.option-modal__btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-modal__btn--ghost,
+.option-modal__btn--ghost {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.admin-modal__btn--ghost:hover,
+.option-modal__btn--ghost:hover {
+  background: #e5e7eb;
+}
+
+.admin-modal__btn--primary,
+.option-modal__btn--primary {
+  background: #111827;
+  color: #fff;
+}
+
+.admin-modal__btn--primary:hover,
+.option-modal__btn--primary:hover {
+  background: #0b1220;
+}
+
+.admin-modal__btn--danger,
+.option-modal__btn--danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.admin-modal__btn--danger:hover,
+.option-modal__btn--danger:hover {
+  background: #dc2626;
+}
+
 /* 보조 텍스트(회원 ID 등) */
 .admin-list-muted {
   color: #6b7280;
@@ -962,6 +1124,147 @@
 /* 컬럼 수가 적은 목록용 테이블 */
 .admin-table--min-w-800 {
   min-width: 800px;
+}
+
+/* 스팜 영상: 주문일·식별·결제·주문상품(넓게)·옵션 */
+.admin-table.admin-table--crawling-video {
+  min-width: 1000px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(1),
+.admin-table.admin-table--crawling-video td:nth-child(1) {
+  min-width: 128px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(2),
+.admin-table.admin-table--crawling-video td:nth-child(2) {
+  min-width: 80px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(3),
+.admin-table.admin-table--crawling-video td:nth-child(3) {
+  min-width: 112px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(4),
+.admin-table.admin-table--crawling-video td:nth-child(4) {
+  min-width: 118px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(5),
+.admin-table.admin-table--crawling-video td:nth-child(5) {
+  min-width: 92px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(6),
+.admin-table.admin-table--crawling-video td:nth-child(6) {
+  min-width: 260px;
+}
+
+.admin-table.admin-table--crawling-video th:nth-child(7),
+.admin-table.admin-table--crawling-video td:nth-child(7) {
+  min-width: 120px;
+}
+
+.admin-table.admin-table--crawling-video .admin-table-col-title {
+  max-width: 400px;
+}
+
+/* 스팜 보정: 주문번호·3줄 블록·이슈(고정) 반복 */
+.admin-table.admin-table--crawling-motion {
+  min-width: 1280px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(1),
+.admin-table.admin-table--crawling-motion td:nth-child(1) {
+  min-width: 172px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(2),
+.admin-table.admin-table--crawling-motion td:nth-child(2) {
+  min-width: 200px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(3),
+.admin-table.admin-table--crawling-motion td:nth-child(3) {
+  min-width: 176px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(4),
+.admin-table.admin-table--crawling-motion td:nth-child(4) {
+  min-width: 132px;
+  width: 132px;
+  max-width: 132px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(5),
+.admin-table.admin-table--crawling-motion td:nth-child(5) {
+  min-width: 188px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(6),
+.admin-table.admin-table--crawling-motion td:nth-child(6) {
+  min-width: 132px;
+  width: 132px;
+  max-width: 132px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(7),
+.admin-table.admin-table--crawling-motion td:nth-child(7) {
+  min-width: 168px;
+}
+
+.admin-table.admin-table--crawling-motion th:nth-child(8),
+.admin-table.admin-table--crawling-motion td:nth-child(8) {
+  min-width: 132px;
+  width: 132px;
+  max-width: 132px;
+}
+
+/* 스팜 모청: 청첩장 URL 열 포함 */
+.admin-table.admin-table--crawling-card {
+  min-width: 1160px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(1),
+.admin-table.admin-table--crawling-card td:nth-child(1) {
+  min-width: 128px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(2),
+.admin-table.admin-table--crawling-card td:nth-child(2) {
+  min-width: 84px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(3),
+.admin-table.admin-table--crawling-card td:nth-child(3) {
+  min-width: 120px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(4),
+.admin-table.admin-table--crawling-card td:nth-child(4) {
+  min-width: 120px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(5),
+.admin-table.admin-table--crawling-card td:nth-child(5) {
+  min-width: 92px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(6),
+.admin-table.admin-table--crawling-card td:nth-child(6) {
+  min-width: 340px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(7),
+.admin-table.admin-table--crawling-card td:nth-child(7) {
+  min-width: 118px;
+}
+
+.admin-table.admin-table--crawling-card th:nth-child(8),
+.admin-table.admin-table--crawling-card td:nth-child(8) {
+  min-width: 88px;
+  text-align: center;
 }
 
 /* 상태 열이 3번째인 테이블 (답변 여부 등) */

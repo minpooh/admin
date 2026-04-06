@@ -1434,15 +1434,15 @@ export default function OrderVideoTestPage() {
               <Modal.Close />
             </Modal.Header>
             <Modal.Body>
-              <div className="option-modal__status-grid">
-                <div className="option-modal__status-row">
-                  <span className="option-modal__status-label">현재 파트너사</span>
-                  <span className="option-modal__status-value">{order.partner}</span>
+              <div className="admin-modal-field-grid">
+                <div className="admin-modal-field-row">
+                  <span className="admin-modal-field-label">현재 파트너사</span>
+                  <span className="admin-modal-field-value">{order.partner}</span>
                 </div>
-                <div className="option-modal__status-row">
-                  <span className="option-modal__status-label">변경 파트너사</span>
+                <div className="admin-modal-field-row">
+                  <span className="admin-modal-field-label">변경 파트너사</span>
                   <select
-                    className="option-modal__partner-select"
+                    className="admin-modal-field-control"
                     value={changedPartner}
                     onChange={(e) => setChangedPartner(e.target.value)}
                   >
@@ -1458,14 +1458,14 @@ export default function OrderVideoTestPage() {
             <Modal.Footer>
               <button
                 type="button"
-                className="option-modal__btn option-modal__btn--ghost"
+                className="admin-modal__btn admin-modal__btn--ghost"
                 onClick={closePartnerModal}
               >
                 닫기
               </button>
               <button
                 type="button"
-                className="option-modal__btn option-modal__btn--primary"
+                className="admin-modal__btn admin-modal__btn--primary"
                 onClick={() => confirmPartnerChange(order.id)}
               >
                 변경 저장

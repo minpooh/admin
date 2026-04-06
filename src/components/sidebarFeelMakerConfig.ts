@@ -118,7 +118,7 @@ export const CREATOR_MANAGEMENT = [
 
 export type FeelMakerSectionId =
   | 'orderManagement'
-  | 'crawling'
+  | 'crawlingManagement'
   | 'customerManagement'
   | 'reviewManagement'
   | 'errorManagement'
@@ -140,7 +140,7 @@ export type FeelMakerSectionConfigItem = {
 /** feelmaker 패널에 실제로 표시할 섹션 ID (순서) */
 export const FEELMAKER_SECTION_IDS: FeelMakerSectionId[] = [
   'orderManagement',
-  'crawling',
+  'crawlingManagement',
   'errorManagement',
   'reviewManagement',
   'customerManagement',
@@ -152,7 +152,14 @@ export const FEELMAKER_SECTION_IDS: FeelMakerSectionId[] = [
 
 export const FEELMAKER_SECTION_CONFIG: FeelMakerSectionConfigItem[] = [
   { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'page' },
-  { id: 'crawling', title: '크롤링', icon: HiGlobeAlt, items: CRAWLING, expandable: true, subItemKeyPrefix: 'report' },
+  {
+    id: 'crawlingManagement',
+    title: '크롤링',
+    icon: HiGlobeAlt,
+    items: CRAWLING,
+    expandable: true,
+    subItemKeyPrefix: 'crawling',
+  },
   { id: 'errorManagement', title: '오류관리', icon: HiNoSymbol, items: ERROR_MANAGEMENT, expandable: true },
   { id: 'reviewManagement', title: '문의/후기관리', icon: HiQuestionMarkCircle, items: REVIEW_MANAGEMENT, expandable: false },
   { id: 'customerManagement', title: '고객관리', icon: HiUserCircle, items: CUSTOMER_MANAGEMENT, expandable: true },
