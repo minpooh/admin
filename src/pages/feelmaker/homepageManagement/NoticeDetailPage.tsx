@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Pencil } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
-import { RichTextEditor } from '../../../components/RichTextEditor';
 import '../../../styles/adminPage.css';
 import './NoticePage.css';
+const RichTextEditor = lazy(async () => {
+  const mod = await import('../../../components/RichTextEditor');
+  return { default: mod.RichTextEditor };
+});
+
 import type { NoticeRow } from './mock/notice.mock';
 import { noticeListPath } from './noticePaths';
 
@@ -139,30 +143,32 @@ export default function NoticeDetailPage({
             {!isRichText ? previewContent : undefined}
           </div>
         ) : (
-          <RichTextEditor
-            initialBody={draftContent}
-            onCancel={() => {
-              if (isCreate) {
-                onCancelCreate?.();
-                return;
-              }
-              setDraftContent(row.content);
-              cancelEdit();
-            }}
-            onSave={(html) => {
-              setDraftContent(html);
-              const titleTrim = draftTitle.trim();
-              const authorTrim = draftCreatedBy.trim();
-              onSave({
-                ...row,
-                title: titleTrim || '새 공지',
-                content: html,
-                pinned: draftPinned,
-                createdBy: authorTrim || '관리자',
-              });
-              if (!isCreate) setIsEditing(false);
-            }}
-          />
+          <Suspense fallback={<p className="admin-list-result">에디터 로딩 중...</p>}>
+            <RichTextEditor
+              initialBody={draftContent}
+              onCancel={() => {
+                if (isCreate) {
+                  onCancelCreate?.();
+                  return;
+                }
+                setDraftContent(row.content);
+                cancelEdit();
+              }}
+              onSave={(html) => {
+                setDraftContent(html);
+                const titleTrim = draftTitle.trim();
+                const authorTrim = draftCreatedBy.trim();
+                onSave({
+                  ...row,
+                  title: titleTrim || '새 공지',
+                  content: html,
+                  pinned: draftPinned,
+                  createdBy: authorTrim || '관리자',
+                });
+                if (!isCreate) setIsEditing(false);
+              }}
+            />
+          </Suspense>
         )}
       </section>
     </div>

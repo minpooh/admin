@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Pencil } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
-import { RichTextEditor } from '../../../components/RichTextEditor';
 import '../../../styles/adminPage.css';
 import './EventPage.css';
+const RichTextEditor = lazy(async () => {
+  const mod = await import('../../../components/RichTextEditor');
+  return { default: mod.RichTextEditor };
+});
+
 import type { EventRow } from './mock/event.mock';
 import { eventListPath } from './eventPaths';
 
@@ -232,32 +236,34 @@ export default function EventDetailPage({
             {!isRichText ? previewContent : undefined}
           </div>
         ) : (
-          <RichTextEditor
-            initialBody={draftContent}
-            onCancel={() => {
-              if (isCreate) {
-                onCancelCreate?.();
-                return;
-              }
-              setDraftContent(row.content);
-              cancelEdit();
-            }}
-            onSave={(html) => {
-              setDraftContent(html);
-              const nextPeriod = formatPeriodRange(periodStart, periodEnd) || row.period;
-              const titleTrim = draftTitle.trim();
-              const authorTrim = draftCreatedBy.trim();
-              onSave({
-                ...row,
-                title: titleTrim || '새 이벤트',
-                period: nextPeriod,
-                content: html,
-                exposed: draftExposed,
-                createdBy: authorTrim || '관리자',
-              });
-              if (!isCreate) setIsEditing(false);
-            }}
-          />
+          <Suspense fallback={<p className="admin-list-result">에디터 로딩 중...</p>}>
+            <RichTextEditor
+              initialBody={draftContent}
+              onCancel={() => {
+                if (isCreate) {
+                  onCancelCreate?.();
+                  return;
+                }
+                setDraftContent(row.content);
+                cancelEdit();
+              }}
+              onSave={(html) => {
+                setDraftContent(html);
+                const nextPeriod = formatPeriodRange(periodStart, periodEnd) || row.period;
+                const titleTrim = draftTitle.trim();
+                const authorTrim = draftCreatedBy.trim();
+                onSave({
+                  ...row,
+                  title: titleTrim || '새 이벤트',
+                  period: nextPeriod,
+                  content: html,
+                  exposed: draftExposed,
+                  createdBy: authorTrim || '관리자',
+                });
+                if (!isCreate) setIsEditing(false);
+              }}
+            />
+          </Suspense>
         )}
       </section>
     </div>

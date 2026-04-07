@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowRight, Pencil } from 'lucide-react';
 import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
@@ -7,8 +7,20 @@ import './ReviewPage.css';
 import { pagePath } from '../../../routes';
 import Alert from '../../../components/Alert';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
-import { RichTextEditor, RichTextEditorFrequentReplies, RichTextEditorModeLabel } from '../../../components/RichTextEditor';
 import type { ReviewDetailData, ReviewThreadEntry } from './mock/review.mock';
+const RichTextEditor = lazy(async () => {
+  const mod = await import('../../../components/RichTextEditor');
+  return { default: mod.RichTextEditor };
+});
+const RichTextEditorFrequentReplies = lazy(async () => {
+  const mod = await import('../../../components/RichTextEditor');
+  return { default: mod.RichTextEditorFrequentReplies };
+});
+const RichTextEditorModeLabel = lazy(async () => {
+  const mod = await import('../../../components/RichTextEditor');
+  return { default: mod.RichTextEditorModeLabel };
+});
+
 import { getProductReviewStats, getReviewById } from './mock/review.mock';
 
 const LIST_PATH = pagePath({
@@ -325,19 +337,21 @@ export default function ReviewDetailPage() {
           <p className="inquiry-thread-hint">관리자가 등록한 답변만 표시됩니다.</p>
 
           {replyEditor.status === 'new' && (
-            <RichTextEditor
-              key={`new-${replyEditorNonce}`}
-              initialBody=""
-              renderTop={({ insertPlainText }) => (
-                <>
-                  <RichTextEditorModeLabel variant="new" />
-                  <RichTextEditorFrequentReplies onInsert={insertPlainText} />
-                </>
-              )}
-              onCancel={closeReplyEditor}
-              onSave={(html) => commitReply(html, 'new')}
-              onEmpty={() => setAlertMessage('답변 내용을 입력해주세요.')}
-            />
+            <Suspense fallback={<p className="inquiry-thread-empty">에디터 로딩 중...</p>}>
+              <RichTextEditor
+                key={`new-${replyEditorNonce}`}
+                initialBody=""
+                renderTop={({ insertPlainText }) => (
+                  <>
+                    <RichTextEditorModeLabel variant="new" />
+                    <RichTextEditorFrequentReplies onInsert={insertPlainText} />
+                  </>
+                )}
+                onCancel={closeReplyEditor}
+                onSave={(html) => commitReply(html, 'new')}
+                onEmpty={() => setAlertMessage('답변 내용을 입력해주세요.')}
+              />
+            </Suspense>
           )}
 
           {adminReplies.length === 0 ? (
@@ -367,19 +381,21 @@ export default function ReviewDetailPage() {
                     </div>
                     {isEditingThis ? (
                       <div className="reply-editor-wrap--inline">
-                        <RichTextEditor
-                          key={`edit-${item.id}-${replyEditorNonce}`}
-                          initialBody={item.body}
-                          renderTop={({ insertPlainText }) => (
-                            <>
-                              <RichTextEditorModeLabel variant="edit" />
-                              <RichTextEditorFrequentReplies onInsert={insertPlainText} />
-                            </>
-                          )}
-                          onCancel={closeReplyEditor}
-                          onSave={(html) => commitReply(html, 'edit', item.id)}
-                          onEmpty={() => setAlertMessage('답변 수정 내용을 입력해주세요.')}
-                        />
+                        <Suspense fallback={<p className="inquiry-thread-empty">에디터 로딩 중...</p>}>
+                          <RichTextEditor
+                            key={`edit-${item.id}-${replyEditorNonce}`}
+                            initialBody={item.body}
+                            renderTop={({ insertPlainText }) => (
+                              <>
+                                <RichTextEditorModeLabel variant="edit" />
+                                <RichTextEditorFrequentReplies onInsert={insertPlainText} />
+                              </>
+                            )}
+                            onCancel={closeReplyEditor}
+                            onSave={(html) => commitReply(html, 'edit', item.id)}
+                            onEmpty={() => setAlertMessage('답변 수정 내용을 입력해주세요.')}
+                          />
+                        </Suspense>
                       </div>
                     ) : (
                       <ThreadBody body={item.body} />
