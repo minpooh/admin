@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
-import './confirm.css';
+import './Confirm.css';
 
 type ConfirmProps = {
   open: boolean;

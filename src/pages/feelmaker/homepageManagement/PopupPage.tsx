@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
-import Modal from '../../../components/modal';
+import Modal from '../../../components/Modal';
 import ListSelect from '../../../components/ListSelect';
 import '../../../styles/adminPage.css';
 import './PopupPage.css';

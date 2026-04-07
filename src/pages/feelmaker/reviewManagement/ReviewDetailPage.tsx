@@ -5,7 +5,7 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import './InquiryPage.css';
 import './ReviewPage.css';
 import { pagePath } from '../../../routes';
-import Alert from '../../../components/alert';
+import Alert from '../../../components/Alert';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import { RichTextEditor, RichTextEditorFrequentReplies, RichTextEditorModeLabel } from '../../../components/RichTextEditor';
 import type { ReviewDetailData, ReviewThreadEntry } from './mock/review.mock';

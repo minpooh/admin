@@ -5,7 +5,7 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BarChart3, Clock3, MessageSquareText, Trash2 } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
-import Confirm from '../../../components/confirm';
+import Confirm from '../../../components/Confirm';
 import { pagePath } from '../../../routes';
 import './InquiryPage.css';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';

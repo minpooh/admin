@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import Confirm from '../../../components/confirm';
+import Confirm from '../../../components/Confirm';
 import CrawlingListTemplate, {
   type CrawlingAppliedSearch,
   type CrawlingColumnDef,

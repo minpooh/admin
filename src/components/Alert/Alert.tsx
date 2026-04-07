@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import './alert.css';
+import './Alert.css';
 
 type AlertProps = {
   open: boolean;

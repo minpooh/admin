@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
-import Modal from '../../../components/modal';
-import ModalInput from '../../../components/ModalInput';
+import Modal, { ModalInput } from '../../../components/Modal';
 import CrawlingListTemplate, { type CrawlingColumnDef } from './CrawlingListTemplate';
 import {
   MOCK_STOREFARM_MOTION_ROWS,

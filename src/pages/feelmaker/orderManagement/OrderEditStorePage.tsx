@@ -6,9 +6,9 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import ListSelect from '../../../components/ListSelect';
-import Modal from '../../../components/modal';
-import Confirm from '../../../components/confirm';
-import Toast from '../../../components/toast';
+import Modal from '../../../components/Modal';
+import Confirm from '../../../components/Confirm';
+import Toast from '../../../components/Toast';
 import { MOCK_STORE_EDIT_ORDERS, type StoreEditOrderItem } from './mock/orderEditStore.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;

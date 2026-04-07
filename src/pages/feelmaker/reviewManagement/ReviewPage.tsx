@@ -7,7 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import { FaRegStar, FaStar } from 'react-icons/fa';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import ListSelect from '../../../components/ListSelect';
-import Confirm from '../../../components/confirm';
+import Confirm from '../../../components/Confirm';
 import './ReviewPage.css';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import { pagePath } from '../../../routes';

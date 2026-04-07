@@ -5,8 +5,8 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
-import Modal from '../../../components/modal';
-import Confirm from '../../../components/confirm';
+import Modal from '../../../components/Modal';
+import Confirm from '../../../components/Confirm';
 import ListSelect from '../../../components/ListSelect';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderVideoTest.mock';
 

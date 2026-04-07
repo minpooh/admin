@@ -22,9 +22,9 @@ import {
   FEELFRAME_SECTION_IDS,
   FEELFRAME_SECTION_CONFIG,
 } from './sidebarFeelFrameConfig';
-import { pagePath, isItemActive, type NavId } from '../routes';
+import { pagePath, isItemActive, type NavId } from '../../routes';
 import './Sidebar.css';
-import logo from '../assets/FEEL_logo.png';
+import logo from '../../assets/FEEL_logo.png';
 
 /** feelmaker / feelframe 패널에서 공통으로 쓰는 섹션 ID 타입 */
 type SectionId = FeelMakerSectionId | FeelFrameSectionId;

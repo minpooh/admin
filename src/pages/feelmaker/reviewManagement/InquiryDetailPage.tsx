@@ -5,7 +5,7 @@ import './InquiryPage.css';
 import { pagePath } from '../../../routes';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import { RichTextEditor, RichTextEditorFrequentReplies, RichTextEditorModeLabel } from '../../../components/RichTextEditor';
-import Alert from '../../../components/alert';
+import Alert from '../../../components/Alert';
 import type { InquiryDetailData, InquiryThreadEntry } from './mock/inquiry.mock';
 import { getInquiryById } from './mock/inquiry.mock';
 

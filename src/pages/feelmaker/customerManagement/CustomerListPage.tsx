@@ -4,7 +4,7 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Mail, MessageCircle, Newspaper, QrCode, UserCircle, Users } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
-import Modal from '../../../components/modal';
+import Modal from '../../../components/Modal';
 import '../../../styles/adminPage.css';
 import './CustomerListPage.css';
 import {

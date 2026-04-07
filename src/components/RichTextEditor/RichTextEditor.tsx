@@ -20,7 +20,7 @@ import {
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react';
-import Modal from './modal';
+import Modal from '../Modal';
 import './RichTextEditor.css';
 
 type ImageNodeAttrs = { src?: string; alt?: string };

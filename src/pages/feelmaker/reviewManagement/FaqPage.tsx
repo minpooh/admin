@@ -24,8 +24,8 @@ import {
   FileQuestion,
   CircleHelp,
 } from 'lucide-react';
-import Alert from '../../../components/alert';
-import Confirm from '../../../components/confirm';
+import Alert from '../../../components/Alert';
+import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import './FaqPage.css';
 

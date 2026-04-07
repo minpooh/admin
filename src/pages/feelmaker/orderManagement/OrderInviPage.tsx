@@ -6,8 +6,8 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import ListSelect from '../../../components/ListSelect';
-import Modal from '../../../components/modal';
-import Confirm from '../../../components/confirm';
+import Modal from '../../../components/Modal';
+import Confirm from '../../../components/Confirm';
 import {
   MOCK_INVITE_ORDERS,
   type InviteOrder,
