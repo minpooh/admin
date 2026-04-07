@@ -7,7 +7,6 @@ import { BarChart3, Clock3, MessageSquareText, Trash2 } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/confirm';
 import { pagePath } from '../../../routes';
-import '../orderManagement/OrderListPage.css';
 import './InquiryPage.css';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import InquiryDetailPage from './InquiryDetailPage';

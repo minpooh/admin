@@ -1,10 +1,6 @@
 /**
- * 공통 관리자 목록 페이지: 레이아웃, 필터, 테이블 기본, 페이지네이션
+ * 공통 관리자 목록: 페이지 래퍼, 테이블, 페이지네이션, 목록 전용 유틸
  */
-
-@import './adminSearchField.css';
-@import './adminFilterChips.css';
-@import './adminTwoCol.css';
 
 /* 페이지 래퍼: 배경 없음 */
 .admin-list-page {
@@ -40,731 +36,6 @@
   color: #374151;
   margin: 0;
 }
-
-/* 요약·지표 카드 (목록 상단 통계, 키워드 순위 등) */
-.admin-stat-heading {
-  margin: 0 0 1rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.admin-stat-cards {
-  display: grid;
-  gap: 1rem;
-  align-items: stretch;
-}
-
-.admin-stat-cards > * {
-  min-width: 0;
-}
-
-.admin-stat-cards--1-1-2 {
-  grid-template-columns: 1fr 1fr 2fr;
-}
-
-@media (max-width: 960px) {
-  .admin-stat-cards--1-1-2 {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 공통 카드 섹션 래퍼 (페이지별 카드영역 재사용) */
-.admin-stat-section {
-  margin-bottom: 1.5rem;
-}
-
-.admin-stat-card {
-  border: 1px solid var(--gray-100);
-  border-radius: 16px;
-  padding: 1.5rem;
-  background: #fff;
-  box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.01);
-  min-height: 112px;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.admin-stat-card--auto {
-  min-height: 0;
-}
-
-
-.admin-stat-card__icon {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  margin: 0;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-}
-
-.admin-stat-card__icon svg {
-  display: block;
-}
-
-.admin-stat-card__icon--primary {
-  color: var(--primary-color-600, #2563eb);
-  background: var(--primary-color-100, rgba(59, 130, 246, 0.12));
-  border-color: var(--primary-color-200, rgba(59, 130, 246, 0.18));
-}
-
-.admin-stat-card__icon--warning {
-  color: var(--warning-color-600, #d97706);
-  background: var(--warning-color-100, rgba(217, 119, 6, 0.14));
-  border-color: var(--warning-color-200, rgba(217, 119, 6, 0.2));
-}
-
-.admin-stat-card__icon--success {
-  color: var(--success-color-600, #047857);
-  background: var(--success-color-100, rgba(4, 120, 87, 0.12));
-  border-color: var(--success-color-200, rgba(4, 120, 87, 0.18));
-}
-
-
-.admin-stat-label {
-  margin: 0 0 0.35rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #6b7280;
-}
-
-.admin-stat-value {
-  margin: 0;
-  font-size: 1.75rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: #111827;
-  font-variant-numeric: tabular-nums;
-}
-
-.admin-stat-value--warning {
-  color: var(--warning-color-600, #d97706);
-}
-
-.admin-stat-hint {
-  margin: 0.5rem 0 0;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-.admin-stat-empty {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
-  color: #9ca3af;
-}
-
-.admin-stat-rank-list {
-  list-style: none;
-  margin: 0.25rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  max-height: 140px;
-  overflow: auto;
-}
-
-.admin-stat-rank-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
-  line-height: 1.35;
-}
-
-.admin-stat-rank-name {
-  color: #374151;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.admin-stat-rank-count {
-  flex-shrink: 0;
-  color: #6b7280;
-  font-variant-numeric: tabular-nums;
-}
-
-/* 필터 섹션 공통 */
-.filter-section {
-  margin-bottom: 1.25rem;
-}
-
-.filter-top-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.25rem;
-  align-items: flex-end;
-}
-
-.filter-top-row > * {
-  min-width: 0;
-}
-
-/* 공통: 상세조건 없는 검색조건 박스(4열) */
-.filter-top-row.admin-filter-row--no-detail {
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
-}
-
-/* 하위 호환: 기존 클래스도 동일 동작 */
-.filter-top-row.admin-filter-row--wide {
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
-}
-
-.filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn {
-  width: 100%;
-}
-
-/* 중간 해상도: 2열로 줄여 박스 밖 넘침 방지 */
-@media (max-width: 1280px) {
-  .filter-top-row.admin-filter-row--no-detail,
-  .filter-top-row.admin-filter-row--wide {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: end;
-  }
-
-  .filter-top-row.admin-filter-row--no-detail .date-range-wrap,
-  .filter-top-row.admin-filter-row--wide .date-range-wrap {
-    flex-wrap: wrap;
-  }
-
-  .filter-top-row.admin-filter-row--no-detail .filter-section--search-btn,
-  .filter-top-row.admin-filter-row--wide .filter-section--search-btn {
-    grid-column: 1 / -1;
-  }
-}
-
-.filter-top-row .filter-section {
-  margin-bottom: 0;
-}
-
-@media (max-width: 900px) {
-  .filter-top-row {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-top-row.admin-filter-row--wide {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-top-row.admin-filter-row--no-detail {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 데스크탑에서는 주문일(날짜+프리셋)이 줄바꿈 없이 셀 너비에 맞게 */
-@media (min-width: 901px) {
-  .filter-top-row .date-range-wrap {
-    flex-wrap: nowrap;
-  }
-}
-
-.filter-top-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  align-items: start;
-}
-
-
-.filter-top-actions .detail-search-toggle {
-  width: 100%;
-  justify-content: center;
-}
-
-.filter-section:last-child {
-  margin-bottom: 0;
-}
-
-.filter-label {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.5rem;
-}
-
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.filter-row--spread {
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-/* 필터 버튼: 전체보기/선택 = 검정, 나머지 = 흰색 */
-.filter-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #fff;
-  color: #374151;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.filter-btn:hover {
-  background: #f3f4f6;
-}
-
-.filter-btn.active {
-  background: #111827;
-  border-color: #111827;
-  color: #fff;
-}
-
-.filter-btn--outline {
-  background: #fff;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.filter-btn--primary {
-  background: #111827;
-  color: #fff;
-}
-
-.filter-btn--primary:hover {
-  background: #374151;
-  border-color: #374151;
-}
-
-/* 상세검색 접기/펼치기 */
-.filter-detail {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.25rem;
-  margin-top: 0;
-  margin-bottom: 0;
-
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-
-  transition:
-    max-height 0.28s ease,
-    opacity 0.18s ease,
-    transform 0.18s ease,
-    margin-top 0.28s ease,
-    margin-bottom 0.28s ease;
-}
-
-.filter-detail.filter-detail--expanded {
-  margin-top: 1.25rem;
-  margin-bottom: 1rem;
-  max-height: 2000px; /* 충분히 큰 값 */
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.filter-detail .filter-section {
-  margin-bottom: 0;
-}
-
-/* 상세검색 내 드롭다운은 셀 너비에 맞춤 */
-.filter-detail .filter-select {
-  width: 100%;
-  min-width: 0;
-}
-
-@media (max-width: 900px) {
-  .filter-detail {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .filter-detail {
-    grid-template-columns: 1fr;
-  }
-}
-
-.filter-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.75rem;
-  padding-top: 0;
-  border-top: none;
-}
-
-/* 상세검색 토글 (가운데 텍스트 + 화살표) */
-.detail-search-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--gray-200);
-  border: none;
-  cursor: pointer;
-  color: var(--gray-900);
-  border-radius: 8px;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.detail-search-toggle__text {
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
-.detail-search-toggle__icon {
-  color: var(--gray-700);
-  transition: transform 0.2s ease;
-}
-
-.detail-search-toggle.is-open .detail-search-toggle__icon {
-  transform: rotate(180deg);
-}
-
-.detail-search-toggle:hover {
-  background: var(--gray-100);
-  border-color: var(--gray-300);
-}
-
-/* 날짜 입력 + 범위 버튼 */
-.date-range-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.date-range-pickers {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-  flex: 2 1 0;
-}
-
-.date-range-pickers .date-picker-input {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.date-range-wrap input,
-.date-range-wrap .date-picker-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8125rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
-.date-range-wrap input:focus,
-.date-range-wrap input:focus-visible,
-.date-range-wrap .date-picker-input:focus,
-.date-range-wrap .date-picker-input:focus-visible {
-  outline: none;
-  border-color: var(--gray-300);
-  box-shadow: 0 0 0 3px var(--gray-100);
-}
-
-.date-range-wrap .date-sep {
-  color: #6b7280;
-  font-size: 0.875rem;
-  flex: 0 0 auto;
-}
-
-/* 상세 메타 등: 날짜 범위가 그리드 셀 너비를 쓰도록 */
-.admin-detail-meta__row .date-range-wrap {
-  width: 100%;
-}
-
-/* react-datepicker 캘린더 디자인 오버라이드 */
-.admin-list-datepicker-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.admin-list-datepicker-container .react-datepicker {
-  border-radius: 12px 12px 0 0;
-  border-bottom: none;
-}
-
-.react-datepicker {
-  font-family: inherit;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.react-datepicker__close-icon::after {
-  background-color: #dbeafe;
-  color: #333;
-}
-
-.react-datepicker__header {
-  padding-top: 1rem;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.react-datepicker__header-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-  gap: 0.25rem;
-}
-
-/* 상단 연·월 텍스트 제거, 클릭 가능한 연·월만 표시 */
-.react-datepicker__current-month {
-  display: none;
-}
-
-.react-datepicker__navigation {
-  top: 1rem;
-}
-
-/* 연·월: 클릭 가능한 것만 표시, 헤더와 같은 폰트, 아래 화살표 숨김 */
-.react-datepicker__month-dropdown-container,
-.react-datepicker__year-dropdown-container {
-  margin: 0 0.25rem;
-  position: relative;
-}
-
-.react-datepicker__month-read-view,
-.react-datepicker__year-read-view {
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  user-select: none;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #111827;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-.react-datepicker__month-read-view:hover,
-.react-datepicker__year-read-view:hover {
-  background: #f3f4f6;
-}
-
-.react-datepicker__month-read-view--selected-option,
-.react-datepicker__year-read-view--selected-option {
-  font-weight: 600;
-  color: #111827;
-}
-
-/* 연·월 옆 아래 방향 화살표 숨김 */
-.react-datepicker__month-read-view--down-arrow,
-.react-datepicker__year-read-view--down-arrow,
-.react-datepicker__month-year-read-view--down-arrow {
-  display: none !important;
-}
-
-/* 드롭다운 리스트는 기본 숨김, 열렸을 때만 표시 (라이브러리가 open 시 클래스/표시 처리) */
-.react-datepicker__month-dropdown,
-.react-datepicker__year-dropdown {
-  position: absolute;
-  z-index: 2;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 200px;
-  overflow-y: auto;
-  top: calc(100% + 4px); /* 버튼 바로 아래, 살짝 간격 */
-  left: 0;
-  width: 70px;
-  transform: none;
-  padding: 0.25rem;
-}
-
-.react-datepicker__month-option,
-.react-datepicker__year-option {
-  width: 100%;
-  border-radius: 8px;
-  padding: 0.25rem 0;
-  margin-bottom: 0.25rem;
-  cursor: pointer;
-  font-size: 0.8125rem;
-}
-
-.react-datepicker__month-option:hover,
-.react-datepicker__year-option:hover {
-  background: #f3f4f6;
-}
-
-.react-datepicker__month-option--selected_month,
-.react-datepicker__year-option--selected_year {
-  background: #dbeafe;
-  color: #1e40af;
-  font-weight: 500;
-}
-
-/* 연/월 드롭다운에서 선택된 옵션 위치 조정 */
-.react-datepicker__year-option--selected,
-.react-datepicker__month-option--selected,
-.react-datepicker__month-year-option--selected {
-  display: none;
-}
-
-/* 화살표: 얇고 둥글게 */
-.react-datepicker__navigation-icon::before {
-  border-width: 2px 2px 0 0 !important;
-  border-color: #374151 !important;
-  width: 6px !important;
-  height: 6px !important;
-  top: 50% !important;
-  margin-top: -3px !important;
-  border-radius: 2px;
-}
-
-.react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
-  border-color: #111827 !important;
-}
-
-.react-datepicker__day-names {
-  margin-bottom: 0.25rem;
-}
-
-.react-datepicker__day-name {
-  color: #374151;
-  font-weight: 500;
-  font-size: 0.8125rem;
-}
-
-.react-datepicker__day {
-  border-radius: 50%;
-  font-size: 0.8125rem;
-}
-
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
-  background-color: #dbeafe !important;
-  color: #1e40af;
-  font-weight: 500;
-}
-
-.react-datepicker__day--selected:hover,
-.react-datepicker__day--keyboard-selected:hover {
-  background-color: #bfdbfe !important;
-  color: #1e40af;
-}
-
-/* 선택된 일자(시작/종료)는 기간 색상보다 우선 */
-.react-datepicker__day--selected.react-datepicker__day--in-range,
-.react-datepicker__day--selected.react-datepicker__day--in-selecting-range {
-  background-color: #dbeafe !important;
-  color: #1e40af;
-}
-
-.react-datepicker__day--selected.react-datepicker__day--in-range:hover,
-.react-datepicker__day--selected.react-datepicker__day--in-selecting-range:hover {
-  background-color: #bfdbfe !important;
-  color: #1e40af;
-}
-
-/* 선택된 기간(시작~종료 사이) 색상 */
-.react-datepicker__day--in-range {
-  background-color: #84b0eb !important;
-  color: #fff;
-}
-
-.react-datepicker__day--in-range:hover {
-  background-color: #6a9de6 !important;
-  color: #fff;
-}
-
-/* 기간 변경 시 새로 추가되는 구간 (선택 중인 구간) - #84b0eb 계열 */
-.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range) {
-  background-color: #a8c9f0 !important;
-  color: #fff;
-}
-
-.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range):hover {
-  background-color: #8fb8ed !important;
-  color: #fff;
-}
-
-/* 기간 변경 시 없어지는 구간(이전 선택)은 회색 유지 */
-.react-datepicker__month--selecting-range .react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range),
-.react-datepicker__year--selecting-range .react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range) {
-  background-color: #f0f0f0 !important;
-  color: #000;
-}
-
-.react-datepicker__day--today {
-  font-weight: 600;
-  color: #111827;
-}
-
-.react-datepicker__month-container {
-  padding: 0 0.75rem 0.75rem;
-}
-
-/* 캘린더 푸터: 달력 아래, 오늘(왼쪽) / 닫기(오른쪽) */
-.react-datepicker-custom-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-top: none;
-  background: #fff;
-  border-radius: 0 0 12px 12px;
-  box-sizing: border-box;
-}
-
-.react-datepicker-custom-footer .datepicker-footer-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #111827;
-  color: #fff;
-  transition: background 0.15s;
-}
-
-.react-datepicker-custom-footer .datepicker-footer-btn:hover {
-  background: #374151;
-}
-
-.react-datepicker-custom-footer .datepicker-footer-btn--today {
-  order: 1;
-}
-
-.react-datepicker-custom-footer .datepicker-footer-btn--close {
-  order: 2;
-}
-
-/* 드롭다운만 (pg사, 옵션, 파트너) */
-.filter-select {
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  font-size: 0.8125rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
-  min-width: 120px;
-}
-
 /* 테이블 박스: 패딩 없이 테이블로 꽉 채움 */
 .admin-list-box.admin-list-box--table {
   padding: 0;
@@ -923,6 +194,27 @@
   cursor: not-allowed;
 }
 
+/* 페이지 타이틀 + 우측 액션·추가 버튼 (배너·팝업·공동구매 등) */
+.admin-list-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.admin-list-page-header .page-title {
+  margin: 0;
+}
+
+.admin-list-page-header__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 /* 목록 하단 등: 추가 버튼 (배너/이벤트 등 공통) */
 .admin-list-add-btn {
   display: inline-flex;
@@ -949,8 +241,296 @@
   filter: brightness(0.97);
 }
 
+/* 기본 `.admin-list-add-btn`보다 뒤에 두고, 이중 클래스로 덮어씀 */
+.admin-list-add-btn.admin-list-add-btn--secondary {
+  background: #fff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.admin-list-add-btn.admin-list-add-btn--secondary:hover {
+  filter: none;
+  background: #f9fafb;
+}
+
+.admin-list-add-btn.admin-list-add-btn--secondary:active {
+  filter: none;
+  background: #f3f4f6;
+}
+
 .admin-table .col-center {
   text-align: center;
+}
+
+/* 공통 라벨(구매/가입/스킨/URL/혜택) */
+.list-label {
+  display: inline-block;
+  min-width: 1.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-right: 0.25rem;
+}
+
+.list-value {
+  color: #374151;
+  font-size: 0.8125rem;
+}
+
+/* 테이블 셀 내부: 여러 줄/버튼 공통 */
+/* 전화번호 + 문자발송 버튼 */
+.phone-with-sms {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-start;
+}
+
+.phone-with-sms__number {
+  white-space: nowrap;
+}
+
+.date-with-add {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.date-with-add__btn {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.cell-block--dates {
+  gap: 0.25rem;
+}
+
+/* 셀 내부: 여러 줄/버튼 */
+.cell-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-start;
+}
+
+.cell-block--amount-inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.cell-line {
+  line-height: 1.4;
+}
+
+.cell-line--danger {
+  color: var(--danger-color-500);
+  font-weight: 600;
+}
+
+/* 목록 행 버튼·아이콘·진행 상태 공통 */
+/* 버튼 스타일 (리스트 행 내) - 사진 스타일: 기본 회색, 결제완료 등 그린 pill */
+.row-btn {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 액션 버튼: 연한 회색 배경 + 진한 회색 글자 (사진의 아이콘 스타일) */
+.row-btn--default,
+.row-btn--pink,
+.row-btn--red,
+.row-btn--blue,
+.row-btn--blue-dark,
+.row-btn--yellow,
+.row-btn--gray,
+.row-btn--black {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.row-btn--default:hover,
+.row-btn--pink:hover,
+.row-btn--red:hover,
+.row-btn--blue:hover,
+.row-btn--blue-dark:hover,
+.row-btn--yellow:hover,
+.row-btn--gray:hover,
+.row-btn--black:hover {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+
+/* 아이콘 버튼 (삭제 등) */
+.row-icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.row-icon-btn--danger {
+  background: var(--danger-color-100);
+  color: var(--danger-color-500);
+}
+
+.row-icon-btn--danger:hover {
+  background: var(--danger-color-200);
+}
+
+.row-icon-btn--tone-secondary {
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
+}
+
+.row-icon-btn--tone-secondary:hover {
+  background: var(--secondary-color-200);
+}
+
+.row-icon-btn--tone-primary {
+  background: var(--primary-color-100);
+  color: var(--primary-color-500);
+}
+
+.row-icon-btn--tone-primary:hover {
+  background: var(--primary-color-200);
+}
+
+.row-icon-btn--tone-purple {
+  background: var(--purple-color-100);
+  color: var(--purple-color-500);
+}
+
+.row-icon-btn--tone-purple:hover {
+  background: var(--purple-color-200);
+}
+
+.row-icon-btn--compact {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 3px;
+}
+
+.cell-line--with-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-icon-btn--inline-sm {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+
+/* 결제완료 등 상태 pill: secondary 토큰 */
+.row-btn--green,
+.row-btn--pill-paid {
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
+}
+
+.row-btn--green:hover,
+.row-btn--pill-paid:hover {
+  background: var(--secondary-color-200);
+  color: var(--secondary-color-500);
+}
+
+/* 결제현황 버튼: 상태 dot 색상과 매칭 */
+.row-btn--status-secondary {
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
+}
+
+.row-btn--status-secondary:hover {
+  background: var(--secondary-color-200);
+  color: var(--secondary-color-500);
+}
+
+.row-btn--status-warning {
+  background: var(--warning-color-100);
+  color: var(--warning-color-500);
+}
+
+.row-btn--status-warning:hover {
+  background: var(--warning-color-200);
+  color: var(--warning-color-500);
+}
+
+.row-btn--status-danger {
+  background: var(--danger-color-100);
+  color: var(--danger-color-500);
+}
+
+.row-btn--status-danger:hover {
+  background: var(--danger-color-200);
+  color: var(--danger-color-500);
+}
+
+.row-btn--status-secondary .progress-status__text,
+.row-btn--status-warning .progress-status__text,
+.row-btn--status-danger .progress-status__text {
+  color: inherit;
+}
+
+/* 금액 빨간색 */
+.amount-red {
+  color: #dc2626;
+}
+
+/* 구매경로 파란색 */
+.path-blue {
+  color: #2563eb;
+}
+
+/* 진행현황: 4px 원형 점 + 텍스트 */
+.progress-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.progress-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--warning-color-500);
+  flex: 0 0 auto;
+}
+
+.progress-status--primary .progress-status__dot {
+  background: var(--primary-color-500);
+}
+
+.progress-status--danger .progress-status__dot {
+  background: var(--danger-color-500);
+}
+
+.progress-status--secondary .progress-status__dot {
+  background: var(--secondary-color-500);
+}
+
+.progress-status--warning .progress-status__dot {
+  background: var(--warning-color-500);
+}
+
+.progress-status__text {
+  color: var(--gray-700);
+  font-weight: 600;
 }
 
 /* 테이블 셀: 이름·아이디·연락처 3줄 (크롤링 등 공통) */
@@ -1003,118 +583,6 @@
   display: inline-block;
   white-space: nowrap;
 }
-
-/* 옵션형 모달 본문: 라벨·값 2열 그리드 (파트너 변경·연락처 변경 등, option-modal__status-* 와 동일 규칙) */
-.admin-modal-field-grid,
-.option-modal__status-grid {
-  margin-top: 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fafafa;
-}
-
-.admin-modal-field-row,
-.option-modal__status-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0;
-}
-
-.admin-modal-field-row + .admin-modal-field-row,
-.option-modal__status-row + .option-modal__status-row,
-.admin-modal-field-row + .option-modal__status-row,
-.option-modal__status-row + .admin-modal-field-row {
-  border-top: 1px solid #e5e7eb;
-}
-
-.admin-modal-field-label,
-.option-modal__status-label {
-  font-size: 0.8125rem;
-  color: #6b7280;
-}
-
-.admin-modal-field-value,
-.option-modal__status-value {
-  font-size: 0.875rem;
-  color: #111827;
-  font-weight: 600;
-}
-
-.admin-modal-field-control,
-.option-modal__partner-select {
-  width: 160px;
-  height: 34px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 0 10px;
-  font-size: 0.875rem;
-  color: #111827;
-  background: #fff;
-}
-
-.admin-modal-field-control:focus,
-.option-modal__partner-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-}
-
-/* 옵션형 모달 푸터·버튼 (option-modal__footer / __btn 와 동일) */
-.admin-modal__footer,
-.option-modal__footer {
-  padding: 14px 18px 18px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.admin-modal__btn,
-.option-modal__btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.admin-modal__btn--ghost,
-.option-modal__btn--ghost {
-  background: #f3f4f6;
-  color: #111827;
-}
-
-.admin-modal__btn--ghost:hover,
-.option-modal__btn--ghost:hover {
-  background: #e5e7eb;
-}
-
-.admin-modal__btn--primary,
-.option-modal__btn--primary {
-  background: #111827;
-  color: #fff;
-}
-
-.admin-modal__btn--primary:hover,
-.option-modal__btn--primary:hover {
-  background: #0b1220;
-}
-
-.admin-modal__btn--danger,
-.option-modal__btn--danger {
-  background: #ef4444;
-  color: #fff;
-}
-
-.admin-modal__btn--danger:hover,
-.option-modal__btn--danger:hover {
-  background: #dc2626;
-}
-
 /* 보조 텍스트(회원 ID 등) */
 .admin-list-muted {
   color: #6b7280;
@@ -1310,146 +778,6 @@ button.admin-link {
   white-space: nowrap;
 }
 
-/* 상세 화면: 헤더·메타·본문 블록 (목록 외 공통) */
-.admin-detail-header {
-  margin-bottom: 0.25rem;
-}
-
-.admin-detail-back {
-  display: inline-block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #6b7280;
-  text-decoration: none;
-  margin-bottom: 0.5rem;
-}
-
-.admin-detail-back:hover {
-  color: #111827;
-  text-decoration: underline;
-}
-
-.admin-detail-id {
-  font-size: 0.8125rem;
-  color: #6b7280;
-  margin: 0 0 0.5rem;
-}
-
-.admin-detail-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: 0 0 1rem;
-  color: #111827;
-}
-
-/* 상세·모달 등 단일 줄 텍스트 입력 (검색 필드 입력과 동일 토큰) */
-.admin-inline-input {
-  display: block;
-  width: 100%;
-  max-width: 560px;
-  margin: 0 0 1rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8125rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-sizing: border-box;
-  background: #fff;
-  color: #111827;
-}
-
-.admin-inline-input:focus,
-.admin-inline-input:focus-visible {
-  outline: none;
-  border-color: var(--gray-300);
-  box-shadow: 0 0 0 3px var(--gray-100);
-}
-
-.admin-detail-meta {
-  margin: 0;
-  display: grid;
-  gap: 0.75rem;
-}
-
-.admin-detail-meta__row {
-  display: grid;
-  grid-template-columns: 88px 1fr;
-  gap: 0.75rem;
-  align-items: start;
-  font-size: 0.875rem;
-}
-
-.admin-detail-meta__row dt {
-  color: #6b7280;
-  margin: 0;
-  font-weight: 500;
-}
-
-.admin-detail-meta__row dd {
-  margin: 0;
-}
-
-.admin-detail-section-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem;
-  color: #374151;
-}
-
-.admin-detail-preview-head {
-  margin-bottom: 0.75rem;
-}
-
-.admin-detail-preview-head .admin-detail-section-title {
-  margin-bottom: 0;
-}
-
-.admin-detail-body {
-  white-space: pre-wrap;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: #374151;
-  margin: 0;
-}
-
-.admin-detail-notice {
-  margin: 0.75rem 0 0;
-  font-size: 0.875rem;
-}
-
-.admin-detail-notice a {
-  color: var(--primary-color-500, #2563eb);
-  font-weight: 500;
-}
-
-.admin-status-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.admin-status-pill--대기 {
-  background: #fef3c7;
-  color: #b45309;
-}
-
-.admin-status-pill--처리중 {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.admin-status-pill--답변완료 {
-  background: #d1fae5;
-  color: #047857;
-}
-
-.admin-status-pill--미답변 {
-  background: var(--warning-color-100);
-  color: var(--warning-color-500);
-}
-
 /* 테이블 직하단: .admin-list-table-footer > .admin-table-pagination > .pagination-inner */
 .admin-list-table-footer {
   width: 100%;
@@ -1460,73 +788,4 @@ button.admin-link {
   display: flex;
   justify-content: flex-end;
   margin-top: 1rem;
-}
-
-/* 상세: 뱃지 + 제목 한 줄 */
-.admin-detail-title-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-}
-
-.admin-detail-title-row__text {
-  flex: 1;
-  min-width: 0;
-}
-
-/* 상세: 제목 편집 — 좁은 ListSelect(7rem) + 제목 입력 */
-.admin-detail-title-edit {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem 0.75rem;
-  margin-bottom: 1rem;
-  max-width: 100%;
-}
-
-.admin-detail-title-edit .admin-detail-title-edit__select {
-  flex-shrink: 0;
-  width: 7rem;
-}
-
-.admin-detail-title-edit .admin-detail-title-edit__select .listselect__trigger {
-  min-height: 38px;
-}
-
-.admin-detail-title-edit .admin-detail-title-edit__input {
-  flex: 1;
-  min-width: 12rem;
-  max-width: none;
-  margin: 0;
-}
-
-/* 수정 모드: 첫 줄 선택 너비(7rem)에 맞춘 메타 그리드 */
-.admin-detail-meta--aligned .admin-detail-meta__row {
-  grid-template-columns: 7rem minmax(0, 1fr);
-  column-gap: 0.75rem;
-}
-
-.admin-detail-meta--aligned .admin-detail-meta__row dd {
-  min-width: 0;
-}
-
-.admin-detail-meta--aligned .date-range-wrap {
-  width: 100%;
-}
-
-.admin-detail-meta--aligned .date-range-pickers {
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-.admin-detail-author-input {
-  margin: 0;
-  max-width: 20rem;
-}
-
-.admin-detail-meta--aligned .admin-detail-author-input {
-  max-width: none;
-  width: 100%;
-  box-sizing: border-box;
 }

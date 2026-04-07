@@ -1,0 +1,162 @@
+/* 공동구매 관리 목록 테이블 — 열별 값 특성에 맞춘 최소 너비 (전역 .admin-table nth-child 오버라이드) */
+.admin-list-page--group-buy .admin-table {
+  min-width: 1020px;
+}
+
+/* 1 공구팀명 */
+.admin-list-page--group-buy .admin-table th:nth-child(1),
+.admin-list-page--group-buy .admin-table td:nth-child(1) {
+  min-width: 12rem;
+}
+
+/* 2 참여코드 6자리 */
+.admin-list-page--group-buy .admin-table th:nth-child(2),
+.admin-list-page--group-buy .admin-table td:nth-child(2) {
+  min-width: 4.75rem;
+}
+
+/* 3 공구장 */
+.admin-list-page--group-buy .admin-table th:nth-child(3),
+.admin-list-page--group-buy .admin-table td:nth-child(3) {
+  min-width: 4.25rem;
+}
+
+/* 4 혜택 내용 */
+.admin-list-page--group-buy .admin-table th:nth-child(4),
+.admin-list-page--group-buy .admin-table td:nth-child(4) {
+  min-width: 13.5rem;
+}
+
+/* 5·6 시작·마감 일시 (yyyy-MM-dd HH:mm) */
+.admin-list-page--group-buy .admin-table th:nth-child(5),
+.admin-list-page--group-buy .admin-table td:nth-child(5),
+.admin-list-page--group-buy .admin-table th:nth-child(6),
+.admin-list-page--group-buy .admin-table td:nth-child(6) {
+  min-width: 9.5rem;
+}
+
+/* 7 참여자 수 */
+.admin-list-page--group-buy .admin-table th:nth-child(7),
+.admin-list-page--group-buy .admin-table td:nth-child(7) {
+  min-width: 3rem;
+  text-align: center;
+}
+
+/* 8 진행현황 */
+.admin-list-page--group-buy .admin-table th:nth-child(8),
+.admin-list-page--group-buy .admin-table td:nth-child(8) {
+  min-width: 5.25rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 9 인원추가 */
+.admin-list-page--group-buy .admin-table th:nth-child(9),
+.admin-list-page--group-buy .admin-table td:nth-child(9) {
+  min-width: 4.25rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 검색: 시작날짜·마감날짜 (날짜만) */
+.admin-list-page--group-buy .date-range-pickers .date-picker-input {
+  min-width: 9rem;
+}
+
+.admin-list-page--group-buy .admin-table-empty-cell {
+  text-align: center;
+  padding: 20px;
+}
+
+/* 혜택 내용 */
+.admin-list-page--group-buy .group-buy-table__benefit-cell {
+  min-height: 5.5rem;
+}
+
+.group-buy-benefit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: #374151;
+}
+
+.group-buy-benefit-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.group-buy-benefit-list .list-label {
+  flex: 0 0 3.8rem;
+  margin-right: 0;
+}
+
+.group-buy-benefit-list__value {
+  color: #111827;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* 진행현황: 마감(비활성) — 회색 버튼, 클릭 불가 */
+.admin-list-page--group-buy .group-buy-progress-btn--closed:disabled {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+/* 참여자 상세 모달 */
+.group-buy-participant-modal__lead {
+  margin-top: 0;
+}
+
+/* 공동구매 추가 모달 */
+.group-buy-add-group-modal .admin-modal-field-row--align-start {
+  align-items: flex-start;
+}
+
+.group-buy-add-group-modal .admin-modal-field-row--align-start .admin-modal-field-label {
+  padding-top: 6px;
+}
+
+.group-buy-add-group-modal__date-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--admin-modal-control-max, 220px);
+}
+
+.group-buy-add-group-modal__date-wrap .admin-modal-datepicker__pickers {
+  width: 100%;
+}
+
+/* 인원 추가 모달 */
+.group-buy-add-member-modal .admin-modal-field-row--align-start {
+  align-items: flex-start;
+}
+
+.group-buy-add-member-modal .admin-modal-field-row--align-start .admin-modal-field-label {
+  padding-top: 6px;
+}
+
+.group-buy-add-member-modal__section-label {
+  margin: 18px 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.group-buy-add-member-modal .admin-modal-field-value {
+  max-width: 65%;
+  text-align: right;
+  word-break: break-word;
+}
+
+.group-buy-add-member-modal .admin-modal-field-control {
+  width: min(100%, var(--admin-modal-control-max, 220px));
+}
+
+.group-buy-add-member-modal .admin-modal-datepicker {
+  max-width: min(100%, var(--admin-modal-control-max, 220px));
+}

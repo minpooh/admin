@@ -80,5 +80,12 @@ registerPage('feelmaker/errorManagement/storefarmError', StorefarmErrorPage);
 registerPage('feelmaker/errorManagement/orderError', OrderErrorPage);
 registerPage('feelmaker/errorManagement/delayError', DelayErrorPage);
 
+import CustomerListPage from './feelmaker/customerManagement/CustomerListPage';
+import CouponListPage from './feelmaker/customerManagement/CouponListPage';
+import GroupListPage from './feelmaker/customerManagement/GroupListPage';
+registerPage('feelmaker/customerManagement/customerList', CustomerListPage);
+registerPage('feelmaker/customerManagement/couponList', CouponListPage);
+registerPage('feelmaker/customerManagement/groupList', GroupListPage);
+
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ListSelect from '../../../components/ListSelect';
-import '../../../styles/adminListPage.css';
+import '../../../styles/adminPage.css';
 
 const SEARCH_CONDITION_OPTIONS = [
   { value: 'all', label: '전체' },

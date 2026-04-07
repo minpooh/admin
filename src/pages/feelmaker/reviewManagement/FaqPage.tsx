@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import Alert from '../../../components/alert';
 import Confirm from '../../../components/confirm';
-import '../../../styles/adminListPage.css';
+import '../../../styles/adminPage.css';
 import './FaqPage.css';
 
 type CategoryId = string;

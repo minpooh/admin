@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import Modal from '../../../components/modal';
+import ModalInput from '../../../components/ModalInput';
 import CrawlingListTemplate, { type CrawlingColumnDef } from './CrawlingListTemplate';
 import {
   MOCK_STOREFARM_MOTION_ROWS,
@@ -8,7 +9,6 @@ import {
   type MotionPersonLines,
   type StorefarmMotionRow,
 } from './mock/storefarmCrawling.mock';
-import '../orderManagement/OrderListPage.css';
 
 function flattenTriple(p: MotionPersonLines) {
   return `${p.userId} ${p.name} ${p.phone}`;
@@ -197,10 +197,9 @@ export default function StorefarmMotionPage() {
               </div>
               <div className="admin-modal-field-row">
                 <span className="admin-modal-field-label">변경 연락처</span>
-                <input
+                <ModalInput
                   id="motion-contact-new"
                   type="tel"
-                  className="admin-modal-field-control"
                   value={contactDraft}
                   onChange={(e) => setContactDraft(e.target.value)}
                   placeholder="010-0000-0000"

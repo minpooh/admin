@@ -50,6 +50,8 @@ type ModalProps = {
   children: ReactNode;
   variant?: ModalVariant;
   closeButtonAriaLabel?: string;
+  /** 패널에 추가 클래스 (예: 넓은 테이블용 `option-modal__panel--wide`) */
+  panelClassName?: string;
 };
 
 type ModalContextValue = {
@@ -73,6 +75,7 @@ function ModalRoot({
   children,
   variant = 'app',
   closeButtonAriaLabel = '닫기',
+  panelClassName,
 }: ModalProps) {
   useEffect(() => {
     if (!open) return;
@@ -96,7 +99,10 @@ function ModalRoot({
         aria-label={ariaLabel}
         onMouseDown={() => onClose()}
       >
-        <div className={classNames.panel} onMouseDown={(e) => e.stopPropagation()}>
+        <div
+          className={[classNames.panel, panelClassName].filter(Boolean).join(' ')}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
           {children}
         </div>
       </div>

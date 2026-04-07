@@ -1,4 +1,4 @@
-@import '../../../styles/adminListPage.css';
+@import '../../../styles/adminPage.css';
 
 
 /* 체험영상 목록 전용 컬럼 폭 (구매영상 목록 영향 방지) */
@@ -201,67 +201,6 @@
   min-width: 72px;
 }
 
-/* 구매/가입 채널 한 칸 */
-.cell-block--channels .channel-label {
-  display: inline-block;
-  min-width: 1.75rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: #6b7280;
-  margin-right: 0.25rem;
-}
-
-/* 전화번호 + 문자발송 버튼 */
-.phone-with-sms {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: flex-start;
-}
-
-.phone-with-sms__number {
-  white-space: nowrap;
-}
-
-.date-with-add {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.date-with-add__btn {
-  flex-shrink: 0;
-  margin-top: 0.1rem;
-}
-
-.cell-block--dates {
-  gap: 0.25rem;
-}
-
-/* 셀 내부: 여러 줄/버튼 */
-.cell-block {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: flex-start;
-}
-
-.cell-block--amount-inline {
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.5rem;
-}
-
-.cell-line {
-  line-height: 1.4;
-}
-
-.cell-line--danger {
-  color: var(--danger-color-500);
-  font-weight: 600;
-}
-
 /* 추가옵션 드롭다운 (⋯) */
 .row-options {
   position: relative;
@@ -367,6 +306,10 @@
   overflow: hidden;
 }
 
+.option-modal__panel.option-modal__panel--wide {
+  max-width: min(96vw, 960px);
+}
+
 .option-modal__header {
   display: flex;
   align-items: center;
@@ -418,7 +361,7 @@
   color: #6b7280;
 }
 
-/* 필드 그리드·푸터·기본 버튼: adminListPage.css 의 .admin-modal-field-* / .admin-modal__* 와 공통 정의 */
+/* 필드 그리드·푸터·기본 버튼: adminModal.css 의 .admin-modal-field-* / .admin-modal__* 와 공통 정의 */
 
 .option-modal__amount-input {
   width: 160px;
@@ -792,111 +735,6 @@
   min-width: 0;
 }
 
-/* 버튼 스타일 (리스트 행 내) - 사진 스타일: 기본 회색, 결제완료 등 그린 pill */
-.row-btn {
-  padding: 0.35rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-/* 액션 버튼: 연한 회색 배경 + 진한 회색 글자 (사진의 아이콘 스타일) */
-.row-btn--default,
-.row-btn--pink,
-.row-btn--red,
-.row-btn--blue,
-.row-btn--blue-dark,
-.row-btn--yellow,
-.row-btn--gray,
-.row-btn--black {
-  background: var(--gray-100);
-  color: var(--gray-500);
-}
-
-.row-btn--default:hover,
-.row-btn--pink:hover,
-.row-btn--red:hover,
-.row-btn--blue:hover,
-.row-btn--blue-dark:hover,
-.row-btn--yellow:hover,
-.row-btn--gray:hover,
-.row-btn--black:hover {
-  background: var(--gray-200);
-  color: var(--gray-700);
-}
-
-/* 아이콘 버튼 (삭제 등) */
-.row-icon-btn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.row-icon-btn--danger {
-  background: var(--danger-color-100);
-  color: var(--danger-color-500);
-}
-
-.row-icon-btn--danger:hover {
-  background: var(--danger-color-200);
-}
-
-.row-icon-btn--tone-secondary {
-  background: var(--secondary-color-100);
-  color: var(--secondary-color-500);
-}
-
-.row-icon-btn--tone-secondary:hover {
-  background: var(--secondary-color-200);
-}
-
-.row-icon-btn--tone-primary {
-  background: var(--primary-color-100);
-  color: var(--primary-color-500);
-}
-
-.row-icon-btn--tone-primary:hover {
-  background: var(--primary-color-200);
-}
-
-.row-icon-btn--tone-purple {
-  background: var(--purple-color-100);
-  color: var(--purple-color-500);
-}
-
-.row-icon-btn--tone-purple:hover {
-  background: var(--purple-color-200);
-}
-
-.row-icon-btn--compact {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 3px;
-}
-
-.cell-line--with-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.row-icon-btn--inline-sm {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-}
-
 .admin-list-page--video-mix .admin-table {
   min-width: 1280px;
 }
@@ -996,103 +834,6 @@
 .admin-list-page--invi .admin-table td:nth-child(11) {
   width: 72px;
   min-width: 72px;
-}
-
-/* 결제완료 등 상태 pill: secondary 토큰 */
-.row-btn--green,
-.row-btn--pill-paid {
-  background: var(--secondary-color-100);
-  color: var(--secondary-color-500);
-}
-
-.row-btn--green:hover,
-.row-btn--pill-paid:hover {
-  background: var(--secondary-color-200);
-  color: var(--secondary-color-500);
-}
-
-/* 결제현황 버튼: 상태 dot 색상과 매칭 */
-.row-btn--status-secondary {
-  background: var(--secondary-color-100);
-  color: var(--secondary-color-500);
-}
-
-.row-btn--status-secondary:hover {
-  background: var(--secondary-color-200);
-  color: var(--secondary-color-500);
-}
-
-.row-btn--status-warning {
-  background: var(--warning-color-100);
-  color: var(--warning-color-500);
-}
-
-.row-btn--status-warning:hover {
-  background: var(--warning-color-200);
-  color: var(--warning-color-500);
-}
-
-.row-btn--status-danger {
-  background: var(--danger-color-100);
-  color: var(--danger-color-500);
-}
-
-.row-btn--status-danger:hover {
-  background: var(--danger-color-200);
-  color: var(--danger-color-500);
-}
-
-.row-btn--status-secondary .progress-status__text,
-.row-btn--status-warning .progress-status__text,
-.row-btn--status-danger .progress-status__text {
-  color: inherit;
-}
-
-/* 금액 빨간색 */
-.amount-red {
-  color: #dc2626;
-}
-
-/* 구매경로 파란색 */
-.path-blue {
-  color: #2563eb;
-}
-
-/* 진행현황: 4px 원형 점 + 텍스트 */
-.progress-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.progress-status__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--warning-color-500);
-  flex: 0 0 auto;
-}
-
-.progress-status--primary .progress-status__dot {
-  background: var(--primary-color-500);
-}
-
-.progress-status--danger .progress-status__dot {
-  background: var(--danger-color-500);
-}
-
-.progress-status--secondary .progress-status__dot {
-  background: var(--secondary-color-500);
-}
-
-.progress-status--warning .progress-status__dot {
-  background: var(--warning-color-500);
-}
-
-.progress-status__text {
-  color: var(--gray-700);
-  font-weight: 600;
 }
 
 /* 페이지네이션: 가운데 정렬, 왼쪽 글씨 없음 */

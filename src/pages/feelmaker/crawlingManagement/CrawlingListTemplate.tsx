@@ -3,8 +3,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import ListSelect from '../../../components/ListSelect';
-import '../../../styles/adminListPage.css';
-import '../orderManagement/OrderListPage.css';
+import '../../../styles/adminPage.css';
 
 export type CrawlingAppliedSearch = {
   dateRange: string;
@@ -47,7 +46,7 @@ function isAppliedSearchEmpty(s: CrawlingAppliedSearch, detailSearchEnabled: boo
 export type CrawlingColumnDef<T> = {
   header: string;
   render: (row: T) => ReactNode;
-  /** th·td 공통 (예: adminListPage의 col-center) */
+  /** th·td 공통 (예: adminListPage.css 의 col-center) */
   columnClassName?: string;
 };
 

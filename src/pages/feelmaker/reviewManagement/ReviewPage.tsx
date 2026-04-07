@@ -8,7 +8,6 @@ import { FaRegStar, FaStar } from 'react-icons/fa';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/confirm';
-import '../orderManagement/OrderListPage.css';
 import './ReviewPage.css';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import { pagePath } from '../../../routes';

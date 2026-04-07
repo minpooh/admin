@@ -1,0 +1,265 @@
+/**
+ * react-datepicker 캘린더 (목록 필터·기간 선택 등)
+ */
+
+/* react-datepicker 캘린더 디자인 오버라이드 */
+.admin-list-datepicker-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-list-datepicker-container .react-datepicker {
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.react-datepicker__close-icon::after {
+  background-color: #dbeafe;
+  color: #333;
+}
+
+.react-datepicker__header {
+  padding-top: 1rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.react-datepicker__header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+}
+
+/* 상단 연·월 텍스트 제거, 클릭 가능한 연·월만 표시 */
+.react-datepicker__current-month {
+  display: none;
+}
+
+.react-datepicker__navigation {
+  top: 1rem;
+}
+
+/* 연·월: 클릭 가능한 것만 표시, 헤더와 같은 폰트, 아래 화살표 숨김 */
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container {
+  margin: 0 0.25rem;
+  position: relative;
+}
+
+.react-datepicker__month-read-view,
+.react-datepicker__year-read-view {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.react-datepicker__month-read-view:hover,
+.react-datepicker__year-read-view:hover {
+  background: #f3f4f6;
+}
+
+.react-datepicker__month-read-view--selected-option,
+.react-datepicker__year-read-view--selected-option {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* 연·월 옆 아래 방향 화살표 숨김 */
+.react-datepicker__month-read-view--down-arrow,
+.react-datepicker__year-read-view--down-arrow,
+.react-datepicker__month-year-read-view--down-arrow {
+  display: none !important;
+}
+
+/* 드롭다운 리스트는 기본 숨김, 열렸을 때만 표시 (라이브러리가 open 시 클래스/표시 처리) */
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  position: absolute;
+  z-index: 2;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  top: calc(100% + 4px); /* 버튼 바로 아래, 살짝 간격 */
+  left: 0;
+  width: 70px;
+  transform: none;
+  padding: 0.25rem;
+}
+
+.react-datepicker__month-option,
+.react-datepicker__year-option {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0.25rem 0;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+
+.react-datepicker__month-option:hover,
+.react-datepicker__year-option:hover {
+  background: #f3f4f6;
+}
+
+.react-datepicker__month-option--selected_month,
+.react-datepicker__year-option--selected_year {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+/* 연/월 드롭다운에서 선택된 옵션 위치 조정 */
+.react-datepicker__year-option--selected,
+.react-datepicker__month-option--selected,
+.react-datepicker__month-year-option--selected {
+  display: none;
+}
+
+/* 화살표: 얇고 둥글게 */
+.react-datepicker__navigation-icon::before {
+  border-width: 2px 2px 0 0 !important;
+  border-color: #374151 !important;
+  width: 6px !important;
+  height: 6px !important;
+  top: 50% !important;
+  margin-top: -3px !important;
+  border-radius: 2px;
+}
+
+.react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #111827 !important;
+}
+
+.react-datepicker__day-names {
+  margin-bottom: 0.25rem;
+}
+
+.react-datepicker__day-name {
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+.react-datepicker__day {
+  border-radius: 50%;
+  font-size: 0.8125rem;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #dbeafe !important;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--keyboard-selected:hover {
+  background-color: #bfdbfe !important;
+  color: #1e40af;
+}
+
+/* 선택된 일자(시작/종료)는 기간 색상보다 우선 */
+.react-datepicker__day--selected.react-datepicker__day--in-range,
+.react-datepicker__day--selected.react-datepicker__day--in-selecting-range {
+  background-color: #dbeafe !important;
+  color: #1e40af;
+}
+
+.react-datepicker__day--selected.react-datepicker__day--in-range:hover,
+.react-datepicker__day--selected.react-datepicker__day--in-selecting-range:hover {
+  background-color: #bfdbfe !important;
+  color: #1e40af;
+}
+
+/* 선택된 기간(시작~종료 사이) 색상 */
+.react-datepicker__day--in-range {
+  background-color: #84b0eb !important;
+  color: #fff;
+}
+
+.react-datepicker__day--in-range:hover {
+  background-color: #6a9de6 !important;
+  color: #fff;
+}
+
+/* 기간 변경 시 새로 추가되는 구간 (선택 중인 구간) - #84b0eb 계열 */
+.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range) {
+  background-color: #a8c9f0 !important;
+  color: #fff;
+}
+
+.react-datepicker__day--in-selecting-range:not(.react-datepicker__day--in-range):hover {
+  background-color: #8fb8ed !important;
+  color: #fff;
+}
+
+/* 기간 변경 시 없어지는 구간(이전 선택)은 회색 유지 */
+.react-datepicker__month--selecting-range .react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range),
+.react-datepicker__year--selecting-range .react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range) {
+  background-color: #f0f0f0 !important;
+  color: #000;
+}
+
+.react-datepicker__day--today {
+  font-weight: 600;
+  color: #111827;
+}
+
+.react-datepicker__month-container {
+  padding: 0 0.75rem 0.75rem;
+}
+
+/* 캘린더 푸터: 달력 아래, 오늘(왼쪽) / 닫기(오른쪽) */
+.react-datepicker-custom-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  box-sizing: border-box;
+}
+
+.react-datepicker-custom-footer .datepicker-footer-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #111827;
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.react-datepicker-custom-footer .datepicker-footer-btn:hover {
+  background: #374151;
+}
+
+.react-datepicker-custom-footer .datepicker-footer-btn--today {
+  order: 1;
+}
+
+.react-datepicker-custom-footer .datepicker-footer-btn--close {
+  order: 2;
+}

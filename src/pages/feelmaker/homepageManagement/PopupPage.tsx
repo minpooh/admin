@@ -2,8 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/modal';
 import ListSelect from '../../../components/ListSelect';
-import '../../../styles/adminListPage.css';
-import '../orderManagement/OrderListPage.css';
+import '../../../styles/adminPage.css';
 import './PopupPage.css';
 
 type PopupRow = {
@@ -337,6 +336,7 @@ export default function PopupPage() {
                   </label>
                   <ListSelect
                     ariaLabel="노출여부"
+                    className="listselect--modal"
                     value={draftExposed ? 'exposed' : 'hidden'}
                     onChange={(next) => setDraftExposed(next === 'exposed')}
                     options={[
@@ -352,6 +352,7 @@ export default function PopupPage() {
                   </label>
                   <ListSelect
                     ariaLabel="노출화면"
+                    className="listselect--modal"
                     value={draftScreen === '메인' ? 'main' : 'list'}
                     onChange={(next) => setDraftScreen(next === 'main' ? '메인' : '리스트')}
                     options={[
@@ -367,6 +368,7 @@ export default function PopupPage() {
                   </label>
                   <ListSelect
                     ariaLabel="노출카테고리"
+                    className="listselect--modal"
                     value={
                       draftCategory === '전체'
                         ? 'all'

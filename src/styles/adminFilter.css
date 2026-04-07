@@ -1,0 +1,304 @@
+/**
+ * 목록·상세 공통 필터 영역 (검색 조건, 날짜 범위 입력)
+ */
+
+/* 필터 섹션 공통 */
+.filter-section {
+  margin-bottom: 1.25rem;
+}
+
+.filter-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  align-items: flex-end;
+}
+
+.filter-top-row > * {
+  min-width: 0;
+}
+
+/* 공통: 상세조건 없는 검색조건 박스(4열) */
+.filter-top-row.admin-filter-row--no-detail {
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
+}
+
+/* 하위 호환: 기존 클래스도 동일 동작 */
+.filter-top-row.admin-filter-row--wide {
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
+}
+
+.filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn {
+  width: 100%;
+}
+
+/* 중간 해상도: 2열로 줄여 박스 밖 넘침 방지 */
+@media (max-width: 1280px) {
+  .filter-top-row.admin-filter-row--no-detail,
+  .filter-top-row.admin-filter-row--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail .date-range-wrap,
+  .filter-top-row.admin-filter-row--wide .date-range-wrap {
+    flex-wrap: wrap;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail .filter-section--search-btn,
+  .filter-top-row.admin-filter-row--wide .filter-section--search-btn {
+    grid-column: 1 / -1;
+  }
+}
+
+.filter-top-row .filter-section {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .filter-top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-top-row.admin-filter-row--wide {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-top-row.admin-filter-row--no-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 데스크탑에서는 주문일(날짜+프리셋)이 줄바꿈 없이 셀 너비에 맞게 */
+@media (min-width: 901px) {
+  .filter-top-row .date-range-wrap {
+    flex-wrap: nowrap;
+  }
+}
+
+.filter-top-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+
+.filter-top-actions .detail-search-toggle {
+  width: 100%;
+  justify-content: center;
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-row--spread {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 필터 버튼: 전체보기/선택 = 검정, 나머지 = 흰색 */
+.filter-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: #374151;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.filter-btn:hover {
+  background: #f3f4f6;
+}
+
+.filter-btn.active {
+  background: #111827;
+  border-color: #111827;
+  color: #fff;
+}
+
+.filter-btn--outline {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.filter-btn--primary {
+  background: #111827;
+  color: #fff;
+}
+
+.filter-btn--primary:hover {
+  background: #374151;
+  border-color: #374151;
+}
+
+/* 상세검색 접기/펼치기 */
+.filter-detail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+
+  transition:
+    max-height 0.28s ease,
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    margin-top 0.28s ease,
+    margin-bottom 0.28s ease;
+}
+
+.filter-detail.filter-detail--expanded {
+  margin-top: 1.25rem;
+  margin-bottom: 1rem;
+  max-height: 2000px; /* 충분히 큰 값 */
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.filter-detail .filter-section {
+  margin-bottom: 0;
+}
+
+/* 상세검색 내 드롭다운은 셀 너비에 맞춤 */
+.filter-detail .filter-select {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .filter-detail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .filter-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* 상세검색 토글 (가운데 텍스트 + 화살표) */
+.detail-search-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--gray-200);
+  border: none;
+  cursor: pointer;
+  color: var(--gray-900);
+  border-radius: 8px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.detail-search-toggle__text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.detail-search-toggle__icon {
+  color: var(--gray-700);
+  transition: transform 0.2s ease;
+}
+
+.detail-search-toggle.is-open .detail-search-toggle__icon {
+  transform: rotate(180deg);
+}
+
+.detail-search-toggle:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+/* 날짜 입력 + 범위 버튼 */
+.date-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.date-range-pickers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  flex: 2 1 0;
+}
+
+.date-range-pickers .date-picker-input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.date-range-wrap input,
+.date-range-wrap .date-picker-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.date-range-wrap input:focus,
+.date-range-wrap input:focus-visible,
+.date-range-wrap .date-picker-input:focus,
+.date-range-wrap .date-picker-input:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.date-range-wrap .date-sep {
+  color: #6b7280;
+  font-size: 0.875rem;
+  flex: 0 0 auto;
+}
+/* 드롭다운만 (pg사, 옵션, 파트너) */
+.filter-select {
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  min-width: 120px;
+}

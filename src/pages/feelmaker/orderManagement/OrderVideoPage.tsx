@@ -1060,13 +1060,13 @@ export default function OrderVideoPage() {
                   <td>
                     <div className="cell-block cell-block--channels">
                       <span className="cell-line">
-                        <span className="channel-label">구매</span> {order.purchaseChannel}
+                        <span className="list-label">구매</span> <span className="list-value">{order.purchaseChannel}</span>
                       </span>
                       <span className="cell-line">
-                        <span className="channel-label">가입</span>
+                        <span className="list-label">가입</span>
                         <button
                           type="button"
-                          className="admin-link"
+                          className="admin-link list-value"
                           onClick={() => {
                             setPartnerModalOrderId(order.id);
                             setChangedPartner(order.partner);
@@ -1683,17 +1683,13 @@ export default function OrderVideoPage() {
                 </div>
                 <div className="admin-modal-field-row">
                   <span className="admin-modal-field-label">변경 파트너사</span>
-                  <select
-                    className="admin-modal-field-control"
+                  <ListSelect
+                    ariaLabel="변경 파트너사"
+                    className="listselect--modal"
                     value={changedPartner}
-                    onChange={(e) => setChangedPartner(e.target.value)}
-                  >
-                    {PARTNER_CHANNELS.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setChangedPartner}
+                    options={PARTNER_CHANNELS.map((c) => ({ value: c, label: c }))}
+                  />
                 </div>
               </div>
             </Modal.Body>

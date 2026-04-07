@@ -1,0 +1,178 @@
+/**
+ * 관리자 요약·지표 카드 (목록 상단 통계, 키워드 순위 등)
+ */
+
+/* 요약·지표 카드 (목록 상단 통계, 키워드 순위 등) */
+.admin-stat-heading {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.admin-stat-cards {
+  display: grid;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.admin-stat-cards > * {
+  min-width: 0;
+}
+
+.admin-stat-cards--1-1-2 {
+  grid-template-columns: 1fr 1fr 2fr;
+}
+
+.admin-stat-cards--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 960px) {
+  .admin-stat-cards--1-1-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-stat-cards--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-stat-cards--4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 공통 카드 섹션 래퍼 (페이지별 카드영역 재사용) */
+.admin-stat-section {
+  margin-bottom: 1.5rem;
+}
+
+.admin-stat-card {
+  border: 1px solid var(--gray-100);
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: #fff;
+  box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.01);
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.admin-stat-card--auto {
+  min-height: 0;
+}
+
+
+.admin-stat-card__icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin: 0;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+.admin-stat-card__icon svg {
+  display: block;
+}
+
+.admin-stat-card__icon--primary {
+  color: var(--primary-color-600, #2563eb);
+  background: var(--primary-color-100, rgba(59, 130, 246, 0.12));
+  border-color: var(--primary-color-200, rgba(59, 130, 246, 0.18));
+}
+
+.admin-stat-card__icon--warning {
+  color: var(--warning-color-600, #d97706);
+  background: var(--warning-color-100, rgba(217, 119, 6, 0.14));
+  border-color: var(--warning-color-200, rgba(217, 119, 6, 0.2));
+}
+
+.admin-stat-card__icon--success {
+  color: var(--success-color-600, #047857);
+  background: var(--success-color-100, rgba(4, 120, 87, 0.12));
+  border-color: var(--success-color-200, rgba(4, 120, 87, 0.18));
+}
+
+.admin-stat-card__icon--gray {
+  color: var(--gray-600, #4b5563);
+  background: var(--gray-100, #f3f4f6);
+  border-color: var(--gray-200, #e5e7eb);
+}
+
+
+.admin-stat-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.admin-stat-value {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111827;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-stat-value--warning {
+  color: var(--warning-color-600, #d97706);
+}
+
+.admin-stat-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.admin-stat-empty {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.admin-stat-rank-list {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 140px;
+  overflow: auto;
+}
+
+.admin-stat-rank-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.admin-stat-rank-name {
+  color: #374151;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-stat-rank-count {
+  flex-shrink: 0;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}

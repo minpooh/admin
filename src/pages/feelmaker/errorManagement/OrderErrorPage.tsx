@@ -1,4 +1,4 @@
-import '../../../styles/adminListPage.css';
+import '../../../styles/adminPage.css';
 
 export default function OrderErrorPage() {
   return (

@@ -25,9 +25,10 @@ export default function ListSelect({
   useEffect(() => {
     if (!open) return;
 
-    const handlePointerDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target || !wrapRef.current || wrapRef.current.contains(target)) return;
+    /** 캡처 단계: 옵션 모달 패널의 `stopPropagation` 때문에 버블 단계 리스너는 document까지 도달하지 않음 */
+    const handlePointerDownCapture = (e: MouseEvent | TouchEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node) || !wrapRef.current || wrapRef.current.contains(target)) return;
       setOpen(false);
     };
 
@@ -35,10 +36,12 @@ export default function ListSelect({
       if (e.key === 'Escape') setOpen(false);
     };
 
-    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('mousedown', handlePointerDownCapture, true);
+    document.addEventListener('touchstart', handlePointerDownCapture, true);
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('mousedown', handlePointerDownCapture, true);
+      document.removeEventListener('touchstart', handlePointerDownCapture, true);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [open]);

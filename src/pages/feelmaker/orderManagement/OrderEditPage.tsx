@@ -1293,17 +1293,13 @@ export default function OrderEditPage() {
                 </div>
                 <div className="option-modal__status-row">
                   <span className="option-modal__status-label">변경 담당자</span>
-                  <select
-                    className="option-modal__partner-select"
+                  <ListSelect
+                    ariaLabel="변경 담당자"
+                    className="listselect--modal"
                     value={changedManager}
-                    onChange={(e) => setChangedManager(e.target.value as (typeof MANAGERS)[number])}
-                  >
-                    {MANAGERS.map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(next) => setChangedManager(next as (typeof MANAGERS)[number])}
+                    options={MANAGERS.map((m) => ({ value: m, label: m }))}
+                  />
                 </div>
               </div>
             </Modal.Body>

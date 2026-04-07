@@ -830,7 +830,7 @@ export default function OrderInviPage() {
                     <div className="product-name-with-public">
                       <div className="cell-block cell-block--channels">
                         <span className="cell-line">
-                          <span className="channel-label">스킨</span>{' '}
+                          <span className="list-label">스킨</span>{' '}
                           <span
                             className={`badge-square order-invi-badge order-invi-badge--inline ${
                               order.inviteType === 'wedding'
@@ -841,10 +841,10 @@ export default function OrderInviPage() {
                           >
                             {order.inviteType === 'wedding' ? 'w' : 'b'}
                           </span>{' '}
-                          {order.skinType}
+                          <span className="list-value">{order.skinType}</span>
                         </span>
                         <span className="cell-line">
-                          <span className="channel-label">URL</span> {order.url}
+                          <span className="list-label">URL</span> <span className="list-value">{order.url}</span>
                         </span>
                       </div>
                     </div>

@@ -1,0 +1,12 @@
+/**
+ * 관리자 공통 페이지 스타일 번들 (검색·필터·카드·목록·상세·모달)
+ */
+@import './adminSearchField.css';
+@import './adminFilterChips.css';
+@import './adminTwoCol.css';
+@import './adminCard.css';
+@import './adminFilter.css';
+@import './adminDatepicker.css';
+@import './adminModal.css';
+@import './adminDetail.css';
+@import './adminListPage.css';

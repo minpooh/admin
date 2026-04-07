@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/modal';
-import '../../../styles/adminListPage.css';
-import '../orderManagement/OrderListPage.css';
+import '../../../styles/adminPage.css';
 import ListSelect from '../../../components/ListSelect';
 import './BannerPage.css';
 
@@ -473,6 +472,7 @@ export default function BannerPage() {
                   </label>
                   <ListSelect
                     ariaLabel="노출여부"
+                    className="listselect--modal"
                     value={draftExposed ? 'exposed' : 'hidden'}
                     onChange={(next) => setDraftExposed(next === 'exposed')}
                     options={[

@@ -1,0 +1,280 @@
+/**
+ * 옵션형 모달 본문·필드·부가 테이블 (Modal / option-modal 공통)
+ */
+
+/* 옵션형 모달 본문: 라벨·값 2열 그리드 (파트너 변경·연락처 변경 등, option-modal__status-* 와 동일 규칙) */
+.admin-modal-field-grid,
+.option-modal__status-grid {
+  --admin-modal-control-max: 220px;
+  margin-top: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.admin-modal-field-row,
+.option-modal__status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.admin-modal-field-row + .admin-modal-field-row,
+.option-modal__status-row + .option-modal__status-row,
+.admin-modal-field-row + .option-modal__status-row,
+.option-modal__status-row + .admin-modal-field-row {
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-modal-field-label,
+.option-modal__status-label {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.admin-modal-field-value,
+.option-modal__status-value {
+  font-size: 0.875rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+/* 모달 필드 컨트롤: 목록 필터 `.date-range-wrap input`과 동일 톤 — `ModalInput` / `ModalDatePicker` / 모달용 `ListSelect`(`.listselect--modal`) */
+.admin-modal-field-control {
+  width: 100%;
+  max-width: var(--admin-modal-control-max, 220px);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+select.admin-modal-field-control {
+  cursor: pointer;
+}
+
+.admin-modal-field-control:focus,
+.admin-modal-field-control:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+/* 옵션형 모달 푸터·버튼 (option-modal__footer / __btn 와 동일) */
+.admin-modal__footer,
+.option-modal__footer {
+  padding: 14px 18px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.admin-modal__btn,
+.option-modal__btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-modal__btn--ghost,
+.option-modal__btn--ghost {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.admin-modal__btn--ghost:hover,
+.option-modal__btn--ghost:hover {
+  background: #e5e7eb;
+}
+
+.admin-modal__btn--primary,
+.option-modal__btn--primary {
+  background: #111827;
+  color: #fff;
+}
+
+.admin-modal__btn--primary:hover,
+.option-modal__btn--primary:hover {
+  background: #0b1220;
+}
+
+.admin-modal__btn--danger,
+.option-modal__btn--danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.admin-modal__btn--danger:hover,
+.option-modal__btn--danger:hover {
+  background: #dc2626;
+}
+
+/* 옵션 모달 필드: DatePicker 래퍼 (`ModalDatePicker`) — 너비·맥스는 input/select와 동일(`--admin-modal-control-max`) */
+.admin-modal-datepicker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: var(--admin-modal-control-max, 220px);
+  min-width: 0;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+.admin-modal-datepicker__pickers {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-modal-datepicker .react-datepicker-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-modal-datepicker .admin-modal-field-control {
+  width: 100%;
+  min-width: 0;
+}
+
+/* 그리드 행: 우측 컨트롤(input/select/datepicker)이 동일한 flex·최대 너비로 정렬 */
+.admin-modal-field-row > .admin-modal-field-control,
+.admin-modal-field-row > .admin-modal-datepicker,
+.option-modal__status-row > .admin-modal-field-control,
+.option-modal__status-row > .admin-modal-datepicker {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 모달 필드용 ListSelect — `ModalInput` 등과 동일 너비·열 정렬 (`ListSelect` + `listselect--modal`) */
+.listselect.listselect--modal {
+  width: 100%;
+  max-width: var(--admin-modal-control-max, 220px);
+}
+
+.listselect.listselect--modal .listselect__menu {
+  z-index: 20;
+}
+
+.admin-modal-field-row > .listselect.listselect--modal,
+.option-modal__status-row > .listselect.listselect--modal {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* 옵션 모달 본문: 참여자 요약(총·사용·미사용) */
+.admin-modal-participant-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding: 12px 14px;
+  margin-top: 4px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fafafa;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.admin-modal-participant-summary__sep {
+  width: 1px;
+  height: 1rem;
+  background: #e5e7eb;
+  flex: 0 0 auto;
+}
+
+.admin-modal-participant-summary strong {
+  color: #111827;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* 옵션 모달 본문: 스크롤 가능한 부가 목록 테이블 */
+.admin-modal-table-wrap {
+  margin-top: 14px;
+  max-height: min(58vh, 440px);
+  overflow: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-modal-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.admin-modal-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  background: #f8f8f8;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.admin-modal-table tbody td {
+  padding: 8px 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+  color: #333;
+}
+
+.admin-modal-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-modal-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.admin-modal-table .row-btn {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.admin-modal-table__cell-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.admin-modal-coupon-status--used {
+  font-weight: 600;
+  color: var(--secondary-color-600, #047857);
+}
+
+.admin-modal-coupon-status--unused {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.admin-modal-table-empty {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
