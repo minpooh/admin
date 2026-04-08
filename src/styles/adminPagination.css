@@ -1,0 +1,56 @@
+/**
+ * 목록 하단 페이지네이션 공통
+ * 마크업: .admin-list-table-footer > .admin-table-pagination > .pagination-inner > button
+ */
+
+.admin-list-table-footer {
+  width: 100%;
+}
+
+.admin-table-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  gap: 0.25rem;
+}
+
+.admin-table-pagination .pagination-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.admin-table-pagination button {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--gray-100);
+  color: var(--gray-500);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.admin-table-pagination button:hover:not(:disabled) {
+  background: var(--gray-200);
+  color: var(--gray-700);
+}
+
+.admin-table-pagination button.active {
+  background: var(--primary-color-500);
+  color: #fff;
+}
+
+.admin-table-pagination button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

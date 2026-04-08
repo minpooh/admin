@@ -377,9 +377,17 @@ export type RichTextEditorProps = {
   onSave: (html: string) => void;
   onEmpty?: () => void;
   renderTop?: (helpers: { insertPlainText: (text: string) => void }) => ReactNode;
+  showActions?: boolean;
 };
 
-export function RichTextEditor({ initialBody, onCancel, onSave, onEmpty, renderTop }: RichTextEditorProps) {
+export function RichTextEditor({
+  initialBody,
+  onCancel,
+  onSave,
+  onEmpty,
+  renderTop,
+  showActions = true,
+}: RichTextEditorProps) {
   const initialHtml = initialBodyToEditorHtml(initialBody);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [sourceMode, setSourceMode] = useState(false);
@@ -520,14 +528,16 @@ export function RichTextEditor({ initialBody, onCancel, onSave, onEmpty, renderT
           <EditorContent editor={editor} />
         )}
       </div>
-      <div className="reply-editor__actions">
-        <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
-          취소
-        </button>
-        <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
-          저장
-        </button>
-      </div>
+      {showActions ? (
+        <div className="reply-editor__actions">
+          <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
+            취소
+          </button>
+          <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
+            저장
+          </button>
+        </div>
+      ) : null}
 
       <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
     </div>

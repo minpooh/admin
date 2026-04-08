@@ -1,0 +1,85 @@
+/**
+ * 관리자 공통 탭 (카테고리·세그먼트 전환 등)
+ */
+
+.admin-tabs {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--gray-200, #e5e7eb);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.admin-tabs__list {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 0.125rem 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  min-width: min-content;
+}
+
+.admin-tabs__item {
+  flex-shrink: 0;
+}
+
+.admin-tabs__tab {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7rem;
+  min-height: 40px;
+  padding: 0.55rem 1.35rem;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.admin-tabs__tab:hover {
+  color: var(--gray-900, #111827);
+  background: var(--gray-200, #1f2937);
+}
+
+.admin-tabs__tab:focus {
+  outline: none;
+}
+
+.admin-tabs__tab:focus-visible {
+  outline: 2px solid var(--gray-900, #111827);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.admin-tabs__tab--active {
+  color: #fff;
+  background: var(--gray-900, #111827);
+  border-bottom-color: var(--gray-900, #111827);
+}
+.admin-tabs__tab--active:hover {
+  color: #fff;
+  background: var(--gray-900, #111827);
+}
+
+@media (max-width: 640px) {
+  .admin-tabs__tab {
+    min-width: 5.75rem;
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+}

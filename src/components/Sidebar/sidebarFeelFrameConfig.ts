@@ -12,8 +12,8 @@ import {
   HiCheckCircle,
   HiArchiveBox,
   HiCube,
-  HiTag,
-  HiHashtag,
+  HiUserGroup,
+  HiComputerDesktop,
   HiRectangleGroup,
   HiArrowsPointingOut,
   HiCake,
@@ -54,8 +54,8 @@ export const DELIVERY_MANAGEMENT = [
 
 export const PRODUCT_MANAGEMENT = [
   { id: 'productList', icon: HiCube, label: '상품 리스트' },
-  { id: 'productCategory', icon: HiTag, label: '카테고리 관리' },
-  { id: 'productTag', icon: HiHashtag, label: '태그 관리' },
+  { id: 'renderingPc', icon: HiComputerDesktop, label: '랜더링 PC 관리' },
+  { id: 'designerManagement', icon: HiUserGroup, label: '디자이너 관리' },
 ];
 
 export const SALES_MANAGEMENT = [

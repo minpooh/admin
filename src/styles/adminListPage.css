@@ -148,52 +148,6 @@
   min-width: 80px;
 }
 
-.admin-table-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem 0;
-  gap: 0.25rem;
-}
-
-.admin-table-pagination .pagination-inner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.admin-table-pagination button {
-  min-width: 32px;
-  height: 32px;
-  padding: 0 0.5rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background: var(--gray-100);
-  color: var(--gray-500);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, color 0.15s;
-}
-
-.admin-table-pagination button:hover:not(:disabled) {
-  background: var(--gray-200);
-  color: var(--gray-700);
-}
-
-.admin-table-pagination button.active {
-  background: var(--primary-color-500);
-  color: #fff;
-}
-
-.admin-table-pagination button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* 페이지 타이틀 + 우측 액션·추가 버튼 (배너·팝업·공동구매 등) */
 .admin-list-page-header {
   display: flex;
@@ -776,11 +730,6 @@ button.admin-link {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* 테이블 직하단: .admin-list-table-footer > .admin-table-pagination > .pagination-inner */
-.admin-list-table-footer {
-  width: 100%;
 }
 
 /* 목록 아래 추가 버튼 행 (이벤트·공지 등) */

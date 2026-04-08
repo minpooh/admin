@@ -1,0 +1,53 @@
+.admin-list-page--rendering-pc .admin-table {
+  min-width: 920px;
+  table-layout: fixed;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(1),
+.admin-list-page--rendering-pc .admin-table td:nth-child(1) {
+  width: 56px;
+  min-width: 56px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(2),
+.admin-list-page--rendering-pc .admin-table td:nth-child(2) {
+  width: 100px;
+  min-width: 100px;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(3),
+.admin-list-page--rendering-pc .admin-table td:nth-child(3) {
+  width: 120px;
+  min-width: 120px;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(4),
+.admin-list-page--rendering-pc .admin-table td:nth-child(4) {
+  width: auto;
+  min-width: 220px;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(5),
+.admin-list-page--rendering-pc .admin-table td:nth-child(5) {
+  width: 100px;
+  min-width: 100px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.admin-list-page--rendering-pc .admin-table th:nth-child(6),
+.admin-list-page--rendering-pc .admin-table td:nth-child(6) {
+  width: 88px;
+  min-width: 88px;
+  text-align: center;
+}
+
+.admin-table-cell--path {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  word-break: break-all;
+  color: #374151;
+}

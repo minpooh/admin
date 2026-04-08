@@ -1,0 +1,359 @@
+/**
+ * 공통 아코디언: admin-list-box 안에서 사용
+ * 열림/닫힘 슬라이드: grid-template-rows 0fr → 1fr
+ */
+
+.admin-accordion {
+  padding: 0;
+  /* ListSelect 드롭다운이 박스 밖으로 보이도록 잘림 방지 */
+  overflow: visible;
+}
+
+.admin-accordion__trigger {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  text-align: left;
+}
+
+.admin-accordion__trigger:focus-visible {
+  outline: 2px solid var(--primary-color-400, #a78bfa);
+  outline-offset: -2px;
+}
+
+.admin-accordion__chevron {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.admin-accordion__chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.admin-accordion__panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease;
+}
+
+.admin-accordion__panel.is-open {
+  max-height: 960px;
+  opacity: 1;
+  overflow: visible;
+}
+
+.admin-accordion__inner {
+  overflow: visible;
+  min-height: 80px;
+}
+
+.admin-accordion__body {
+  border-top: 1px solid var(--gray-100);
+  padding: 0 1.25rem 1.25rem;
+}
+
+.admin-accordion-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem 1rem;
+  padding-top: 1rem;
+}
+
+.admin-accordion-form-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-accordion-form-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-accordion-form-grid--5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-accordion-field {
+  min-width: 0;
+  position: relative;
+  z-index: 0;
+}
+
+.admin-accordion-field--full {
+  grid-column: 1 / -1;
+}
+
+.admin-accordion-field .admin-accordion-input {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-accordion-file-input {
+  width: 100%;
+  max-width: 100%;
+  font-size: 0.8125rem;
+  color: var(--gray-700);
+  box-sizing: border-box;
+}
+
+.admin-accordion-file-input::file-selector-button,
+.admin-accordion-file-input::-webkit-file-upload-button {
+  margin-right: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--gray-900);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.admin-accordion-file-input::file-selector-button:hover,
+.admin-accordion-file-input::-webkit-file-upload-button:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-50);
+}
+
+.admin-accordion-file-input:focus {
+  outline: none;
+}
+
+.admin-accordion-file-input:focus-visible::file-selector-button,
+.admin-accordion-file-input:focus-visible::-webkit-file-upload-button {
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.admin-accordion-file-name {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  word-break: break-all;
+}
+
+/* 열린 선택박스 메뉴가 아래쪽 아코디언 위에 겹쳐 보이도록 */
+.admin-accordion-field:has(.listselect__trigger.is-open) {
+  z-index: 5;
+}
+
+.admin-accordion-field .listselect__menu {
+  z-index: 100;
+}
+
+.admin-accordion-check-group {
+  margin-top: 1rem;
+}
+
+.admin-accordion-check-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.25rem 2rem;
+  margin-top: 1rem;
+}
+
+.admin-accordion-check-row > .admin-accordion-check-group {
+  margin-top: 0;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.admin-accordion-check-group--no-top-margin {
+  margin-top: 0;
+}
+
+.admin-accordion-bgm-block {
+  padding-top: 1rem;
+}
+
+.admin-accordion-field--bgm-file {
+  margin-top: 1rem;
+}
+
+.admin-accordion-etc-block {
+  padding-top: 1rem;
+}
+
+.admin-accordion-scene-block {
+  padding-top: 1rem;
+}
+
+.admin-accordion-scene-textarea {
+  display: block;
+  width: 100%;
+  max-width: none;
+  resize: none;
+  min-height: 120px;
+  height: 120px;
+  max-height: 120px;
+  margin: 0 0 1rem;
+  overflow-y: auto;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+.admin-accordion-check-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+}
+
+.admin-accordion-check-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* ListSelect 트리거(.listselect__trigger)와 동일한 보더·배경·포커스 토큰 */
+.admin-accordion-check-item input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: #ffffff;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.admin-accordion-check-item input[type='checkbox']:hover {
+  border-color: var(--gray-300);
+}
+
+.admin-accordion-check-item input[type='checkbox']:focus {
+  outline: none;
+}
+
+.admin-accordion-check-item input[type='checkbox']:focus-visible {
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.admin-accordion-check-item input[type='checkbox']:checked {
+  background-color: var(--gray-900);
+  border-color: var(--gray-900);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.2l3 3 6-6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px 12px;
+}
+
+.admin-accordion-field__label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* 드래그앤드롭 업로드 (배너 추가 모달 .banner-upload-box 와 동일 구조·토큰) */
+.admin-accordion-upload-box {
+  width: 100%;
+  aspect-ratio: 1024 / 390;
+  min-height: 120px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.admin-accordion-upload-box.is-dragging {
+  border-color: var(--primary-color-500, #2563eb);
+  background: rgba(37, 99, 235, 0.06);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.admin-accordion-upload-box__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.admin-accordion-upload-box__text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.admin-accordion-upload-box__hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.admin-accordion-upload-box__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .admin-accordion-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-accordion-form-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-accordion-form-grid--5 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-accordion-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-accordion-form-grid--2 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-accordion-form-grid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-accordion-form-grid--5 {
+    grid-template-columns: 1fr;
+  }
+}
