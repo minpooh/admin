@@ -116,6 +116,10 @@ export const CREATOR_MANAGEMENT = [
   { id: 'creatorBoard', icon: HiListBullet, label: '게시판 관리' },
 ];
 
+export const MARKETING_MANAGEMENT = [
+  { id: 'editorList', icon: HiPencil, label: '에디터 리스트' },
+];
+
 export type FeelMakerSectionId =
   | 'orderManagement'
   | 'crawlingManagement'
@@ -125,7 +129,8 @@ export type FeelMakerSectionId =
   | 'productManagement'
   | 'homepageManagement'
   | 'enterpriseManagement'
-  | 'creatorManagement';
+  | 'creatorManagement'
+  | 'marketingManagement';
 
 export type FeelMakerSectionConfigItem = {
   id: string;
@@ -148,6 +153,7 @@ export const FEELMAKER_SECTION_IDS: FeelMakerSectionId[] = [
   'homepageManagement',
   'enterpriseManagement',
   'creatorManagement',
+  'marketingManagement',
 ];
 
 export const FEELMAKER_SECTION_CONFIG: FeelMakerSectionConfigItem[] = [
@@ -167,4 +173,5 @@ export const FEELMAKER_SECTION_CONFIG: FeelMakerSectionConfigItem[] = [
   { id: 'homepageManagement', title: '홈페이지관리', icon: HiHome, items: HOMEPAGE_MANAGEMENT, expandable: true },
   { id: 'enterpriseManagement', title: '엔터프라이즈관리', icon: HiBriefcase, items: ENTERPRISE_MANAGEMENT, expandable: true },
   { id: 'creatorManagement', title: '크리에이터관리', icon: HiUserCircle, items: CREATOR_MANAGEMENT, expandable: true },
+  { id: 'marketingManagement', title: '마케팅관리', icon: HiMegaphone, items: MARKETING_MANAGEMENT, expandable: true },
 ];

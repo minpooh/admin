@@ -102,6 +102,7 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   homepageManagement: false,
   enterpriseManagement: false,
   creatorManagement: false,
+  marketingManagement: false,
   uploadManagement: false,
   deliveryManagement: false,
   salesManagement: false,

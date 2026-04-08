@@ -28,6 +28,10 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
+.admin-stat-cards--6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
 @media (max-width: 960px) {
   .admin-stat-cards--1-1-2 {
     grid-template-columns: 1fr;
@@ -36,10 +40,24 @@
   .admin-stat-cards--4 {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .admin-stat-cards--6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 600px) {
   .admin-stat-cards--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-stat-cards--6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-stat-cards--6 {
     grid-template-columns: 1fr;
   }
 }

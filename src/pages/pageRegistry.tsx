@@ -90,9 +90,11 @@ registerPage('feelmaker/customerManagement/groupList', GroupListPage);
 import ProductListPage from './feelmaker/productManagement/ProductListPage';
 import RenderingPcPage from './feelmaker/productManagement/RenderingPcPage';
 import DesignerManagementPage from './feelmaker/productManagement/DesignerManagementPage';
+import EditorListPage from './feelmaker/marketingManagement/EditorListPage';
 registerPage('feelmaker/productManagement/productList', ProductListPage);
 registerPage('feelmaker/productManagement/renderingPc', RenderingPcPage);
 registerPage('feelmaker/productManagement/designerManagement', DesignerManagementPage);
+registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
 registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
 registerPage('feelframe/productManagement/designerManagement', DesignerManagementPage);
 
