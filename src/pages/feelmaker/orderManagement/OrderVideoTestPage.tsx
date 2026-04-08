@@ -872,9 +872,7 @@ export default function OrderVideoTestPage() {
                 <th>구매채널/가입채널</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
-                <th>이름</th>
-                <th>아이디</th>
-                <th>전화번호</th>
+                <th className="col-center">고객정보</th>
                 <th>제작일/최초제작일</th>
                 <th>영상</th>
                 <th>삭제</th>
@@ -962,10 +960,11 @@ export default function OrderVideoTestPage() {
                       </div>
                     </div>
                   </td>
-                  <td>{order.customerName}</td>
-                  <td>{order.customerId}</td>
-                  <td>
-                    <div className="phone-with-sms">
+                  <td className="col-center">
+                    <div className="admin-cell-triple">
+                      <span className="cell-line">{order.customerName}</span>
+                      <span className="cell-line">{order.customerId}</span>
+                      <div className="phone-with-sms admin-cell-triple__phone-row">
                       <button
                         type="button"
                         className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
@@ -979,6 +978,7 @@ export default function OrderVideoTestPage() {
                         <Mail size={12} aria-hidden="true" />
                       </button>
                       <span className="phone-with-sms__number">{order.customerPhone}</span>
+                      </div>
                     </div>
                   </td>
                   <td>

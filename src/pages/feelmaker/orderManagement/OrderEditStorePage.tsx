@@ -420,9 +420,7 @@ export default function OrderEditStorePage() {
                 <th>긴급보정</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
-                <th>이름</th>
-                <th>아이디</th>
-                <th>전화번호</th>
+                <th className="col-center">고객정보</th>
                 <th>결제현황</th>
                 <th>옵션</th>
                 <th>사진</th>
@@ -444,7 +442,7 @@ export default function OrderEditStorePage() {
                     </div>
                   </td>
                   <td>{order.orderNo}</td>
-                  <td>{order.urgentAdded ? '추가' : '없음'}</td>
+                  <td>{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
                   <td>
                     <div className={['progress-status', getProgressVariantClass(order.progress)].join(' ')}>
                       <span className="progress-status__dot" aria-hidden="true" />
@@ -481,9 +479,13 @@ export default function OrderEditStorePage() {
                       </span>
                     </div>
                   </td>
-                  <td>{order.customerName}</td>
-                  <td>{order.customerId}</td>
-                  <td>{order.customerPhone}</td>
+                  <td className="col-center">
+                    <div className="admin-cell-triple">
+                      <span className="cell-line">{order.customerName}</span>
+                      <span className="cell-line">{order.customerId}</span>
+                      <span className="cell-line">{order.customerPhone}</span>
+                    </div>
+                  </td>
                   <td>
                     <button
                       type="button"
@@ -580,7 +582,7 @@ export default function OrderEditStorePage() {
               ))}
               {paginatedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={13} style={{ textAlign: 'center', padding: '20px' }}>검색 결과가 없습니다.</td>
+                  <td colSpan={11} style={{ textAlign: 'center', padding: '20px' }}>검색 결과가 없습니다.</td>
                 </tr>
               )}
             </tbody>

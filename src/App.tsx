@@ -1,9 +1,12 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import useDragScroll from './hooks/useDragScroll';
 import PageRouter from './pages/PageRouter';
 import './App.css';
 
 function Layout() {
+  useDragScroll();
+
   return (
     <main className="app">
       <Sidebar />

@@ -5,6 +5,7 @@ export type OrderItem = {
 
   productName: string;
   category: string;
+  correctionStrength: '강' | '중' | '약' | '디자이너임의';
   orderDate: string;
 
   customerName: string;
@@ -31,9 +32,8 @@ export type OrderItem = {
   urgentAdded?: boolean;
   artworkPhotoAdded?: boolean;
 
-  /** 사진/참고사진 업로드 여부 (추후 리스트 렌더링에 사용) */
+  /** 사진 업로드 여부 (추후 리스트 렌더링에 사용) */
   photoAdded?: boolean;
-  referencePhotoAdded?: boolean;
 };
 
 export const MOCK_ORDERS: OrderItem[] = [
@@ -42,6 +42,7 @@ export const MOCK_ORDERS: OrderItem[] = [
     no: 'E478402',
     noSub: '(120402)',
     category: '사진보정',
+    correctionStrength: '강',
     productName: '사진보정 30컷 - 긴급',
     orderDate: '2026-03-13 10:52:28',
     customerName: '이민정',
@@ -61,13 +62,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: false,
     artworkPhotoAdded: false,
     photoAdded: false,
-    referencePhotoAdded: false,
   },
   {
     id: '2',
     no: 'E478401',
     noSub: '(120401)',
     category: '긴급보정',
+    correctionStrength: '중',
     productName: '긴급보정 아트웍화보 - 프리미엄',
     orderDate: '2026-03-12 15:20:00',
     customerName: '김철수',
@@ -87,13 +88,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: true,
     artworkPhotoAdded: false,
     photoAdded: true,
-    referencePhotoAdded: true,
   },
   {
     id: '3',
     no: 'E478400',
     noSub: '(120400)',
     category: '사진보정',
+    correctionStrength: '약',
     productName: '사진보정 단품 - 표준',
     orderDate: '2026-03-11 09:00:00',
     customerName: '박영희',
@@ -113,13 +114,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: false,
     artworkPhotoAdded: true,
     photoAdded: true,
-    referencePhotoAdded: false,
   },
   {
     id: '4',
     no: 'E478399',
     noSub: '(120399)',
     category: '아트웍화보보정',
+    correctionStrength: '디자이너임의',
     productName: '아트웍화보보정 - 고객 요청',
     orderDate: '2026-03-10 14:00:00',
     customerName: '최민수',
@@ -139,13 +140,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: true,
     artworkPhotoAdded: true,
     photoAdded: true,
-    referencePhotoAdded: true,
   },
   {
     id: '5',
     no: 'E478398',
     noSub: '(120398)',
     category: '긴급보정',
+    correctionStrength: '강',
     productName: '긴급보정 10컷 - 토스결제',
     orderDate: '2026-03-09 13:12:00',
     customerName: '정유진',
@@ -165,13 +166,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: true,
     artworkPhotoAdded: false,
     photoAdded: true,
-    referencePhotoAdded: true,
   },
   {
     id: '6',
     no: 'E478397',
     noSub: '(120397)',
     category: '사진보정',
+    correctionStrength: '중',
     productName: '사진보정 - 프리미엄 세트',
     orderDate: '2026-03-08 11:05:00',
     customerName: '한지민',
@@ -191,13 +192,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: false,
     artworkPhotoAdded: true,
     photoAdded: true,
-    referencePhotoAdded: false,
   },
   {
     id: '7',
     no: 'E478396',
     noSub: '(120396)',
     category: '아트웍화보보정',
+    correctionStrength: '약',
     productName: '아트웍화보보정 - 시그니처',
     orderDate: '2026-03-07 17:43:00',
     customerName: '유승호',
@@ -217,13 +218,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: false,
     artworkPhotoAdded: false,
     photoAdded: true,
-    referencePhotoAdded: true,
   },
   {
     id: '8',
     no: 'E478395',
     noSub: '(120395)',
     category: '사진보정',
+    correctionStrength: '디자이너임의',
     productName: '사진보정 원스텝',
     orderDate: '2026-03-06 12:24:00',
     customerName: '김연아',
@@ -243,13 +244,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: true,
     artworkPhotoAdded: true,
     photoAdded: false,
-    referencePhotoAdded: true,
   },
   {
     id: '9',
     no: 'E478394',
     noSub: '(120394)',
     category: '긴급보정',
+    correctionStrength: '강',
     productName: '긴급보정 20컷 - 고객 업로드',
     orderDate: '2026-03-05 09:50:00',
     customerName: '박소담',
@@ -269,13 +270,13 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: false,
     artworkPhotoAdded: false,
     photoAdded: false,
-    referencePhotoAdded: false,
   },
   {
     id: '10',
     no: 'E478393',
     noSub: '(120393)',
     category: '아트웍화보보정',
+    correctionStrength: '중',
     productName: '아트웍화보보정 - 프리미엄',
     orderDate: '2026-03-04 20:10:00',
     customerName: '장동건',
@@ -295,7 +296,6 @@ export const MOCK_ORDERS: OrderItem[] = [
     urgentAdded: true,
     artworkPhotoAdded: true,
     photoAdded: true,
-    referencePhotoAdded: true,
   },
 ];
 

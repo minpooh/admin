@@ -805,9 +805,7 @@ export default function OrderInviPage() {
             <thead>
               <tr>
                 <th>사용현황</th>
-                <th>이름</th>
-                <th>아이디</th>
-                <th>전화번호</th>
+                <th className="col-center">고객정보</th>
                 <th>제작일</th>
                 <th>주문일</th>
                 <th>예식일/만료일</th>
@@ -849,10 +847,11 @@ export default function OrderInviPage() {
                       </div>
                     </div>
                   </td>
-                  <td>{order.customerName}</td>
-                  <td>{order.customerId}</td>
-                  <td>
-                    <div className="phone-with-sms">
+                  <td className="col-center">
+                    <div className="admin-cell-triple">
+                      <span className="cell-line">{order.customerName}</span>
+                      <span className="cell-line">{order.customerId}</span>
+                      <div className="phone-with-sms admin-cell-triple__phone-row">
                       <button
                         type="button"
                         className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
@@ -866,6 +865,7 @@ export default function OrderInviPage() {
                         <Mail size={12} aria-hidden="true" />
                       </button>
                       <span className="phone-with-sms__number">{order.customerPhone}</span>
+                      </div>
                     </div>
                   </td>
                   <td>{order.weddingDate}</td>

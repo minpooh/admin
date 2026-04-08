@@ -44,21 +44,30 @@ const OPTION_LABEL: Record<OptionModalType, string> = {
 };
 
 function getPhotoMenuItemsByProgress(progress: string): string[] {
-  if (progress === '작업완료') {
+  if (progress === '관리자업로드' || progress === '확정') {
     return ['사진등록', '원본다운로드', '관리자사진다운로드'];
   }
-  if (progress === '재수정대기중' || progress === '재수정작업중') {
+  if (progress === '재수정진행중') {
     return ['사진등록', '원본다운로드', '관리자사진다운로드', '재수정요청다운로드'];
   }
   return ['사진등록', '원본다운로드'];
 }
 
+function normalizeProgress(progress: string): '보정진행중' | '관리자업로드' | '재수정진행중' | '확정' {
+  if (progress === '보정진행중' || progress === '관리자업로드' || progress === '재수정진행중' || progress === '확정') {
+    return progress;
+  }
+  if (progress === '작업전' || progress === '작업중') return '보정진행중';
+  if (progress === '작업완료') return '관리자업로드';
+  if (progress === '재수정대기중' || progress === '재수정작업중') return '재수정진행중';
+  return '보정진행중';
+}
+
 function getProgressVariantClass(progress: string): string {
-  if (progress === '작업전') return 'progress-status--primary';
-  if (progress === '작업중') return 'progress-status--danger';
-  if (progress === '작업완료') return 'progress-status--secondary';
-  if (progress === '재수정대기중') return 'progress-status--warning';
-  if (progress === '재수정작업중') return 'progress-status--danger';
+  if (progress === '보정진행중') return 'progress-status--danger';
+  if (progress === '관리자업로드') return 'progress-status--secondary';
+  if (progress === '재수정진행중') return 'progress-status--warning';
+  if (progress === '확정') return 'progress-status--primary';
   return 'progress-status--warning';
 }
 
@@ -71,6 +80,13 @@ function getPaymentRowVariant(paymentStatus: string): { rowBtnClass: string; dot
     return { rowBtnClass: 'row-btn--status-secondary', dotClass: 'progress-status--secondary' };
   }
   return { rowBtnClass: 'row-btn--status-warning', dotClass: 'progress-status--warning' };
+}
+
+function getCorrectionStrengthBadgeClass(strength: OrderItem['correctionStrength']): string {
+  if (strength === '강') return 'badge-square--strength-strong';
+  if (strength === '중') return 'badge-square--strength-medium';
+  if (strength === '약') return 'badge-square--strength-weak';
+  return 'badge-square--strength-designer';
 }
 
 function parseOrderDate(orderDate: string): Date {
@@ -158,13 +174,8 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
     if (applied.paymentStatus && order.paymentStatus !== applied.paymentStatus) return false;
 
     if (applied.workStatus) {
-      if (applied.workStatus === '고객업로드') {
-        if (!['작업전', '작업중'].includes(order.progress)) return false;
-      } else if (applied.workStatus === '관리자업로드') {
-        if (order.progress !== '작업완료') return false;
-      } else if (applied.workStatus === '재수정업로드') {
-        if (!['재수정대기중', '재수정작업중'].includes(order.progress)) return false;
-      }
+      const normalizedProgress = normalizeProgress(order.progress);
+      if (normalizedProgress !== applied.workStatus) return false;
     }
 
     if (applied.urgentPhotoEdit) {
@@ -703,9 +714,10 @@ export default function OrderEditPage() {
               onChange={setWorkStatus}
               options={[
                 { value: '', label: '전체보기' },
-                { value: '고객업로드', label: '고객업로드' },
+                { value: '보정진행중', label: '보정진행중' },
                 { value: '관리자업로드', label: '관리자업로드' },
-                { value: '재수정업로드', label: '재수정업로드' },
+                { value: '재수정진행중', label: '재수정진행중' },
+                { value: '확정', label: '확정' },
               ]}
             />
           </div>
@@ -754,24 +766,22 @@ export default function OrderEditPage() {
             <thead>
               <tr>
                 <th>NO</th>
-                <th>긴급보정</th>
+                <th className="col-center">긴급보정</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
-                <th>이름</th>
-                <th>아이디</th>
-                <th>전화번호</th>
-                <th>결제현황</th>
+                <th className="col-center">고객정보</th>
+                <th className="col-center">결제현황</th>
                 <th>결제금액</th>
-                <th>옵션</th>
-                <th>사진</th>
-                <th>참고사진</th>
-                <th>삭제</th>
+                <th className="col-center">옵션</th>
+                <th className="col-center">사진</th>
+                <th className="col-center">삭제</th>
               </tr>
             </thead>
             <tbody>
               {paginatedOrders.map((order) => {
                 const paymentVariant = getPaymentRowVariant(order.paymentStatus);
-                const progressVariantClass = getProgressVariantClass(order.progress);
+                const normalizedProgress = normalizeProgress(order.progress);
+                const progressVariantClass = getProgressVariantClass(normalizedProgress);
 
                 return (
                   <tr key={order.id}>
@@ -782,18 +792,32 @@ export default function OrderEditPage() {
                       </div>
                     </td>
 
-                    <td>{order.urgentAdded ? '추가' : '없음'}</td>
+                    <td className="col-center">
+                      {order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}
+                    </td>
 
                     <td>
                       <div className={['progress-status', progressVariantClass].join(' ')}>
                         <span className="progress-status__dot" aria-hidden="true" />
-                        <span className="progress-status__text">{order.progress}</span>
+                        <span className="progress-status__text">{normalizedProgress}</span>
                       </div>
                     </td>
 
                     <td>
                       <div className="cell-block">
-                        <span className="cell-line">{order.productName}</span>
+                        <span className="cell-line">
+                          <span
+                            className={[
+                              'badge-square',
+                              'badge-square--inline',
+                              'badge-square--no-transition',
+                              getCorrectionStrengthBadgeClass(order.correctionStrength),
+                            ].join(' ')}
+                          >
+                            {order.correctionStrength}
+                          </span>
+                          {order.productName}
+                        </span>
                         <span className="cell-line">
                           {'담당자: '}
                           <button
@@ -810,36 +834,35 @@ export default function OrderEditPage() {
                       </div>
                     </td>
 
-                    <td>{order.customerName}</td>
-                    <td>{order.customerId}</td>
-
-                    <td>
-                      <div className="phone-with-sms">
-                        <button
-                          type="button"
-                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
-                          aria-label="문자 발송"
-                          title="문자 발송"
-                          onClick={() => {
-                            setSmsModalOrderId(order.id);
-                            setSmsText('');
-                          }}
-                        >
-                          <Mail size={12} aria-hidden="true" />
-                        </button>
-                        <span className="phone-with-sms__number">{order.customerPhone}</span>
+                    <td className="col-center">
+                      <div className="admin-cell-triple">
+                        <span className="cell-line">{order.customerName}</span>
+                        <span className="cell-line">{order.customerId}</span>
+                        <div className="phone-with-sms admin-cell-triple__phone-row">
+                          <button
+                            type="button"
+                            className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
+                            aria-label="문자 발송"
+                            title="문자 발송"
+                            onClick={() => {
+                              setSmsModalOrderId(order.id);
+                              setSmsText('');
+                            }}
+                          >
+                            <Mail size={12} aria-hidden="true" />
+                          </button>
+                          <span className="phone-with-sms__number">{order.customerPhone}</span>
+                        </div>
                       </div>
                     </td>
 
-                    <td>
-                      <div className="cell-block">
-                        <button type="button" className={['row-btn', paymentVariant.rowBtnClass].join(' ')} onClick={() => setPaymentModalOrderId(order.id)}>
-                          <span className={['progress-status', paymentVariant.dotClass].join(' ')}>
-                            <span className="progress-status__dot" aria-hidden="true" />
-                            <span className="progress-status__text">{order.paymentStatus}</span>
-                          </span>
-                        </button>
-                      </div>
+                    <td className="col-center">
+                      <button type="button" className={['row-btn', paymentVariant.rowBtnClass].join(' ')} onClick={() => setPaymentModalOrderId(order.id)}>
+                        <span className={['progress-status', paymentVariant.dotClass].join(' ')}>
+                          <span className="progress-status__dot" aria-hidden="true" />
+                          <span className="progress-status__text">{order.paymentStatus}</span>
+                        </span>
+                      </button>
                     </td>
 
                     <td>
@@ -858,7 +881,7 @@ export default function OrderEditPage() {
                       </div>
                     </td>
 
-                    <td>
+                    <td className="col-center">
                       <div className="row-options">
                         <button
                           type="button"
@@ -893,7 +916,7 @@ export default function OrderEditPage() {
                       </div>
                     </td>
 
-                    <td>
+                    <td className="col-center">
                       <div className="row-options">
                         <button
                           type="button"
@@ -927,9 +950,7 @@ export default function OrderEditPage() {
                         </button>
                       </div>
                     </td>
-                    <td>{order.referencePhotoAdded ? '업로드완료' : '미업로드'}</td>
-
-                    <td>
+                    <td className="col-center">
                       <button
                         type="button"
                         className="row-icon-btn row-icon-btn--danger"
@@ -946,7 +967,7 @@ export default function OrderEditPage() {
 
               {paginatedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={13} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
@@ -1025,7 +1046,7 @@ export default function OrderEditPage() {
                 zIndex: 10000,
               }}
             >
-              {getPhotoMenuItemsByProgress(portalPhotoOrder.progress).map((item) => (
+              {getPhotoMenuItemsByProgress(normalizeProgress(portalPhotoOrder.progress)).map((item) => (
                 <button
                   key={`${portalPhotoOrder.id}-${item}`}
                   type="button"

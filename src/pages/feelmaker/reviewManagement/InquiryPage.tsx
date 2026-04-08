@@ -132,7 +132,7 @@ export default function InquiryPage() {
           row.title.toLowerCase().includes(keywordTrim) ||
           row.id.toLowerCase().includes(keywordTrim) ||
           row.authorName.toLowerCase().includes(keywordTrim) ||
-          row.authorId.toLowerCase().includes(keywordTrim) ||
+          row.memberId.toLowerCase().includes(keywordTrim) ||
           row.email.toLowerCase().includes(keywordTrim);
         const scope = appliedSearch.searchScope;
         if (scope === 'all') {
@@ -144,7 +144,7 @@ export default function InquiryPage() {
         } else if (scope === 'member') {
           if (
             !row.authorName.toLowerCase().includes(keywordTrim) &&
-            !row.authorId.toLowerCase().includes(keywordTrim) &&
+            !row.memberId.toLowerCase().includes(keywordTrim) &&
             !row.email.toLowerCase().includes(keywordTrim)
           ) {
             return false;
@@ -626,7 +626,7 @@ export default function InquiryPage() {
                 <th scope="col">제목</th>
                 <th scope="col">답변 여부</th>
                 <th scope="col">작성자</th>
-                <th scope="col">이메일</th>
+                <th scope="col">아이디</th>
                 <th scope="col">답변자</th>
                 <th scope="col">답변일</th>
                 <th scope="col">삭제</th>
@@ -645,7 +645,7 @@ export default function InquiryPage() {
                     <InquiryAnswerStatusCell answeredAt={row.answeredAt} />
                   </td>
                   <td>{row.authorName}</td>
-                  <td>{row.email}</td>
+                  <td>{row.memberId}</td>
                   <td>{row.answeredBy ?? '—'}</td>
                   <td>{row.answeredAt ?? '—'}</td>
                   <td>
