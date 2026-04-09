@@ -7,8 +7,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
+import Alert from '../../../components/Alert';
 import Confirm from '../../../components/Confirm';
+import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
 import Toast from '../../../components/Toast';
+import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_STORE_EDIT_ORDERS, type StoreEditOrderItem } from './mock/orderEditStore.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -278,6 +281,7 @@ export default function OrderEditStorePage() {
   }, [openOptionsOrderId, openPhotoOrderId]);
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
   const [paymentModalOrderId, setPaymentModalOrderId] = useState<string | null>(null);
   const [managerModalOrderId, setManagerModalOrderId] = useState<string | null>(null);
   const [changedManager, setChangedManager] = useState<(typeof MANAGERS)[number]>('담당자1');
@@ -417,7 +421,7 @@ export default function OrderEditStorePage() {
               <tr>
                 <th>NO</th>
                 <th>주문번호</th>
-                <th>긴급보정</th>
+                <th className="col-center">긴급보정</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
                 <th className="col-center">고객정보</th>
@@ -442,7 +446,7 @@ export default function OrderEditStorePage() {
                     </div>
                   </td>
                   <td>{order.orderNo}</td>
-                  <td>{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
+                  <td className="col-center">{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
                   <td>
                     <div className={['progress-status', getProgressVariantClass(order.progress)].join(' ')}>
                       <span className="progress-status__dot" aria-hidden="true" />
@@ -480,11 +484,16 @@ export default function OrderEditStorePage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <div className="admin-cell-triple">
+                    <CustomerInfoCopyWrap
+                      customerName={order.customerName}
+                      customerId={order.customerId}
+                      customerPhone={order.customerPhone}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                    >
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <span className="cell-line">{order.customerPhone}</span>
-                    </div>
+                    </CustomerInfoCopyWrap>
                   </td>
                   <td>
                     <button
@@ -737,6 +746,12 @@ export default function OrderEditStorePage() {
           </Modal>
         );
       })()}
+
+      <Alert
+        open={copyInfoAlertOpen}
+        message={CUSTOMER_INFO_COPIED_ALERT_MESSAGE}
+        onClose={() => setCopyInfoAlertOpen(false)}
+      />
 
       <Confirm
         open={Boolean(confirmDialog)}

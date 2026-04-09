@@ -6,8 +6,11 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/Modal';
+import Alert from '../../../components/Alert';
+import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
 import Confirm from '../../../components/Confirm';
 import ListSelect from '../../../components/ListSelect';
+import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderVideo.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -282,6 +285,7 @@ export default function OrderVideoPage() {
   const [changedAmount, setChangedAmount] = useState<string>('');
   const [changedPartner, setChangedPartner] = useState<string>('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
 
   const smsHistoryLen = smsModalOrderId ? (smsHistoryByOrderId[smsModalOrderId]?.length ?? 0) : 0;
 
@@ -688,7 +692,7 @@ export default function OrderVideoPage() {
   })();
 
   return (
-    <div className="admin-list-page">
+    <div className="admin-list-page admin-list-page--video">
       <h1 className="page-title">구매영상 목록</h1>
 
       {/* 검색 결과 문구 */}
@@ -1129,25 +1133,30 @@ export default function OrderVideoPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <div className="admin-cell-triple">
+                    <CustomerInfoCopyWrap
+                      customerName={order.customerName}
+                      customerId={order.customerId}
+                      customerPhone={order.customerPhone}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                    >
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <div className="phone-with-sms admin-cell-triple__phone-row">
-                      <button
-                        type="button"
-                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
-                        aria-label="문자 발송"
-                        title="문자 발송"
-                        onClick={() => {
-                          setSmsModalOrderId(order.id);
-                          setSmsText('');
-                        }}
-                      >
-                        <Mail size={12} aria-hidden="true" />
-                      </button>
-                      <span className="phone-with-sms__number">{order.customerPhone}</span>
+                        <button
+                          type="button"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
+                          aria-label="문자 발송"
+                          title="문자 발송"
+                          onClick={() => {
+                            setSmsModalOrderId(order.id);
+                            setSmsText('');
+                          }}
+                        >
+                          <Mail size={12} aria-hidden="true" />
+                        </button>
+                        <span className="phone-with-sms__number">{order.customerPhone}</span>
                       </div>
-                    </div>
+                    </CustomerInfoCopyWrap>
                   </td>
                   <td>
                     <div className="date-with-add">
@@ -1829,6 +1838,12 @@ export default function OrderVideoPage() {
           </Modal>
         );
       })()}
+
+      <Alert
+        open={copyInfoAlertOpen}
+        message={CUSTOMER_INFO_COPIED_ALERT_MESSAGE}
+        onClose={() => setCopyInfoAlertOpen(false)}
+      />
 
       <Confirm
         open={Boolean(confirmDialog)}

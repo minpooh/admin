@@ -6,8 +6,11 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import Modal from '../../../components/Modal';
+import Alert from '../../../components/Alert';
 import Confirm from '../../../components/Confirm';
+import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
 import ListSelect from '../../../components/ListSelect';
+import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderVideoTest.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -240,6 +243,7 @@ export default function OrderVideoTestPage() {
   const [changedAmount, setChangedAmount] = useState<string>('');
   const [changedPartner, setChangedPartner] = useState<string>('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
 
   const smsHistoryLen = smsModalOrderId ? (smsHistoryByOrderId[smsModalOrderId]?.length ?? 0) : 0;
 
@@ -961,25 +965,30 @@ export default function OrderVideoTestPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <div className="admin-cell-triple">
+                    <CustomerInfoCopyWrap
+                      customerName={order.customerName}
+                      customerId={order.customerId}
+                      customerPhone={order.customerPhone}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                    >
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <div className="phone-with-sms admin-cell-triple__phone-row">
-                      <button
-                        type="button"
-                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
-                        aria-label="문자 발송"
-                        title="문자 발송"
-                        onClick={() => {
-                          setSmsModalOrderId(order.id);
-                          setSmsText('');
-                        }}
-                      >
-                        <Mail size={12} aria-hidden="true" />
-                      </button>
-                      <span className="phone-with-sms__number">{order.customerPhone}</span>
+                        <button
+                          type="button"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
+                          aria-label="문자 발송"
+                          title="문자 발송"
+                          onClick={() => {
+                            setSmsModalOrderId(order.id);
+                            setSmsText('');
+                          }}
+                        >
+                          <Mail size={12} aria-hidden="true" />
+                        </button>
+                        <span className="phone-with-sms__number">{order.customerPhone}</span>
                       </div>
-                    </div>
+                    </CustomerInfoCopyWrap>
                   </td>
                   <td>
                     <div className="date-with-add">
@@ -1587,6 +1596,12 @@ export default function OrderVideoTestPage() {
           </Modal>
         );
       })()}
+
+      <Alert
+        open={copyInfoAlertOpen}
+        message={CUSTOMER_INFO_COPIED_ALERT_MESSAGE}
+        onClose={() => setCopyInfoAlertOpen(false)}
+      />
 
       <Confirm
         open={Boolean(confirmDialog)}

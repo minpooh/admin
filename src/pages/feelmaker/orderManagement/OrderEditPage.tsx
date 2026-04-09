@@ -9,7 +9,9 @@ import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import Alert from '../../../components/Alert';
+import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
 import Toast from '../../../components/Toast';
+import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderEdit.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
@@ -835,7 +837,12 @@ export default function OrderEditPage() {
                     </td>
 
                     <td className="col-center">
-                      <div className="admin-cell-triple">
+                      <CustomerInfoCopyWrap
+                        customerName={order.customerName}
+                        customerId={order.customerId}
+                        customerPhone={order.customerPhone}
+                        onCopied={() => setAlertMessage(CUSTOMER_INFO_COPIED_ALERT_MESSAGE)}
+                      >
                         <span className="cell-line">{order.customerName}</span>
                         <span className="cell-line">{order.customerId}</span>
                         <div className="phone-with-sms admin-cell-triple__phone-row">
@@ -853,7 +860,7 @@ export default function OrderEditPage() {
                           </button>
                           <span className="phone-with-sms__number">{order.customerPhone}</span>
                         </div>
-                      </div>
+                      </CustomerInfoCopyWrap>
                     </td>
 
                     <td className="col-center">

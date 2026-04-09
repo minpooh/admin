@@ -89,57 +89,6 @@
   white-space: normal;
 }
 
-/* 컬럼 최소 너비 */
-.admin-table th:nth-child(1),
-.admin-table td:nth-child(1) {
-  min-width: 80px;
-}
-
-.admin-table th:nth-child(2),
-.admin-table td:nth-child(2) {
-  min-width: 150px;
-}
-
-.admin-table th:nth-child(3),
-.admin-table td:nth-child(3) {
-  min-width: 100px;
-}
-
-.admin-table th:nth-child(4),
-.admin-table td:nth-child(4) {
-  min-width: 180px;
-}
-
-.admin-table th:nth-child(5),
-.admin-table td:nth-child(5) {
-  min-width: 100px;
-}
-
-.admin-table th:nth-child(6),
-.admin-table td:nth-child(6) {
-  min-width: 160px;
-}
-
-.admin-table th:nth-child(7),
-.admin-table td:nth-child(7) {
-  min-width: 100px;
-}
-
-.admin-table th:nth-child(8),
-.admin-table td:nth-child(8) {
-  min-width: 150px;
-}
-
-.admin-table th:nth-child(9),
-.admin-table td:nth-child(9),
-.admin-table th:nth-child(10),
-.admin-table td:nth-child(10),
-.admin-table th:nth-child(11),
-.admin-table td:nth-child(11) {
-  min-width: 50px;
-  text-align: center;
-}
-
 /* 페이지 타이틀 + 우측 액션·추가 버튼 (배너·팝업·공동구매 등) */
 .admin-list-page-header {
   display: flex;
@@ -501,6 +450,62 @@
 
 .admin-table .col-center .admin-cell-triple__phone-row {
   justify-content: center;
+}
+
+/* 셀 블록 호버 시 우측 상단 복사 버튼 (고객정보 등, 문자발송 버튼과 유사 크기) */
+.admin-copy {
+  position: relative;
+}
+
+.admin-copy__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 2px 4px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.admin-copy:hover .admin-copy__overlay,
+.admin-copy:focus-within .admin-copy__overlay {
+  opacity: 1;
+}
+
+.admin-copy__backdrop {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.08);
+  pointer-events: none;
+}
+
+.admin-copy__btn {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--gray-700);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background 0.15s, color 0.15s;
+}
+
+.admin-copy__btn:hover {
+  background: var(--gray-100);
+  color: var(--gray-900);
 }
 
 /* 테이블 셀: 이슈/플레이스홀더 문구 */

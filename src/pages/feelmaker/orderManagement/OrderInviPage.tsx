@@ -7,7 +7,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './OrderListPage.css';
 import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
+import Alert from '../../../components/Alert';
 import Confirm from '../../../components/Confirm';
+import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
+import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import {
   MOCK_INVITE_ORDERS,
   type InviteOrder,
@@ -203,6 +206,7 @@ export default function OrderInviPage() {
   const [smsText, setSmsText] = useState('');
   const [smsHistoryByOrderId, setSmsHistoryByOrderId] = useState<Record<string, string[]>>({});
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
   const phoneMessagesRef = useRef<HTMLDivElement | null>(null);
 
   const baseOrders = useMemo(
@@ -848,25 +852,30 @@ export default function OrderInviPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <div className="admin-cell-triple">
+                    <CustomerInfoCopyWrap
+                      customerName={order.customerName}
+                      customerId={order.customerId}
+                      customerPhone={order.customerPhone}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                    >
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <div className="phone-with-sms admin-cell-triple__phone-row">
-                      <button
-                        type="button"
-                        className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
-                        aria-label="문자 발송"
-                        title="문자 발송"
-                        onClick={() => {
-                          setSmsModalOrderId(order.id);
-                          setSmsText('');
-                        }}
-                      >
-                        <Mail size={12} aria-hidden="true" />
-                      </button>
-                      <span className="phone-with-sms__number">{order.customerPhone}</span>
+                        <button
+                          type="button"
+                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
+                          aria-label="문자 발송"
+                          title="문자 발송"
+                          onClick={() => {
+                            setSmsModalOrderId(order.id);
+                            setSmsText('');
+                          }}
+                        >
+                          <Mail size={12} aria-hidden="true" />
+                        </button>
+                        <span className="phone-with-sms__number">{order.customerPhone}</span>
                       </div>
-                    </div>
+                    </CustomerInfoCopyWrap>
                   </td>
                   <td>{order.weddingDate}</td>
                   <td>
@@ -1136,6 +1145,12 @@ export default function OrderInviPage() {
           </Modal>
         );
       })()}
+      <Alert
+        open={copyInfoAlertOpen}
+        message={CUSTOMER_INFO_COPIED_ALERT_MESSAGE}
+        onClose={() => setCopyInfoAlertOpen(false)}
+      />
+
       <Confirm
         open={Boolean(confirmDialog)}
         title={confirmDialog?.title}

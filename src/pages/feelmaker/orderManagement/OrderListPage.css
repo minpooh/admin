@@ -1,6 +1,58 @@
 @import '../../../styles/adminPage.css';
 
 
+
+/* 구매영상 목록 전용 컬럼 폭 */
+.admin-list-page--video .admin-table th:nth-child(1),
+.admin-list-page--video .admin-table td:nth-child(1) {
+  min-width: 80px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(2),
+.admin-list-page--video .admin-table td:nth-child(2) {
+  min-width: 150px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(3),
+.admin-list-page--video .admin-table td:nth-child(3) {
+  min-width: 100px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(4),
+.admin-list-page--video .admin-table td:nth-child(4) {
+  min-width: 180px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(5),
+.admin-list-page--video .admin-table td:nth-child(5) {
+  min-width: 100px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(6),
+.admin-list-page--video .admin-table td:nth-child(6) {
+  min-width: 160px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(7),
+.admin-list-page--video .admin-table td:nth-child(7) {
+  min-width: 100px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(8),
+.admin-list-page--video .admin-table td:nth-child(8) {
+  min-width: 150px;
+}
+
+.admin-list-page--video .admin-table th:nth-child(9),
+.admin-list-page--video .admin-table td:nth-child(9),
+.admin-list-page--video .admin-table th:nth-child(10),
+.admin-list-page--video .admin-table td:nth-child(10),
+.admin-list-page--video .admin-table th:nth-child(11),
+.admin-list-page--video .admin-table td:nth-child(11) {
+  min-width: 50px;
+  text-align: center;
+}
+
 /* 체험영상 목록 전용 컬럼 폭 (구매영상 목록 영향 방지) */
 .admin-list-page--test-video .admin-table {
   min-width: 1160px;
@@ -89,7 +141,6 @@
 .admin-list-page--edit-store .admin-table th:nth-child(3),
 .admin-list-page--edit-store .admin-table td:nth-child(3) {
   min-width: 90px;
-  text-align: center;
 }
 
 .admin-list-page--edit-store .admin-table th:nth-child(4),
@@ -109,6 +160,11 @@
 
 .admin-list-page--edit-store .admin-table th:nth-child(7),
 .admin-list-page--edit-store .admin-table td:nth-child(7) {
+  min-width: 120px;
+}
+
+.admin-list-page--edit-store .admin-table th:nth-child(10),
+.admin-list-page--edit-store .admin-table td:nth-child(10) {
   min-width: 120px;
 }
 
