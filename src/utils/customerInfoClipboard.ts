@@ -1,8 +1,4 @@
-export const CUSTOMER_INFO_COPIED_ALERT_MESSAGE = '고객정보가 복사되었습니다';
-
-export function formatCustomerClipboardText(name: string, id: string, phone: string): string {
-  return `${name}\n ${id}\n ${phone}`;
-}
+export const CUSTOMER_INFO_COPIED_ALERT_MESSAGE = '복사되었습니다';
 
 export async function copyTextToClipboard(text: string): Promise<boolean> {
   try {
@@ -22,8 +18,4 @@ export async function copyTextToClipboard(text: string): Promise<boolean> {
   } catch {
     return false;
   }
-}
-
-export async function copyCustomerToClipboard(name: string, id: string, phone: string): Promise<boolean> {
-  return copyTextToClipboard(formatCustomerClipboardText(name, id, phone));
 }

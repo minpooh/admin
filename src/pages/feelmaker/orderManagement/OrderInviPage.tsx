@@ -9,7 +9,7 @@ import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
 import Alert from '../../../components/Alert';
 import Confirm from '../../../components/Confirm';
-import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import {
   MOCK_INVITE_ORDERS,
@@ -17,6 +17,16 @@ import {
   type InviteType,
   type PaymentStatus,
 } from './mock/orderInvi.mock';
+
+function formatInviteRowCopy(order: InviteOrder): string {
+  return [
+    `URL: ${order.url}`,
+    `이름: ${order.customerName}`,
+    `아이디: ${order.customerId}`,
+    `전화번호: ${order.customerPhone}`,
+    `주문번호: ${order.orderNo}`,
+  ].join('\n');
+}
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 
@@ -808,6 +818,7 @@ export default function OrderInviPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th>사용현황</th>
                 <th className="col-center">고객정보</th>
                 <th>제작일</th>
@@ -828,6 +839,13 @@ export default function OrderInviPage() {
                   isExpireImminent(computedExpireDate);
                 return (
                 <tr key={order.id}>
+                  <td className="col-center">
+                    <ListRowCopyButton
+                      text={formatInviteRowCopy(order)}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                      ariaLabel="URL·이름·아이디·전화번호·주문번호 복사"
+                    />
+                  </td>
                   <td>
                     <div className="product-name-with-public">
                       <div className="cell-block cell-block--channels">
@@ -852,12 +870,7 @@ export default function OrderInviPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <CustomerInfoCopyWrap
-                      customerName={order.customerName}
-                      customerId={order.customerId}
-                      customerPhone={order.customerPhone}
-                      onCopied={() => setCopyInfoAlertOpen(true)}
-                    >
+                    <div className="admin-cell-triple">
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <div className="phone-with-sms admin-cell-triple__phone-row">
@@ -875,7 +888,7 @@ export default function OrderInviPage() {
                         </button>
                         <span className="phone-with-sms__number">{order.customerPhone}</span>
                       </div>
-                    </CustomerInfoCopyWrap>
+                    </div>
                   </td>
                   <td>{order.weddingDate}</td>
                   <td>
@@ -995,7 +1008,7 @@ export default function OrderInviPage() {
               })}
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={11} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>

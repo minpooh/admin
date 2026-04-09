@@ -8,10 +8,19 @@ import './OrderListPage.css';
 import Modal from '../../../components/Modal';
 import Alert from '../../../components/Alert';
 import Confirm from '../../../components/Confirm';
-import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import ListSelect from '../../../components/ListSelect';
 import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderVideoTest.mock';
+
+function formatPurchaseVideoRowCopy(order: OrderItem): string {
+  return [
+    `이름: ${order.customerName}`,
+    `아이디: ${order.customerId}`,
+    `전화번호: ${order.customerPhone}`,
+    `주문번호: ${order.no}${order.noSub}`,
+  ].join('\n');
+}
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 
@@ -872,6 +881,7 @@ export default function OrderVideoTestPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th>NO</th>
                 <th>구매채널/가입채널</th>
                 <th>진행현황</th>
@@ -885,6 +895,13 @@ export default function OrderVideoTestPage() {
             <tbody>
               {paginatedOrders.map((order) => (
                 <tr key={order.id}>
+                  <td className="col-center">
+                    <ListRowCopyButton
+                      text={formatPurchaseVideoRowCopy(order)}
+                      onCopied={() => setCopyInfoAlertOpen(true)}
+                      ariaLabel="이름·아이디·전화번호·주문번호 복사"
+                    />
+                  </td>
                   <td>
                     <div className="cell-block">
                       <span className="cell-line">{order.no}</span>
@@ -965,12 +982,7 @@ export default function OrderVideoTestPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <CustomerInfoCopyWrap
-                      customerName={order.customerName}
-                      customerId={order.customerId}
-                      customerPhone={order.customerPhone}
-                      onCopied={() => setCopyInfoAlertOpen(true)}
-                    >
+                    <div className="admin-cell-triple">
                       <span className="cell-line">{order.customerName}</span>
                       <span className="cell-line">{order.customerId}</span>
                       <div className="phone-with-sms admin-cell-triple__phone-row">
@@ -988,7 +1000,7 @@ export default function OrderVideoTestPage() {
                         </button>
                         <span className="phone-with-sms__number">{order.customerPhone}</span>
                       </div>
-                    </CustomerInfoCopyWrap>
+                    </div>
                   </td>
                   <td>
                     <div className="date-with-add">

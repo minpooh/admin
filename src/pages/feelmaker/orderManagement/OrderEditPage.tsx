@@ -9,10 +9,19 @@ import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import Alert from '../../../components/Alert';
-import CustomerInfoCopyWrap from '../../../components/CustomerInfoCopyWrap';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import Toast from '../../../components/Toast';
 import { CUSTOMER_INFO_COPIED_ALERT_MESSAGE } from '../../../utils/customerInfoClipboard';
 import { MOCK_ORDERS, type OrderItem } from './mock/orderEdit.mock';
+
+function formatPhotoEditRowCopy(order: OrderItem): string {
+  return [
+    `이름: ${order.customerName}`,
+    `아이디: ${order.customerId}`,
+    `전화번호: ${order.customerPhone}`,
+    `주문번호: ${order.no}${order.noSub}`,
+  ].join('\n');
+}
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 const MANAGERS = ['담당자1', '담당자2', '담당자3'] as const;
@@ -767,6 +776,7 @@ export default function OrderEditPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th>NO</th>
                 <th className="col-center">긴급보정</th>
                 <th>진행현황</th>
@@ -787,6 +797,13 @@ export default function OrderEditPage() {
 
                 return (
                   <tr key={order.id}>
+                    <td className="col-center">
+                      <ListRowCopyButton
+                        text={formatPhotoEditRowCopy(order)}
+                        onCopied={() => setAlertMessage(CUSTOMER_INFO_COPIED_ALERT_MESSAGE)}
+                        ariaLabel="이름·아이디·전화번호·주문번호 복사"
+                      />
+                    </td>
                     <td>
                       <div className="cell-block">
                         <span className="cell-line">{order.no}</span>
@@ -837,12 +854,7 @@ export default function OrderEditPage() {
                     </td>
 
                     <td className="col-center">
-                      <CustomerInfoCopyWrap
-                        customerName={order.customerName}
-                        customerId={order.customerId}
-                        customerPhone={order.customerPhone}
-                        onCopied={() => setAlertMessage(CUSTOMER_INFO_COPIED_ALERT_MESSAGE)}
-                      >
+                      <div className="admin-cell-triple">
                         <span className="cell-line">{order.customerName}</span>
                         <span className="cell-line">{order.customerId}</span>
                         <div className="phone-with-sms admin-cell-triple__phone-row">
@@ -860,7 +872,7 @@ export default function OrderEditPage() {
                           </button>
                           <span className="phone-with-sms__number">{order.customerPhone}</span>
                         </div>
-                      </CustomerInfoCopyWrap>
+                      </div>
                     </td>
 
                     <td className="col-center">
@@ -974,7 +986,7 @@ export default function OrderEditPage() {
 
               {paginatedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={11} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
