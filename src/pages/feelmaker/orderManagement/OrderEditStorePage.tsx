@@ -32,13 +32,12 @@ type AppliedSearch = {
   requestDateRange: string;
   requestStartDate: Date | null;
   requestEndDate: Date | null;
-  conditionType: '이름' | '아이디' | '주문번호';
+  conditionType: '이름' | '아이디' | '전화번호' | '스팜주문번호';
   keyword: string;
   workStatus: string;
   urgentPhotoEdit: string;
 };
-
-type OptionModalType = 'personAdd' | 'urgentEdit' | 'artworkAlbumEdit';
+type AppliedChipKey = 'uploadDate' | 'requestDate' | 'keyword' | 'workStatus' | 'urgentPhotoEdit';
 type ConfirmDialogState = {
   title?: string;
   message: string;
@@ -48,16 +47,21 @@ type ConfirmDialogState = {
   onConfirm: () => void;
 };
 
-const OPTION_LABEL: Record<OptionModalType, string> = {
-  personAdd: '인물추가',
-  urgentEdit: '긴급보정',
-  artworkAlbumEdit: '아트웍화보보정',
-};
 const MANAGERS = ['담당자1', '담당자2', '담당자3'] as const;
 
 function parseOrderDate(orderDate: string): Date {
   const dateStr = orderDate.replace(/\/$/, '').trim().slice(0, 19);
   return new Date(dateStr);
+}
+
+function normalizeProgress(progress: string): '보정진행중' | '관리자업로드' | '재수정진행중' | '확정' {
+  if (progress === '보정진행중' || progress === '관리자업로드' || progress === '재수정진행중' || progress === '확정') {
+    return progress;
+  }
+  if (progress === '작업전' || progress === '작업중') return '보정진행중';
+  if (progress === '작업완료') return '관리자업로드';
+  if (progress === '재수정대기중' || progress === '재수정작업중') return '재수정진행중';
+  return '보정진행중';
 }
 
 function isInCustomDateRange(orderDate: string, start: Date | null, end: Date | null): boolean {
@@ -104,17 +108,16 @@ function isInPresetDateRange(orderDate: string, dateRange: string): boolean {
 }
 
 function getProgressVariantClass(progress: string): string {
-  if (progress === '작업전') return 'progress-status--primary';
-  if (progress === '작업중') return 'progress-status--danger';
-  if (progress === '작업완료') return 'progress-status--secondary';
-  if (progress === '재수정대기중') return 'progress-status--warning';
-  if (progress === '재수정작업중') return 'progress-status--danger';
+  if (progress === '보정진행중') return 'progress-status--danger';
+  if (progress === '관리자업로드') return 'progress-status--secondary';
+  if (progress === '재수정진행중') return 'progress-status--warning';
+  if (progress === '확정') return 'progress-status--primary';
   return 'progress-status--warning';
 }
 
 function getPhotoMenuItemsByProgress(progress: string): string[] {
-  if (progress === '작업완료') return ['사진등록', '원본다운로드', '관리자사진다운로드'];
-  if (progress === '재수정대기중' || progress === '재수정작업중') {
+  if (progress === '관리자업로드' || progress === '확정') return ['사진등록', '원본다운로드', '관리자사진다운로드'];
+  if (progress === '재수정진행중') {
     return ['사진등록', '원본다운로드', '관리자사진다운로드', '재수정요청다운로드'];
   }
   return ['사진등록', '원본다운로드'];
@@ -162,9 +165,15 @@ function applyFilters(orders: StoreEditOrderItem[], applied: AppliedSearch | nul
     if (keywordTrim) {
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(keywordTrim)) return false;
-      if (applied.conditionType === '주문번호' && !order.orderNo.toLowerCase().includes(keywordTrim)) return false;
+      if (applied.conditionType === '전화번호' && !order.customerPhone.toLowerCase().includes(keywordTrim))
+        return false;
+      if (applied.conditionType === '스팜주문번호' && !order.orderNo.toLowerCase().includes(keywordTrim))
+        return false;
     }
-    if (applied.workStatus && order.progress !== applied.workStatus) return false;
+    if (applied.workStatus) {
+      const normalizedProgress = normalizeProgress(order.progress);
+      if (normalizedProgress !== applied.workStatus) return false;
+    }
     if (applied.urgentPhotoEdit === '신청' && !order.urgentAdded) return false;
     if (applied.urgentPhotoEdit === '미신청' && order.urgentAdded) return false;
     return true;
@@ -183,7 +192,7 @@ export default function OrderEditStorePage() {
   const [requestStartDate, setRequestStartDate] = useState<Date | null>(null);
   const [requestEndDate, setRequestEndDate] = useState<Date | null>(null);
 
-  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '주문번호'>('이름');
+  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '전화번호' | '스팜주문번호'>('이름');
   const [keyword, setKeyword] = useState('');
   const [workStatus, setWorkStatus] = useState('');
   const [urgentPhotoEdit, setUrgentPhotoEdit] = useState('');
@@ -226,39 +235,112 @@ export default function OrderEditStorePage() {
     });
   };
 
-  const [openOptionsOrderId, setOpenOptionsOrderId] = useState<string | null>(null);
-  const [rowDropdownPos, setRowDropdownPos] = useState<{ top: number; right: number } | null>(null);
-  const rowDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
-  const [optionModal, setOptionModal] = useState<{ orderId: string; type: OptionModalType } | null>(null);
+  const formatYmd = (d: Date | null) => {
+    if (!d) return '';
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const isAppliedSearchEmpty = (s: AppliedSearch | null) => {
+    if (!s) return true;
+    return (
+      !s.uploadDateRange &&
+      s.uploadStartDate == null &&
+      s.uploadEndDate == null &&
+      !s.requestDateRange &&
+      s.requestStartDate == null &&
+      s.requestEndDate == null &&
+      !s.keyword.trim() &&
+      !s.workStatus &&
+      !s.urgentPhotoEdit
+    );
+  };
+
+  const clearAppliedFilter = (key: AppliedChipKey) => {
+    if (!appliedSearch) return;
+    const next: AppliedSearch = { ...appliedSearch };
+    switch (key) {
+      case 'uploadDate':
+        setUploadDateRange('');
+        setUploadStartDate(null);
+        setUploadEndDate(null);
+        next.uploadDateRange = '';
+        next.uploadStartDate = null;
+        next.uploadEndDate = null;
+        break;
+      case 'requestDate':
+        setRequestDateRange('');
+        setRequestStartDate(null);
+        setRequestEndDate(null);
+        next.requestDateRange = '';
+        next.requestStartDate = null;
+        next.requestEndDate = null;
+        break;
+      case 'keyword':
+        setKeyword('');
+        next.keyword = '';
+        break;
+      case 'workStatus':
+        setWorkStatus('');
+        next.workStatus = '';
+        break;
+      case 'urgentPhotoEdit':
+        setUrgentPhotoEdit('');
+        next.urgentPhotoEdit = '';
+        break;
+      default:
+        break;
+    }
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
+  };
+
+  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = (() => {
+    if (!appliedSearch) return [];
+    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
+    if (appliedSearch.uploadStartDate || appliedSearch.uploadEndDate) {
+      const start = formatYmd(appliedSearch.uploadStartDate);
+      const end = formatYmd(appliedSearch.uploadEndDate);
+      chips.push({
+        key: 'uploadDate',
+        label: `업로드일: ${start}${start && end ? ' ~ ' : ''}${end}`,
+      });
+    } else if (appliedSearch.uploadDateRange) {
+      chips.push({ key: 'uploadDate', label: `업로드일: ${appliedSearch.uploadDateRange}` });
+    }
+    if (appliedSearch.requestStartDate || appliedSearch.requestEndDate) {
+      const start = formatYmd(appliedSearch.requestStartDate);
+      const end = formatYmd(appliedSearch.requestEndDate);
+      chips.push({
+        key: 'requestDate',
+        label: `재수정요청일: ${start}${start && end ? ' ~ ' : ''}${end}`,
+      });
+    } else if (appliedSearch.requestDateRange) {
+      chips.push({ key: 'requestDate', label: `재수정요청일: ${appliedSearch.requestDateRange}` });
+    }
+    if (appliedSearch.keyword.trim()) {
+      chips.push({
+        key: 'keyword',
+        label: `검색: ${appliedSearch.conditionType} ${appliedSearch.keyword}`,
+      });
+    }
+    if (appliedSearch.workStatus) {
+      chips.push({ key: 'workStatus', label: `제작현황: ${appliedSearch.workStatus}` });
+    }
+    if (appliedSearch.urgentPhotoEdit) {
+      chips.push({ key: 'urgentPhotoEdit', label: `긴급사진보정: ${appliedSearch.urgentPhotoEdit}` });
+    }
+    return chips;
+  })();
 
   const [openPhotoOrderId, setOpenPhotoOrderId] = useState<string | null>(null);
   const [photoDropdownPos, setPhotoDropdownPos] = useState<{ top: number; right: number } | null>(null);
   const photoDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
-
-  const portalOptionsOrder = useMemo(
-    () => (openOptionsOrderId ? orders.find((o) => o.id === openOptionsOrderId) ?? null : null),
-    [openOptionsOrderId, orders]
-  );
   const portalPhotoOrder = useMemo(
     () => (openPhotoOrderId ? orders.find((o) => o.id === openPhotoOrderId) ?? null : null),
     [openPhotoOrderId, orders]
   );
-
-  useLayoutEffect(() => {
-    if (!openOptionsOrderId || !rowDropdownAnchorRef.current) return;
-    const update = () => {
-      const r = rowDropdownAnchorRef.current?.getBoundingClientRect();
-      if (!r) return;
-      setRowDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-    };
-    update();
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [openOptionsOrderId]);
 
   useLayoutEffect(() => {
     if (!openPhotoOrderId || !photoDropdownAnchorRef.current) return;
@@ -277,17 +359,16 @@ export default function OrderEditStorePage() {
   }, [openPhotoOrderId]);
 
   useEffect(() => {
-    if (!openOptionsOrderId && !openPhotoOrderId) return;
+    if (!openPhotoOrderId) return;
     const handlePointerDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
       if (target.closest('.row-options') || target.closest('.row-options__menu-portal')) return;
-      setOpenOptionsOrderId(null);
       setOpenPhotoOrderId(null);
     };
     document.addEventListener('mousedown', handlePointerDown);
     return () => document.removeEventListener('mousedown', handlePointerDown);
-  }, [openOptionsOrderId, openPhotoOrderId]);
+  }, [openPhotoOrderId]);
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
@@ -371,7 +452,7 @@ export default function OrderEditStorePage() {
           <div className="filter-section">
             <span className="filter-label">조건검색</span>
             <div className="admin-search-field">
-              <ListSelect ariaLabel="조건검색 타입" className="listselect--condition-type" value={conditionType} onChange={(next) => setConditionType(next as '이름' | '아이디' | '주문번호')} options={[{ value: '이름', label: '이름' }, { value: '아이디', label: '아이디' }, { value: '주문번호', label: '주문번호' }]} />
+              <ListSelect ariaLabel="조건검색 타입" className="listselect--condition-type" value={conditionType} onChange={(next) => setConditionType(next as '이름' | '아이디' | '전화번호' | '스팜주문번호')} options={[{ value: '이름', label: '이름' }, { value: '아이디', label: '아이디' }, { value: '전화번호', label: '전화번호' }, { value: '스팜주문번호', label: '스팜주문번호' }]} />
               <input type="text" placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             </div>
           </div>
@@ -413,7 +494,7 @@ export default function OrderEditStorePage() {
 
           <div className="filter-section">
             <span className="filter-label">제작현황</span>
-            <ListSelect ariaLabel="제작현황" value={workStatus} onChange={setWorkStatus} options={[{ value: '', label: '전체보기' }, { value: '작업전', label: '작업전' }, { value: '작업중', label: '작업중' }, { value: '작업완료', label: '작업완료' }, { value: '재수정대기중', label: '재수정대기중' }, { value: '재수정작업중', label: '재수정작업중' }]} />
+            <ListSelect ariaLabel="제작현황" value={workStatus} onChange={setWorkStatus} options={[{ value: '', label: '전체보기' }, { value: '보정진행중', label: '보정진행중' }, { value: '관리자업로드', label: '관리자업로드' }, { value: '재수정진행중', label: '재수정진행중' }, { value: '확정', label: '확정' }]} />
           </div>
 
           <div className="filter-section">
@@ -424,6 +505,28 @@ export default function OrderEditStorePage() {
       </section>
 
       <section className="admin-list-box admin-list-box--table">
+        {appliedChips.length > 0 && (
+          <section className="admin-applied-filters">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
+                {appliedChips.map((chip) => (
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
+                    <button
+                      type="button"
+                      className="admin-filter-chip__x"
+                      aria-label={`${chip.label} 해제`}
+                      onClick={() => clearAppliedFilter(chip.key)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
@@ -436,7 +539,6 @@ export default function OrderEditStorePage() {
                 <th>상품정보</th>
                 <th className="col-center">고객정보</th>
                 <th>결제현황</th>
-                <th>옵션</th>
                 <th>사진</th>
                 <th>샘플여부</th>
                 <th>삭제</th>
@@ -465,9 +567,9 @@ export default function OrderEditStorePage() {
                   <td>{order.orderNo}</td>
                   <td className="col-center">{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
                   <td>
-                    <div className={['progress-status', getProgressVariantClass(order.progress)].join(' ')}>
+                    <div className={['progress-status', getProgressVariantClass(normalizeProgress(order.progress))].join(' ')}>
                       <span className="progress-status__dot" aria-hidden="true" />
-                      <span className="progress-status__text">{order.progress}</span>
+                      <span className="progress-status__text">{normalizeProgress(order.progress)}</span>
                     </div>
                   </td>
                   <td>
@@ -525,31 +627,6 @@ export default function OrderEditStorePage() {
                         type="button"
                         className="row-options__trigger"
                         aria-haspopup="menu"
-                        aria-expanded={openOptionsOrderId === order.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (openOptionsOrderId === order.id) {
-                            setOpenOptionsOrderId(null);
-                            setRowDropdownPos(null);
-                            return;
-                          }
-                          rowDropdownAnchorRef.current = e.currentTarget;
-                          const r = e.currentTarget.getBoundingClientRect();
-                          setRowDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-                          setOpenPhotoOrderId(null);
-                          setOpenOptionsOrderId(order.id);
-                        }}
-                      >
-                        <MoreHorizontal size={16} aria-hidden="true" />
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="row-options">
-                      <button
-                        type="button"
-                        className="row-options__trigger"
-                        aria-haspopup="menu"
                         aria-expanded={openPhotoOrderId === order.id}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -561,7 +638,6 @@ export default function OrderEditStorePage() {
                           photoDropdownAnchorRef.current = e.currentTarget;
                           const r = e.currentTarget.getBoundingClientRect();
                           setPhotoDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-                          setOpenOptionsOrderId(null);
                           setOpenPhotoOrderId(order.id);
                         }}
                       >
@@ -574,7 +650,7 @@ export default function OrderEditStorePage() {
                       <div className="cell-block">
                         <span className="cell-line cell-line--with-action">
                           <span>샘플번호: {order.sampleNo}</span>
-                          {order.progress === '작업완료' && (
+                          {normalizeProgress(order.progress) === '관리자업로드' && (
                             <button
                               type="button"
                               className="row-icon-btn row-icon-btn--tone-primary row-icon-btn--inline-sm"
@@ -603,7 +679,7 @@ export default function OrderEditStorePage() {
               ))}
               {paginatedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={12} style={{ textAlign: 'center', padding: '20px' }}>검색 결과가 없습니다.</td>
+                  <td colSpan={11} style={{ textAlign: 'center', padding: '20px' }}>검색 결과가 없습니다.</td>
                 </tr>
               )}
             </tbody>
@@ -625,21 +701,10 @@ export default function OrderEditStorePage() {
         </div>
       </section>
 
-      {portalOptionsOrder && rowDropdownPos
-        ? createPortal(
-            <div className="row-options__menu-portal" role="menu" style={{ position: 'fixed', top: rowDropdownPos.top, right: rowDropdownPos.right, zIndex: 10000 }}>
-              <button type="button" className="row-options__item" role="menuitem" onClick={() => setOptionModal({ orderId: portalOptionsOrder.id, type: 'personAdd' })}>인물추가</button>
-              <button type="button" className="row-options__item" role="menuitem" onClick={() => setOptionModal({ orderId: portalOptionsOrder.id, type: 'urgentEdit' })}>긴급보정</button>
-              <button type="button" className="row-options__item" role="menuitem" onClick={() => setOptionModal({ orderId: portalOptionsOrder.id, type: 'artworkAlbumEdit' })}>아트웍화보보정</button>
-            </div>,
-            document.body
-          )
-        : null}
-
       {portalPhotoOrder && photoDropdownPos
         ? createPortal(
             <div className="row-options__menu-portal" role="menu" style={{ position: 'fixed', top: photoDropdownPos.top, right: photoDropdownPos.right, zIndex: 10000 }}>
-              {getPhotoMenuItemsByProgress(portalPhotoOrder.progress).map((item) => (
+              {getPhotoMenuItemsByProgress(normalizeProgress(portalPhotoOrder.progress)).map((item) => (
                 <button key={`${portalPhotoOrder.id}-${item}`} type="button" className="row-options__item" role="menuitem" onClick={() => setOpenPhotoOrderId(null)}>
                   {item}
                 </button>
@@ -648,21 +713,6 @@ export default function OrderEditStorePage() {
             document.body
           )
         : null}
-
-      {optionModal && (
-        <Modal open onClose={() => setOptionModal(null)} ariaLabel="옵션" variant="option">
-          <Modal.Header>
-            <Modal.Title>{OPTION_LABEL[optionModal.type]}</Modal.Title>
-            <Modal.Close />
-          </Modal.Header>
-          <Modal.Body>
-            <div className="option-modal__desc">{OPTION_LABEL[optionModal.type]} 옵션(목업)</div>
-          </Modal.Body>
-          <Modal.Footer>
-            <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={() => setOptionModal(null)}>닫기</button>
-          </Modal.Footer>
-        </Modal>
-      )}
 
       {paymentModalOrderId && (() => {
         const order = orders.find((o) => o.id === paymentModalOrderId);

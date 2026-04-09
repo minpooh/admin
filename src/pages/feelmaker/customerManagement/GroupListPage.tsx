@@ -21,6 +21,8 @@ const DATE_PRESET_OPTIONS = [
   { value: '1주', label: '1주' },
   { value: '2주', label: '2주' },
   { value: '1개월', label: '1개월' },
+  { value: '3개월', label: '3개월' },
+  { value: '6개월', label: '6개월' },
 ];
 
 const DETAIL_SEARCH_SCOPE_OPTIONS = [
@@ -189,6 +191,8 @@ function applyDatePreset(next: string, setStart: (d: Date | null) => void, setEn
   if (next === '1주') start.setDate(start.getDate() - 6);
   if (next === '2주') start.setDate(start.getDate() - 13);
   if (next === '1개월') start.setDate(start.getDate() - 29);
+  if (next === '3개월') start.setDate(start.getDate() - 89);
+  if (next === '6개월') start.setDate(start.getDate() - 179);
   setStart(start);
   setEnd(end);
 }

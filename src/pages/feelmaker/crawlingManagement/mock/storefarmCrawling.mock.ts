@@ -52,12 +52,10 @@ export type StorefarmCardRow = {
 
 export const MOTION_SEARCH_SCOPE_OPTIONS = [
   { value: 'all', label: '전체' },
+  { value: 'name', label: '이름' },
+  { value: 'userId', label: '아이디' },
+  { value: 'phone', label: '전화번호' },
   { value: 'orderNumber', label: '주문번호' },
-  { value: 'storefarm', label: '스팜정보' },
-  { value: 'memberId', label: '회원(아이디)' },
-  { value: 'memberContact', label: '회원(연락처)' },
-  { value: 'upload', label: '업로드정보' },
-  { value: 'issue', label: '이슈' },
 ];
 
 export const VIDEO_SEARCH_SCOPE_OPTIONS = [
@@ -65,21 +63,13 @@ export const VIDEO_SEARCH_SCOPE_OPTIONS = [
   { value: 'name', label: '이름' },
   { value: 'userId', label: '아이디' },
   { value: 'phone', label: '전화번호' },
-  { value: 'paymentStatus', label: '결제현황' },
-  { value: 'orderProduct', label: '주문상품' },
-  { value: 'makerService', label: '메이커서비스' },
 ];
 
 export const CARD_SEARCH_SCOPE_OPTIONS = [
   { value: 'all', label: '전체' },
-  { value: 'category', label: '카테고리별' },
   { value: 'name', label: '이름' },
   { value: 'userId', label: '아이디' },
   { value: 'phone', label: '전화번호' },
-  { value: 'paymentStatus', label: '결제현황' },
-  { value: 'signupStatus', label: '가입상태' },
-  { value: 'activeInvitation', label: '사용중청첩장' },
-  { value: 'option', label: '옵션' },
 ];
 
 export const MOCK_STOREFARM_VIDEO_ROWS: StorefarmVideoRow[] = [

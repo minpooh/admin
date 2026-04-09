@@ -63,6 +63,15 @@ function getMotionRowDate(row: StorefarmMotionRow) {
 function createMotionMatchKeyword() {
   return (row: StorefarmMotionRow, scope: string, keywordTrim: string) => {
     if (!keywordTrim) return true;
+    const userIds = [row.storefarm.userId, row.memberById.userId, row.memberByContact.userId, row.uploadInfo.userId]
+      .join(' ')
+      .toLowerCase();
+    const names = [row.storefarm.name, row.memberById.name, row.memberByContact.name, row.uploadInfo.name]
+      .join(' ')
+      .toLowerCase();
+    const phones = [row.storefarm.phone, row.memberById.phone, row.memberByContact.phone, row.uploadInfo.phone]
+      .join(' ')
+      .toLowerCase();
     const haystack = [
       row.orderNumber,
       flattenTriple(row.storefarm),
@@ -77,14 +86,10 @@ function createMotionMatchKeyword() {
       .toLowerCase();
 
     if (scope === 'all') return haystack.includes(keywordTrim);
+    if (scope === 'name') return names.includes(keywordTrim);
+    if (scope === 'userId') return userIds.includes(keywordTrim);
+    if (scope === 'phone') return phones.includes(keywordTrim);
     if (scope === 'orderNumber') return row.orderNumber.toLowerCase().includes(keywordTrim);
-    if (scope === 'storefarm') return flattenTriple(row.storefarm).toLowerCase().includes(keywordTrim);
-    if (scope === 'memberId') return flattenTriple(row.memberById).toLowerCase().includes(keywordTrim);
-    if (scope === 'memberContact') return flattenTriple(row.memberByContact).toLowerCase().includes(keywordTrim);
-    if (scope === 'upload') return flattenTriple(row.uploadInfo).toLowerCase().includes(keywordTrim);
-    if (scope === 'issue') {
-      return [row.issueIdMatch, row.issueContactMatch, row.issueUpload].join(' ').toLowerCase().includes(keywordTrim);
-    }
     return haystack.includes(keywordTrim);
   };
 }

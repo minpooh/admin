@@ -15,7 +15,6 @@ import {
   MOCK_INVITE_ORDERS,
   type InviteOrder,
   type InviteType,
-  type PaymentStatus,
 } from './mock/orderInvi.mock';
 
 function formatInviteRowCopy(order: InviteOrder): string {
@@ -70,15 +69,15 @@ type AppliedSearch = {
   detailOrderEndDate: Date | null;
   detailWeddingStartDate: Date | null;
   detailWeddingEndDate: Date | null;
-  conditionType: '이름' | '아이디' | '주문번호';
+  conditionType: '아이디' | 'URL' | '신랑명' | '신부명' | '아기이름';
   keyword: string;
   skinType: string;
   optionStatus: string;
   urlStatus: string;
-  paymentStatus: '' | PaymentStatus;
+  paymentStatus: '' | '결제완료' | '결제전';
 };
 
-type PaymentFilterValue = '' | PaymentStatus;
+type PaymentFilterValue = '' | '결제완료' | '결제전';
 type ConfirmDialogState = {
   title?: string;
   message: string;
@@ -206,7 +205,7 @@ export default function OrderInviPage() {
   const [selectedSkinType, setSelectedSkinType] = useState('');
   const [selectedOptionStatus, setSelectedOptionStatus] = useState('');
   const [selectedUrlStatus, setSelectedUrlStatus] = useState('');
-  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '주문번호'>('이름');
+  const [conditionType, setConditionType] = useState<'아이디' | 'URL' | '신랑명' | '신부명' | '아기이름'>('아이디');
   const [keyword, setKeyword] = useState('');
   const [selectedPayment, setSelectedPayment] = useState<PaymentFilterValue>('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
@@ -249,15 +248,22 @@ export default function OrderInviPage() {
         )
       )
         return false;
-      if (appliedSearch.paymentStatus && order.paymentStatus !== appliedSearch.paymentStatus)
+      if (appliedSearch.paymentStatus === '결제완료' && order.paymentStatus !== '사용완료(평생소장중)') {
         return false;
+      }
+      if (appliedSearch.paymentStatus === '결제전' && order.paymentStatus === '사용완료(평생소장중)') {
+        return false;
+      }
       if (appliedSearch.skinType && order.skinType !== appliedSearch.skinType) return false;
       if (appliedSearch.optionStatus && order.optionStatus !== appliedSearch.optionStatus) return false;
-      if (appliedSearch.urlStatus && order.urlStatus !== appliedSearch.urlStatus) return false;
+      if (appliedSearch.urlStatus === '입력전' && order.url.trim() !== '') return false;
+      if (appliedSearch.urlStatus === '입력완료' && order.url.trim() === '') return false;
       if (!q) return true;
-      if (appliedSearch.conditionType === '이름') return order.customerName.toLowerCase().includes(q);
       if (appliedSearch.conditionType === '아이디') return order.customerId.toLowerCase().includes(q);
-      return order.orderNo.toLowerCase().includes(q);
+      if (appliedSearch.conditionType === 'URL') return order.url.toLowerCase().includes(q);
+      if (appliedSearch.conditionType === '신랑명') return (order.groomName ?? '').toLowerCase().includes(q);
+      if (appliedSearch.conditionType === '신부명') return (order.brideName ?? '').toLowerCase().includes(q);
+      return (order.babyName ?? '').toLowerCase().includes(q);
     });
   }, [appliedSearch, baseOrders]);
 
@@ -318,7 +324,7 @@ export default function OrderInviPage() {
       chips.push({ key: 'optionStatus', label: `옵션: ${appliedSearch.optionStatus}` });
     if (appliedSearch.urlStatus) chips.push({ key: 'urlStatus', label: `URL: ${appliedSearch.urlStatus}` });
     if (appliedSearch.paymentStatus)
-      chips.push({ key: 'paymentStatus', label: `결제상태: ${appliedSearch.paymentStatus}` });
+      chips.push({ key: 'paymentStatus', label: `결제: ${appliedSearch.paymentStatus}` });
 
     return chips;
   }, [appliedSearch]);
@@ -535,11 +541,15 @@ export default function OrderInviPage() {
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
                 value={conditionType}
-                onChange={(next) => setConditionType(next as '이름' | '아이디' | '주문번호')}
+                onChange={(next) =>
+                  setConditionType(next as '아이디' | 'URL' | '신랑명' | '신부명' | '아기이름')
+                }
                 options={[
-                  { value: '이름', label: '이름' },
                   { value: '아이디', label: '아이디' },
-                  { value: '주문번호', label: '주문번호' },
+                  { value: 'URL', label: 'URL' },
+                  { value: '신랑명', label: '신랑명' },
+                  { value: '신부명', label: '신부명' },
+                  { value: '아기이름', label: '아기이름' },
                 ]}
               />
               <input
@@ -748,14 +758,9 @@ export default function OrderInviPage() {
             <span className="filter-label">옵션</span>
             <ListSelect
               ariaLabel="옵션"
-              value={selectedPayment}
-              onChange={(next) => setSelectedPayment(next as PaymentFilterValue)}
-              options={[
-                { value: '', label: '전체보기' },
-                { value: '사용완료(평생소장중)', label: '사용완료(평생소장중)' },
-                { value: '미사용', label: '미사용' },
-                { value: '추가없음', label: '추가없음' },
-              ]}
+              value={selectedOptionStatus}
+              onChange={setSelectedOptionStatus}
+              options={[...OPTION_STATUS_OPTIONS]}
             />
           </div>
 
@@ -770,12 +775,16 @@ export default function OrderInviPage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">옵션</span>
+            <span className="filter-label">결제</span>
             <ListSelect
-              ariaLabel="옵션"
-              value={selectedOptionStatus}
-              onChange={setSelectedOptionStatus}
-              options={[...OPTION_STATUS_OPTIONS]}
+              ariaLabel="결제"
+              value={selectedPayment}
+              onChange={(next) => setSelectedPayment(next as PaymentFilterValue)}
+              options={[
+                { value: '', label: '전체보기' },
+                { value: '결제완료', label: '결제완료' },
+                { value: '결제전', label: '결제전' },
+              ]}
             />
           </div>
 
@@ -821,8 +830,7 @@ export default function OrderInviPage() {
                 <th className="col-center">복사</th>
                 <th>사용현황</th>
                 <th className="col-center">고객정보</th>
-                <th>제작일</th>
-                <th>주문일</th>
+                <th>제작일/주문일</th>
                 <th>예식일/만료일</th>
                 <th>옵션</th>
                 <th className="col-center">에디터</th>
@@ -890,40 +898,16 @@ export default function OrderInviPage() {
                       </div>
                     </div>
                   </td>
-                  <td>{order.weddingDate}</td>
                   <td>
-                    <div className="phone-with-sms">
-                      {order.paymentStatus === '사용완료(평생소장중)' ? (
-                        <button
-                          type="button"
-                          className="row-icon-btn row-icon-btn--tone-secondary row-icon-btn--compact"
-                          aria-label="워터마크 제거 복구"
-                          title="워터마크 제거 복구"
-                          onClick={() =>
-                            setConfirmDialog({
-                              message: '워터마크 제거 복구 처리하시겠습니까?',
-                              confirmText: '복구',
-                              onConfirm: () => {
-                                setOrders((prev) =>
-                                  prev.map((o) =>
-                                    o.id === order.id
-                                      ? {
-                                          ...o,
-                                          paymentStatus: '미사용',
-                                          optionStatus: '미사용',
-                                          orderDate: '',
-                                        }
-                                      : o
-                                  )
-                                );
-                              },
-                            })
-                          }
-                        >
-                          <RefreshCw size={12} aria-hidden="true" />
-                        </button>
-                      ) : null}
-                      <span className="phone-with-sms__number">{order.orderDate}</span>
+                    <div className="cell-block">
+                      <span className="cell-line">
+                        <span className="list-label">제작일</span>{' '}
+                        <span className="list-value">{order.weddingDate}</span>
+                      </span>
+                      <span className="cell-line">
+                        <span className="list-label">주문일</span>{' '}
+                        <span className="list-value">{order.orderDate}</span>
+                      </span>
                     </div>
                   </td>
                   <td>
@@ -1008,7 +992,7 @@ export default function OrderInviPage() {
               })}
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>

@@ -12,7 +12,7 @@ import { MOCK_SAMPLE_EDIT_ORDERS, type SampleEditItem } from './mock/orderEditSa
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 
-type ConditionType = '이름' | '아이디' | '주문번호';
+type ConditionType = '이름' | '아이디' | '전화번호';
 type AppliedSearch = {
   requestDateRange: string;
   requestStartDate: Date | null;
@@ -22,6 +22,7 @@ type AppliedSearch = {
   workStatus: string;
   reviewStatus: string;
 };
+type AppliedChipKey = 'requestDate' | 'keyword' | 'workStatus' | 'reviewStatus';
 
 type ConfirmDialogState = {
   title?: string;
@@ -87,23 +88,18 @@ function getStrengthBadgeClass(strength: SampleEditItem['correctionStrength']): 
   return 'badge-square--strength-designer';
 }
 
-function getProgressByWorkStatus(workStatus: SampleEditItem['workStatus']): '작업중' | '작업완료' | '작업전' {
-  if (workStatus === '고객업로드') return '작업중';
-  if (workStatus === '관리자업로드' || workStatus === '원본업로드') return '작업완료';
-  return '작업전';
-}
-
 function getProgressVariantClass(progress: string): string {
-  if (progress === '작업전') return 'progress-status--primary';
-  if (progress === '작업중') return 'progress-status--danger';
-  if (progress === '작업완료') return 'progress-status--secondary';
+  if (progress === '고객업로드') return 'progress-status--danger';
+  if (progress === '관리자업로드') return 'progress-status--secondary';
+  if (progress === '원본업로드') return 'progress-status--primary';
   if (progress === '재수정대기중') return 'progress-status--warning';
   if (progress === '재수정작업중') return 'progress-status--danger';
   return 'progress-status--warning';
 }
 
 function getPhotoMenuItemsByProgress(progress: string): string[] {
-  if (progress === '작업완료') return ['사진등록', '원본다운로드', '관리자사진다운로드'];
+  if (progress === '관리자업로드' || progress === '원본업로드')
+    return ['사진등록', '원본다운로드', '관리자사진다운로드'];
   if (progress === '재수정대기중' || progress === '재수정작업중') {
     return ['사진등록', '원본다운로드', '관리자사진다운로드', '재수정요청다운로드'];
   }
@@ -124,7 +120,7 @@ function applyFilters(rows: SampleEditItem[], applied: AppliedSearch | null): Sa
     if (keywordTrim) {
       if (applied.conditionType === '이름' && !row.customerName.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '아이디' && !row.customerId.toLowerCase().includes(keywordTrim)) return false;
-      if (applied.conditionType === '주문번호' && !row.orderNo.toLowerCase().includes(keywordTrim)) return false;
+      if (applied.conditionType === '전화번호' && !row.customerPhone.toLowerCase().includes(keywordTrim)) return false;
     }
     if (applied.workStatus && row.workStatus !== applied.workStatus) return false;
     if (applied.reviewStatus && row.reviewStatus !== applied.reviewStatus) return false;
@@ -217,6 +213,84 @@ export default function OrderEditSamplePage() {
     });
   };
 
+  const formatYmd = (d: Date | null) => {
+    if (!d) return '';
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const isAppliedSearchEmpty = (s: AppliedSearch | null) => {
+    if (!s) return true;
+    return (
+      !s.requestDateRange &&
+      s.requestStartDate == null &&
+      s.requestEndDate == null &&
+      !s.keyword.trim() &&
+      !s.workStatus &&
+      !s.reviewStatus
+    );
+  };
+
+  const clearAppliedFilter = (key: AppliedChipKey) => {
+    if (!appliedSearch) return;
+    const next: AppliedSearch = { ...appliedSearch };
+    switch (key) {
+      case 'requestDate':
+        setRequestDateRange('');
+        setRequestStartDate(null);
+        setRequestEndDate(null);
+        next.requestDateRange = '';
+        next.requestStartDate = null;
+        next.requestEndDate = null;
+        break;
+      case 'keyword':
+        setKeyword('');
+        next.keyword = '';
+        break;
+      case 'workStatus':
+        setWorkStatus('');
+        next.workStatus = '';
+        break;
+      case 'reviewStatus':
+        setReviewStatus('');
+        next.reviewStatus = '';
+        break;
+      default:
+        break;
+    }
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
+  };
+
+  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = (() => {
+    if (!appliedSearch) return [];
+    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
+    if (appliedSearch.requestStartDate || appliedSearch.requestEndDate) {
+      const start = formatYmd(appliedSearch.requestStartDate);
+      const end = formatYmd(appliedSearch.requestEndDate);
+      chips.push({
+        key: 'requestDate',
+        label: `요청일: ${start}${start && end ? ' ~ ' : ''}${end}`,
+      });
+    } else if (appliedSearch.requestDateRange) {
+      chips.push({ key: 'requestDate', label: `요청일: ${appliedSearch.requestDateRange}` });
+    }
+    if (appliedSearch.keyword.trim()) {
+      chips.push({
+        key: 'keyword',
+        label: `검색: ${appliedSearch.conditionType} ${appliedSearch.keyword}`,
+      });
+    }
+    if (appliedSearch.workStatus) {
+      chips.push({ key: 'workStatus', label: `제작현황: ${appliedSearch.workStatus}` });
+    }
+    if (appliedSearch.reviewStatus) {
+      chips.push({ key: 'reviewStatus', label: `후기작성: ${appliedSearch.reviewStatus}` });
+    }
+    return chips;
+  })();
+
   const openExternal = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -304,7 +378,7 @@ export default function OrderEditSamplePage() {
                 options={[
                   { value: '이름', label: '이름' },
                   { value: '아이디', label: '아이디' },
-                  { value: '주문번호', label: '주문번호' },
+                  { value: '전화번호', label: '전화번호' },
                 ]}
               />
               <input
@@ -362,6 +436,28 @@ export default function OrderEditSamplePage() {
       </section>
 
       <section className="admin-list-box admin-list-box--table">
+        {appliedChips.length > 0 && (
+          <section className="admin-applied-filters">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
+                {appliedChips.map((chip) => (
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
+                    <button
+                      type="button"
+                      className="admin-filter-chip__x"
+                      aria-label={`${chip.label} 해제`}
+                      onClick={() => clearAppliedFilter(chip.key)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
@@ -379,7 +475,7 @@ export default function OrderEditSamplePage() {
             </thead>
             <tbody>
               {paginatedRows.map((row) => {
-                const progress = getProgressByWorkStatus(row.workStatus);
+                const progress = row.workStatus;
                 return (
                   <tr key={row.id}>
                     <td>{row.no}</td>
@@ -538,7 +634,7 @@ export default function OrderEditSamplePage() {
                 zIndex: 10000,
               }}
             >
-              {getPhotoMenuItemsByProgress(getProgressByWorkStatus(portalPhotoRow.workStatus)).map((item) => (
+              {getPhotoMenuItemsByProgress(portalPhotoRow.workStatus).map((item) => (
                 <button
                   key={`${portalPhotoRow.id}-${item}`}
                   type="button"

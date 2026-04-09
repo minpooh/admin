@@ -49,9 +49,9 @@ function extractSnippet(text: string, keyword: string, radius = 45) {
 
 const SEARCH_SCOPE_OPTIONS = [
   { value: 'all', label: '전체' },
+  { value: 'name', label: '이름' },
+  { value: 'phone', label: '전화번호' },
   { value: 'title', label: '제목' },
-  { value: 'id', label: '문의번호' },
-  { value: 'member', label: '회원' },
 ];
 
 type AnswerFilterValue = '' | '미답변' | '답변완료';
@@ -128,27 +128,25 @@ export default function InquiryPage() {
       if (appliedSearch.answerFilter === '답변완료' && row.answeredAt === null) return false;
 
       if (keywordTrim) {
+        const normalizedKeyword = keywordTrim.replace(/[^0-9]/g, '');
         const matchAll =
           row.title.toLowerCase().includes(keywordTrim) ||
-          row.id.toLowerCase().includes(keywordTrim) ||
           row.authorName.toLowerCase().includes(keywordTrim) ||
           row.memberId.toLowerCase().includes(keywordTrim) ||
-          row.email.toLowerCase().includes(keywordTrim);
+          row.email.toLowerCase().includes(keywordTrim) ||
+          row.content.toLowerCase().includes(keywordTrim);
         const scope = appliedSearch.searchScope;
         if (scope === 'all') {
           if (!matchAll) return false;
+        } else if (scope === 'name') {
+          if (!row.authorName.toLowerCase().includes(keywordTrim)) return false;
+        } else if (scope === 'phone') {
+          // 문의 데이터에는 별도 전화번호 필드가 없어, 숫자 포함 텍스트에서 전화번호 패턴을 검색한다.
+          const phoneHaystack = [row.title, row.content, row.memberId, row.email].join(' ');
+          const normalizedPhoneHaystack = phoneHaystack.replace(/[^0-9]/g, '');
+          if (!normalizedKeyword || !normalizedPhoneHaystack.includes(normalizedKeyword)) return false;
         } else if (scope === 'title') {
           if (!row.title.toLowerCase().includes(keywordTrim)) return false;
-        } else if (scope === 'id') {
-          if (!row.id.toLowerCase().includes(keywordTrim)) return false;
-        } else if (scope === 'member') {
-          if (
-            !row.authorName.toLowerCase().includes(keywordTrim) &&
-            !row.memberId.toLowerCase().includes(keywordTrim) &&
-            !row.email.toLowerCase().includes(keywordTrim)
-          ) {
-            return false;
-          }
         }
       }
 
@@ -497,6 +495,8 @@ export default function InquiryPage() {
                   if (next === '1주') start.setDate(start.getDate() - 6);
                   if (next === '2주') start.setDate(start.getDate() - 13);
                   if (next === '1개월') start.setDate(start.getDate() - 29);
+                  if (next === '3개월') start.setDate(start.getDate() - 89);
+                  if (next === '6개월') start.setDate(start.getDate() - 179);
                   setStartDate(start);
                   setEndDate(end);
                 }}
@@ -507,6 +507,8 @@ export default function InquiryPage() {
                   { value: '1주', label: '1주' },
                   { value: '2주', label: '2주' },
                   { value: '1개월', label: '1개월' },
+                  { value: '3개월', label: '3개월' },
+                  { value: '6개월', label: '6개월' },
                 ]}
               />
               <div className="date-range-pickers">

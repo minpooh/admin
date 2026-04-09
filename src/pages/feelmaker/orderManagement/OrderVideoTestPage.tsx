@@ -56,7 +56,6 @@ function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   return { start, end };
 }
 const CATEGORIES = [
-  '사진보정',
   '식전영상',
   '영상편지',
   '성장영상',
@@ -191,6 +190,13 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '주문번호' && !order.no.includes(k)) return false;
+      if (applied.conditionType === '전화번호') {
+        const normalizedKeyword = k.replace(/[^0-9]/g, '');
+        const normalizedPhone = order.customerPhone.replace(/[^0-9]/g, '');
+        if (!normalizedPhone.includes(normalizedKeyword)) return false;
+      }
+      if (applied.conditionType === '에디터번호' && !order.noSub.toLowerCase().includes(k)) return false;
+      if (applied.conditionType === '상품명' && !order.productName.toLowerCase().includes(k)) return false;
     }
     if (applied.category !== null && order.category !== applied.category) return false;
     if (applied.production !== null && !matchProductionStatus(order, applied.production)) return false;
@@ -755,6 +761,9 @@ export default function OrderVideoTestPage() {
                   { value: '이름', label: '이름' },
                   { value: '아이디', label: '아이디' },
                   { value: '주문번호', label: '주문번호' },
+                  { value: '전화번호', label: '전화번호' },
+                  { value: '에디터번호', label: '에디터번호' },
+                  { value: '상품명', label: '상품명' },
                 ]}
               />
               <input

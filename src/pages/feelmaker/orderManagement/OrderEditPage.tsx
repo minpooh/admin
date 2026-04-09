@@ -39,19 +39,11 @@ type AppliedSearch = {
   dateRange: string;
   startDate: Date | null;
   endDate: Date | null;
-  conditionType: '이름' | '아이디' | '주문번호';
+  conditionType: '이름' | '아이디' | '전화번호' | '주문번호' | '담당자명' | '입금자명';
   keyword: string;
   paymentStatus: string;
   workStatus: string;
   urgentPhotoEdit: string;
-};
-
-type OptionModalType = 'personAdd' | 'urgentEdit' | 'artworkAlbumEdit';
-
-const OPTION_LABEL: Record<OptionModalType, string> = {
-  personAdd: '인물추가',
-  urgentEdit: '긴급보정',
-  artworkAlbumEdit: '아트웍화보보정',
 };
 
 function getPhotoMenuItemsByProgress(progress: string): string[] {
@@ -179,7 +171,13 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
     if (keywordTrim) {
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(keywordTrim)) return false;
+      if (applied.conditionType === '전화번호' && !order.customerPhone.toLowerCase().includes(keywordTrim))
+        return false;
       if (applied.conditionType === '주문번호' && !order.no.toLowerCase().includes(keywordTrim)) return false;
+      if (applied.conditionType === '담당자명' && !order.manager.toLowerCase().includes(keywordTrim))
+        return false;
+      if (applied.conditionType === '입금자명' && !(order.depositor ?? '').toLowerCase().includes(keywordTrim))
+        return false;
     }
 
     if (applied.paymentStatus && order.paymentStatus !== applied.paymentStatus) return false;
@@ -208,7 +206,9 @@ export default function OrderEditPage() {
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
 
-  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '주문번호'>('이름');
+  const [conditionType, setConditionType] = useState<
+    '이름' | '아이디' | '전화번호' | '주문번호' | '담당자명' | '입금자명'
+  >('이름');
   const [keyword, setKeyword] = useState('');
 
   const [paymentStatus, setPaymentStatus] = useState('');
@@ -257,57 +257,9 @@ export default function OrderEditPage() {
     });
   };
 
-  // -------- options dropdown + modal --------
-  const [openOptionsOrderId, setOpenOptionsOrderId] = useState<string | null>(null);
-  const [rowDropdownPos, setRowDropdownPos] = useState<{ top: number; right: number } | null>(null);
-  const rowDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
   const [openPhotoOrderId, setOpenPhotoOrderId] = useState<string | null>(null);
   const [photoDropdownPos, setPhotoDropdownPos] = useState<{ top: number; right: number } | null>(null);
   const photoDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
-
-  const portalOptionsOrder = useMemo(
-    () => (openOptionsOrderId ? orders.find((o) => o.id === openOptionsOrderId) ?? null : null),
-    [openOptionsOrderId, orders]
-  );
-
-  const [optionModal, setOptionModal] = useState<{ orderId: string; type: OptionModalType } | null>(null);
-  const closeOptionModal = () => setOptionModal(null);
-
-  const OPTION_MODAL_KEY_MAP: Record<OptionModalType, 'personAdded' | 'urgentAdded' | 'artworkPhotoAdded'> = {
-    personAdd: 'personAdded',
-    urgentEdit: 'urgentAdded',
-    artworkAlbumEdit: 'artworkPhotoAdded',
-  };
-
-  const handleOptionMenuClick = (orderId: string, type: OptionModalType) => {
-    setOptionModal({ orderId, type });
-    setOpenOptionsOrderId(null);
-  };
-
-  const confirmOptionAdd = (
-    orderId: string,
-    modalKey: 'personAdded' | 'urgentAdded' | 'artworkPhotoAdded'
-  ) => {
-    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, [modalKey]: true } : o)));
-    setOptionModal(null);
-  };
-
-  useLayoutEffect(() => {
-    if (!openOptionsOrderId || !rowDropdownAnchorRef.current) return;
-    const update = () => {
-      const el = rowDropdownAnchorRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      setRowDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-    };
-    update();
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [openOptionsOrderId]);
 
   const portalPhotoOrder = useMemo(
     () => (openPhotoOrderId ? orders.find((o) => o.id === openPhotoOrderId) ?? null : null),
@@ -332,19 +284,17 @@ export default function OrderEditPage() {
   }, [openPhotoOrderId]);
 
   useEffect(() => {
-    if (!openOptionsOrderId && !openPhotoOrderId) return;
+    if (!openPhotoOrderId) return;
 
     const handlePointerDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
       if (target.closest('.row-options') || target.closest('.row-options__menu-portal')) return;
-      setOpenOptionsOrderId(null);
       setOpenPhotoOrderId(null);
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setOpenOptionsOrderId(null);
         setOpenPhotoOrderId(null);
       }
     };
@@ -355,7 +305,7 @@ export default function OrderEditPage() {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [openOptionsOrderId, openPhotoOrderId]);
+  }, [openPhotoOrderId]);
 
   // -------- sms modal --------
   const [smsModalOrderId, setSmsModalOrderId] = useState<string | null>(null);
@@ -659,11 +609,18 @@ export default function OrderEditPage() {
                 ariaLabel="조건검색 타입"
                 className="listselect--condition-type"
                 value={conditionType}
-                onChange={(next) => setConditionType(next as '이름' | '아이디' | '주문번호')}
+                onChange={(next) =>
+                  setConditionType(
+                    next as '이름' | '아이디' | '전화번호' | '주문번호' | '담당자명' | '입금자명'
+                  )
+                }
                 options={[
                   { value: '이름', label: '이름' },
                   { value: '아이디', label: '아이디' },
+                  { value: '전화번호', label: '전화번호' },
                   { value: '주문번호', label: '주문번호' },
+                  { value: '담당자명', label: '담당자명' },
+                  { value: '입금자명', label: '입금자명' },
                 ]}
               />
               <input
@@ -778,13 +735,13 @@ export default function OrderEditPage() {
               <tr>
                 <th className="col-center">복사</th>
                 <th>NO</th>
+                <th>구매채널/가입채널</th>
                 <th className="col-center">긴급보정</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
                 <th className="col-center">고객정보</th>
                 <th className="col-center">결제현황</th>
                 <th>결제금액</th>
-                <th className="col-center">옵션</th>
                 <th className="col-center">사진</th>
                 <th className="col-center">삭제</th>
               </tr>
@@ -808,6 +765,19 @@ export default function OrderEditPage() {
                       <div className="cell-block">
                         <span className="cell-line">{order.no}</span>
                         <span className="cell-line">{order.noSub}</span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div className="cell-block">
+                        <span className="cell-line">
+                          <span className="list-label">구매</span>{' '}
+                          <span className="list-value">{order.purchaseChannel}</span>
+                        </span>
+                        <span className="cell-line">
+                          <span className="list-label">가입</span>{' '}
+                          <span className="list-value">{order.partner}</span>
+                        </span>
                       </div>
                     </td>
 
@@ -906,41 +876,6 @@ export default function OrderEditPage() {
                           type="button"
                           className="row-options__trigger"
                           aria-haspopup="menu"
-                          aria-expanded={openOptionsOrderId === order.id}
-                          aria-label="옵션"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const closing = openOptionsOrderId === order.id;
-                            if (closing) {
-                              setOpenOptionsOrderId(null);
-                              rowDropdownAnchorRef.current = null;
-                              setRowDropdownPos(null);
-                              return;
-                            }
-
-                            rowDropdownAnchorRef.current = e.currentTarget;
-                            const r = e.currentTarget.getBoundingClientRect();
-                            setRowDropdownPos({
-                              top: r.bottom + 6,
-                              right: window.innerWidth - r.right,
-                            });
-                            setOpenPhotoOrderId(null);
-                            photoDropdownAnchorRef.current = null;
-                            setPhotoDropdownPos(null);
-                            setOpenOptionsOrderId(order.id);
-                          }}
-                        >
-                          <MoreHorizontal size={16} aria-hidden="true" />
-                        </button>
-                      </div>
-                    </td>
-
-                    <td className="col-center">
-                      <div className="row-options">
-                        <button
-                          type="button"
-                          className="row-options__trigger"
-                          aria-haspopup="menu"
                           aria-expanded={openPhotoOrderId === order.id}
                           aria-label="사진 항목"
                           onClick={(e) => {
@@ -959,9 +894,6 @@ export default function OrderEditPage() {
                               top: r.bottom + 6,
                               right: window.innerWidth - r.right,
                             });
-                            setOpenOptionsOrderId(null);
-                            rowDropdownAnchorRef.current = null;
-                            setRowDropdownPos(null);
                             setOpenPhotoOrderId(order.id);
                           }}
                         >
@@ -1020,38 +952,6 @@ export default function OrderEditPage() {
         </div>
       </section>
 
-      {/* options portal */}
-      {portalOptionsOrder && rowDropdownPos
-        ? createPortal(
-            <div
-              className="row-options__menu-portal"
-              role="menu"
-              style={{
-                position: 'fixed',
-                top: rowDropdownPos.top,
-                right: rowDropdownPos.right,
-                zIndex: 10000,
-              }}
-            >
-              <button type="button" className="row-options__item" role="menuitem" onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'personAdd')}>
-                인물추가 {portalOptionsOrder.personAdded ? '현황보기' : '추가'}
-              </button>
-              <button type="button" className="row-options__item" role="menuitem" onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'urgentEdit')}>
-                긴급보정 {portalOptionsOrder.urgentAdded ? '현황보기' : '추가'}
-              </button>
-              <button
-                type="button"
-                className="row-options__item"
-                role="menuitem"
-                onClick={() => handleOptionMenuClick(portalOptionsOrder.id, 'artworkAlbumEdit')}
-              >
-                아트웍화보보정 {portalOptionsOrder.artworkPhotoAdded ? '현황보기' : '추가'}
-              </button>
-            </div>,
-            document.body
-          )
-        : null}
-
       {/* photo menu portal */}
       {portalPhotoOrder && photoDropdownPos
         ? createPortal(
@@ -1080,71 +980,6 @@ export default function OrderEditPage() {
             document.body
           )
         : null}
-
-      {/* option modal */}
-      {optionModal && (() => {
-        const order = orders.find((o) => o.id === optionModal.orderId);
-        if (!order) return null;
-
-        const modalKey = OPTION_MODAL_KEY_MAP[optionModal.type];
-        const label = OPTION_LABEL[optionModal.type];
-        const isAdded = Boolean(order[modalKey]);
-
-        return (
-          <Modal
-            open
-            onClose={closeOptionModal}
-            ariaLabel={`${label} ${isAdded ? '현황보기' : '추가'}`}
-            variant="option"
-          >
-            <Modal.Header>
-              <Modal.Title>
-                {label} {isAdded ? '현황보기' : '추가'}
-              </Modal.Title>
-              <Modal.Close />
-            </Modal.Header>
-
-            <Modal.Body>
-              {!isAdded ? (
-                <>
-                  <div className="option-modal__desc">
-                    주문 <strong>{order.no}</strong> ({order.noSub})에 <strong>{label}</strong> 옵션을 추가할까요?
-                  </div>
-                  <div className="option-modal__hint">추가 후에는 “현황보기”로 전환됩니다.</div>
-                </>
-              ) : (
-                <>
-                  <div className="option-modal__desc">
-                    주문 <strong>{order.no}</strong> ({order.noSub})에 <strong>{label}</strong> 옵션이 이미 추가되어 있습니다.
-                  </div>
-                  <div className="option-modal__hint">(목업) 여기에서 옵션 상세/상태 정보를 보여주면 됩니다.</div>
-                  <div className="option-modal__status-grid">
-                    <div className="option-modal__status-row">
-                      <span className="option-modal__status-label">상태</span>
-                      <span className="option-modal__status-value">추가됨</span>
-                    </div>
-                    <div className="option-modal__status-row">
-                      <span className="option-modal__status-label">등록일</span>
-                      <span className="option-modal__status-value">{order.orderDate.slice(0, 10)}</span>
-                    </div>
-                  </div>
-                </>
-              )}
-            </Modal.Body>
-
-            <Modal.Footer>
-              <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={closeOptionModal}>
-                닫기
-              </button>
-              {!isAdded && (
-                <button type="button" className="option-modal__btn option-modal__btn--primary" onClick={() => confirmOptionAdd(order.id, modalKey)}>
-                  {label} 추가
-                </button>
-              )}
-            </Modal.Footer>
-          </Modal>
-        );
-      })()}
 
       {/* sms modal */}
       {smsModalOrderId && (() => {

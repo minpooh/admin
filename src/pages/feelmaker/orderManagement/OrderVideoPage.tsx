@@ -56,7 +56,6 @@ function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   return { start, end };
 }
 const CATEGORIES = [
-  '사진보정',
   '식전영상',
   '영상편지',
   '성장영상',
@@ -220,6 +219,13 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '주문번호' && !order.no.includes(k)) return false;
+      if (applied.conditionType === '전화번호') {
+        const normalizedKeyword = k.replace(/[^0-9]/g, '');
+        const normalizedPhone = order.customerPhone.replace(/[^0-9]/g, '');
+        if (!normalizedPhone.includes(normalizedKeyword)) return false;
+      }
+      if (applied.conditionType === '에디터번호' && !order.noSub.toLowerCase().includes(k)) return false;
+      if (applied.conditionType === '상품명' && !order.productName.toLowerCase().includes(k)) return false;
     }
     if (applied.category !== null && order.category !== applied.category) return false;
     if (applied.condition !== null && !matchOrderCondition(order, applied.condition)) return false;
@@ -230,7 +236,16 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
       if (orderPublic !== applied.publicOption) return false;
     }
     if (applied.pgCompany && applied.pgCompany !== '전체' && order.pgCompany !== applied.pgCompany) return false;
-    if (applied.option && applied.option !== '전체' && order.option !== applied.option) return false;
+    if (applied.option && applied.option !== '전체') {
+      if (applied.option === '메이커서비스' && !order.makerServiceAdded) return false;
+      if (applied.option === 'USB' && !order.usbAdded) return false;
+      if (applied.option === 'DVD' && !order.dvdAdded) return false;
+      if (applied.option === '수정횟수추가') {
+        const hasExtraRevision =
+          order.option === '수정횟수추가' || order.productName.includes('수정횟수');
+        if (!hasExtraRevision) return false;
+      }
+    }
     if (applied.partner && applied.partner !== '전체' && order.partner !== applied.partner) return false;
     if (
       applied.purchaseChannel &&
@@ -853,6 +868,9 @@ export default function OrderVideoPage() {
                   { value: '이름', label: '이름' },
                   { value: '아이디', label: '아이디' },
                   { value: '주문번호', label: '주문번호' },
+                  { value: '전화번호', label: '전화번호' },
+                  { value: '에디터번호', label: '에디터번호' },
+                  { value: '상품명', label: '상품명' },
                 ]}
               />
               <input
@@ -968,8 +986,9 @@ export default function OrderVideoPage() {
             onChange={setPgCompany}
             options={[
               { value: '전체', label: '전체' },
-              { value: '토스', label: '토스' },
-              { value: '나이스', label: '나이스' },
+              { value: 'LG U+', label: 'LG U+' },
+              { value: 'NICE', label: 'NICE' },
+              { value: 'KAKAO', label: 'KAKAO' },
             ]}
           />
         </div>
@@ -982,8 +1001,10 @@ export default function OrderVideoPage() {
             onChange={setOption}
             options={[
               { value: '전체', label: '전체' },
-              { value: '기본', label: '기본' },
-              { value: '프리미엄', label: '프리미엄' },
+              { value: '메이커서비스', label: '메이커서비스' },
+              { value: 'USB', label: 'USB' },
+              { value: 'DVD', label: 'DVD' },
+              { value: '수정횟수추가', label: '수정횟수추가' },
             ]}
           />
         </div>

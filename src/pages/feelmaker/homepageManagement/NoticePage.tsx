@@ -13,6 +13,7 @@ import { NOTICE_ROWS_MOCK } from './mock/notice.mock';
 
 const SEARCH_SCOPE_OPTIONS = [
   { value: 'title', label: '제목' },
+  { value: 'content', label: '내용' },
   { value: 'author', label: '작성자' },
 ];
 
@@ -99,6 +100,8 @@ export default function NoticePage() {
       if (keywordTrim) {
         if (appliedSearch.searchScope === 'title') {
           if (!row.title.toLowerCase().includes(keywordTrim)) return false;
+        } else if (appliedSearch.searchScope === 'content') {
+          if (!row.content.toLowerCase().includes(keywordTrim)) return false;
         } else if (appliedSearch.searchScope === 'author') {
           if (!row.createdBy.toLowerCase().includes(keywordTrim)) return false;
         }
@@ -274,6 +277,8 @@ export default function NoticePage() {
                   if (next === '1주') start.setDate(start.getDate() - 6);
                   if (next === '2주') start.setDate(start.getDate() - 13);
                   if (next === '1개월') start.setDate(start.getDate() - 29);
+                  if (next === '3개월') start.setDate(start.getDate() - 89);
+                  if (next === '6개월') start.setDate(start.getDate() - 179);
                   setStartDate(start);
                   setEndDate(end);
                 }}
@@ -284,6 +289,8 @@ export default function NoticePage() {
                   { value: '1주', label: '1주' },
                   { value: '2주', label: '2주' },
                   { value: '1개월', label: '1개월' },
+                  { value: '3개월', label: '3개월' },
+                  { value: '6개월', label: '6개월' },
                 ]}
               />
               <div className="date-range-pickers">

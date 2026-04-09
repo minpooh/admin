@@ -18,6 +18,8 @@ export type OrderItem = {
   couponType: string;
   pgCompany: string;
   purchasePath: string;
+  purchaseChannel: string;
+  partner: string;
   paymentStatus: string;
   amount: number;
 
@@ -27,10 +29,7 @@ export type OrderItem = {
   /** 진행현황 (리스트에 그대로 노출) */
   progress: string;
 
-  /** 옵션 상태 (옵션 모달에서 추가/현황보기 분기용) */
-  personAdded?: boolean;
   urgentAdded?: boolean;
-  artworkPhotoAdded?: boolean;
 
   /** 사진 업로드 여부 (추후 리스트 렌더링에 사용) */
   photoAdded?: boolean;
@@ -55,12 +54,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '미사용',
     pgCompany: '',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '필메이커',
+    partner: 'feelmaker',
     amount: 0,
     urgentPhotoEdit: '없음',
     progress: '작업전',
-    personAdded: false,
     urgentAdded: false,
-    artworkPhotoAdded: false,
     photoAdded: false,
   },
   {
@@ -81,12 +80,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '%할인쿠폰',
     pgCompany: '토스',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '스토어팜',
+    partner: 'baruncompany',
     amount: 189000,
     urgentPhotoEdit: '추가',
     progress: '작업중',
-    personAdded: true,
     urgentAdded: true,
-    artworkPhotoAdded: false,
     photoAdded: true,
   },
   {
@@ -107,12 +106,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '무료쿠폰',
     pgCompany: '',
     purchasePath: 'mobile 주문',
+    purchaseChannel: '필메이커',
+    partner: 'NAVER_STORE',
     amount: 45000,
     urgentPhotoEdit: '없음',
     progress: '재수정대기중',
-    personAdded: false,
     urgentAdded: false,
-    artworkPhotoAdded: true,
     photoAdded: true,
   },
   {
@@ -133,12 +132,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '금액할인쿠폰',
     pgCompany: '',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '스토어팜',
+    partner: 'barunsonmall',
     amount: 79000,
     urgentPhotoEdit: '추가',
     progress: '작업완료',
-    personAdded: true,
     urgentAdded: true,
-    artworkPhotoAdded: true,
     photoAdded: true,
   },
   {
@@ -159,12 +158,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '미사용',
     pgCompany: '토스',
     purchasePath: 'mobile 주문',
+    purchaseChannel: '필메이커',
+    partner: 'feelmotioncard',
     amount: 59000,
     urgentPhotoEdit: '없음',
     progress: '재수정작업중',
-    personAdded: false,
     urgentAdded: true,
-    artworkPhotoAdded: false,
     photoAdded: true,
   },
   {
@@ -185,12 +184,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '금액할인쿠폰',
     pgCompany: '',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '스토어팜',
+    partner: 'deardeer',
     amount: 119000,
     urgentPhotoEdit: '추가',
     progress: '작업중',
-    personAdded: true,
     urgentAdded: false,
-    artworkPhotoAdded: true,
     photoAdded: true,
   },
   {
@@ -211,12 +210,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '%할인쿠폰',
     pgCompany: '',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '필메이커',
+    partner: 'premierpaper',
     amount: 99000,
     urgentPhotoEdit: '없음',
     progress: '작업완료',
-    personAdded: true,
     urgentAdded: false,
-    artworkPhotoAdded: false,
     photoAdded: true,
   },
   {
@@ -237,12 +236,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '미사용',
     pgCompany: '토스',
     purchasePath: 'mobile 주문',
+    purchaseChannel: '스토어팜',
+    partner: 'thecard',
     amount: 85000,
     urgentPhotoEdit: '추가',
     progress: '재수정대기중',
-    personAdded: false,
     urgentAdded: true,
-    artworkPhotoAdded: true,
     photoAdded: false,
   },
   {
@@ -263,12 +262,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '무료쿠폰',
     pgCompany: '',
     purchasePath: 'pc / 크롬 주문',
+    purchaseChannel: '필메이커',
+    partner: 'bom',
     amount: 39000,
     urgentPhotoEdit: '없음',
     progress: '작업전',
-    personAdded: false,
     urgentAdded: false,
-    artworkPhotoAdded: false,
     photoAdded: false,
   },
   {
@@ -289,12 +288,12 @@ export const MOCK_ORDERS: OrderItem[] = [
     couponType: '금액할인쿠폰',
     pgCompany: '토스',
     purchasePath: 'mobile 주문',
+    purchaseChannel: '스토어팜',
+    partner: 'bhandscard',
     amount: 109000,
     urgentPhotoEdit: '추가',
     progress: '재수정작업중',
-    personAdded: true,
     urgentAdded: true,
-    artworkPhotoAdded: true,
     photoAdded: true,
   },
 ];

@@ -71,6 +71,8 @@ const DATE_PRESET_OPTIONS = [
   { value: '1week', label: '1주' },
   { value: '2weeks', label: '2주' },
   { value: '1month', label: '1개월' },
+  { value: '3months', label: '3개월' },
+  { value: '6months', label: '6개월' },
 ];
 
 type EditorListRow = {
@@ -154,6 +156,10 @@ function isInPresetRange(value: string, preset: string): boolean {
       return diffDays >= 0 && diffDays <= 14;
     case '1month':
       return diffDays >= 0 && diffDays <= 30;
+    case '3months':
+      return diffDays >= 0 && diffDays <= 90;
+    case '6months':
+      return diffDays >= 0 && diffDays <= 180;
     default:
       return true;
   }

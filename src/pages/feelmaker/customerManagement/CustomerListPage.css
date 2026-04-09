@@ -9,11 +9,6 @@
 }
 
 /* 회원 목록 테이블: 컬럼별 최소 너비 (내용·두 줄 셀·버튼에 맞춤) */
-.admin-list-page--customer-list .admin-table {
-  min-width: 1442px;
-  table-layout: fixed;
-}
-
 .admin-list-page--customer-list .admin-table th,
 .admin-list-page--customer-list .admin-table td {
   vertical-align: middle;
@@ -22,86 +17,67 @@
 /* 가입일/예식일 */
 .admin-list-page--customer-list .admin-table th:nth-child(1),
 .admin-list-page--customer-list .admin-table td:nth-child(1) {
-  width: 168px;
-  min-width: 168px;
+  min-width: 130px;
 }
 
 /* 구매채널/가입채널 */
 .admin-list-page--customer-list .admin-table th:nth-child(2),
 .admin-list-page--customer-list .admin-table td:nth-child(2) {
-  width: 208px;
-  min-width: 208px;
+  min-width: 100px;
 }
 
 /* 이름 */
 .admin-list-page--customer-list .admin-table th:nth-child(3),
 .admin-list-page--customer-list .admin-table td:nth-child(3) {
-  width: 88px;
-  min-width: 88px;
+  min-width: 80px;
 }
 
 /* 아이디 */
 .admin-list-page--customer-list .admin-table th:nth-child(4),
 .admin-list-page--customer-list .admin-table td:nth-child(4) {
-  width: 112px;
-  min-width: 112px;
+  min-width: 80px;
 }
 
 /* 이메일 */
 .admin-list-page--customer-list .admin-table th:nth-child(5),
 .admin-list-page--customer-list .admin-table td:nth-child(5) {
-  width: 220px;
-  min-width: 220px;
-}
-
-.admin-list-page--customer-list .admin-table td:nth-child(5) .cell-line {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
+  min-width: 150px;
 }
 
 /* 주문횟수 (주문/시안 두 줄) */
 .admin-list-page--customer-list .admin-table th:nth-child(6),
 .admin-list-page--customer-list .admin-table td:nth-child(6) {
-  width: 104px;
-  min-width: 104px;
+  min-width: 80px;
 }
 
 /* 연락처 (문자 버튼 + 번호) */
 .admin-list-page--customer-list .admin-table th:nth-child(7),
 .admin-list-page--customer-list .admin-table td:nth-child(7) {
-  width: 156px;
-  min-width: 156px;
+  min-width: 120px;
 }
 
 /* 적립금 */
 .admin-list-page--customer-list .admin-table th:nth-child(8),
 .admin-list-page--customer-list .admin-table td:nth-child(8) {
-  width: 88px;
-  min-width: 88px;
+  min-width: 100px;
 }
 
 /* 필포인트 */
 .admin-list-page--customer-list .admin-table th:nth-child(9),
 .admin-list-page--customer-list .admin-table td:nth-child(9) {
-  width: 88px;
-  min-width: 88px;
+  min-width: 100px;
 }
 
 /* 전환 (일반회원전환 버튼) */
 .admin-list-page--customer-list .admin-table th:nth-child(10),
 .admin-list-page--customer-list .admin-table td:nth-child(10) {
-  width: 128px;
-  min-width: 128px;
+  min-width: 100px;
 }
 
 /* 모청QR */
 .admin-list-page--customer-list .admin-table th:nth-child(11),
 .admin-list-page--customer-list .admin-table td:nth-child(11) {
-  width: 72px;
-  min-width: 72px;
+  min-width: 50px;
 }
 
 .admin-list-page--customer-list .admin-table-empty-cell {

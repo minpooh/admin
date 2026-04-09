@@ -326,6 +326,8 @@ export default function CrawlingListTemplate<T extends { id: string }>({
                   if (next === '1주') start.setDate(start.getDate() - 6);
                   if (next === '2주') start.setDate(start.getDate() - 13);
                   if (next === '1개월') start.setDate(start.getDate() - 29);
+                  if (next === '3개월') start.setDate(start.getDate() - 89);
+                  if (next === '6개월') start.setDate(start.getDate() - 179);
                   setStartDate(start);
                   setEndDate(end);
                 }}
@@ -336,6 +338,8 @@ export default function CrawlingListTemplate<T extends { id: string }>({
                   { value: '1주', label: '1주' },
                   { value: '2주', label: '2주' },
                   { value: '1개월', label: '1개월' },
+                  { value: '3개월', label: '3개월' },
+                  { value: '6개월', label: '6개월' },
                 ]}
               />
               <div className="date-range-pickers">

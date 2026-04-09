@@ -20,12 +20,15 @@ const DATE_PRESET_OPTIONS = [
   { value: '1주', label: '1주' },
   { value: '2주', label: '2주' },
   { value: '1개월', label: '1개월' },
+  { value: '3개월', label: '3개월' },
+  { value: '6개월', label: '6개월' },
 ];
 
 const DETAIL_SEARCH_SCOPE_OPTIONS = [
   { value: 'all', label: '전체' },
   { value: 'name', label: '이름' },
   { value: 'id', label: '아이디' },
+  { value: 'phone', label: '전화번호' },
   { value: 'email', label: '이메일' },
 ];
 
@@ -140,12 +143,14 @@ function applyCustomerFilters(members: CustomerMember[], applied: CustomerApplie
     }
 
     const kw = applied.keyword.trim().toLowerCase();
+    const normalizedKw = kw.replace(/[^0-9]/g, '');
     if (kw) {
       const scope = applied.searchScope;
       if (scope === 'all') {
         if (
           !m.name.toLowerCase().includes(kw) &&
           !m.loginId.toLowerCase().includes(kw) &&
+          !m.phone.toLowerCase().includes(kw) &&
           !m.email.toLowerCase().includes(kw)
         ) {
           return false;
@@ -154,6 +159,9 @@ function applyCustomerFilters(members: CustomerMember[], applied: CustomerApplie
         if (!m.name.toLowerCase().includes(kw)) return false;
       } else if (scope === 'id') {
         if (!m.loginId.toLowerCase().includes(kw)) return false;
+      } else if (scope === 'phone') {
+        const normalizedPhone = m.phone.replace(/[^0-9]/g, '');
+        if (!normalizedKw || !normalizedPhone.includes(normalizedKw)) return false;
       } else if (scope === 'email') {
         if (!m.email.toLowerCase().includes(kw)) return false;
       }
@@ -196,6 +204,8 @@ function applyDatePreset(next: string, setStart: (d: Date | null) => void, setEn
   if (next === '1주') start.setDate(start.getDate() - 6);
   if (next === '2주') start.setDate(start.getDate() - 13);
   if (next === '1개월') start.setDate(start.getDate() - 29);
+  if (next === '3개월') start.setDate(start.getDate() - 89);
+  if (next === '6개월') start.setDate(start.getDate() - 179);
   setStart(start);
   setEnd(end);
 }

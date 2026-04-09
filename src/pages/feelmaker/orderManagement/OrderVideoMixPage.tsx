@@ -91,6 +91,8 @@ export default function OrderVideoMixPage() {
         if (appliedSearch.dateRange === '1주' && !(diffDays >= 0 && diffDays < 7)) return false;
         if (appliedSearch.dateRange === '2주' && !(diffDays >= 0 && diffDays < 14)) return false;
         if (appliedSearch.dateRange === '1개월' && !(diffDays >= 0 && diffDays < 30)) return false;
+        if (appliedSearch.dateRange === '3개월' && !(diffDays >= 0 && diffDays < 90)) return false;
+        if (appliedSearch.dateRange === '6개월' && !(diffDays >= 0 && diffDays < 180)) return false;
       }
 
       if (keywordTrim) {
@@ -225,6 +227,8 @@ export default function OrderVideoMixPage() {
                   if (next === '1주') start.setDate(start.getDate() - 6);
                   if (next === '2주') start.setDate(start.getDate() - 13);
                   if (next === '1개월') start.setDate(start.getDate() - 29);
+                  if (next === '3개월') start.setDate(start.getDate() - 89);
+                  if (next === '6개월') start.setDate(start.getDate() - 179);
                   setStartDate(start);
                   setEndDate(end);
                 }}
@@ -235,6 +239,8 @@ export default function OrderVideoMixPage() {
                   { value: '1주', label: '1주' },
                   { value: '2주', label: '2주' },
                   { value: '1개월', label: '1개월' },
+                  { value: '3개월', label: '3개월' },
+                  { value: '6개월', label: '6개월' },
                 ]}
               />
               <div className="date-range-pickers">
