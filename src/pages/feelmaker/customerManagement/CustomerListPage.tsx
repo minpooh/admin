@@ -652,7 +652,7 @@ export default function CustomerListPage() {
             <thead>
               <tr>
                 <th>가입일/예식일</th>
-                <th>구매채널/가입채널</th>
+                <th>가입경로</th>
                 <th>이름</th>
                 <th>아이디</th>
                 <th>이메일</th>
@@ -683,7 +683,7 @@ export default function CustomerListPage() {
                     <td>
                       <div className="cell-block cell-block--channels">
                         <span className="cell-line">
-                          <span className="list-label">구매</span> <span className="list-value">{row.purchaseChannel}</span>
+                          <span className="list-label">경로</span> <span className="list-value">{row.signupPath}</span>
                         </span>
                         <span className="cell-line">
                           <span className="list-label">가입</span>
