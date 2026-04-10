@@ -21,7 +21,7 @@
 
 .admin-list-page--video .admin-table th:nth-child(4),
 .admin-list-page--video .admin-table td:nth-child(4) {
-  min-width: 100px;
+  min-width: 80px;
 }
 
 .admin-list-page--video .admin-table th:nth-child(5),
@@ -41,7 +41,7 @@
 
 .admin-list-page--video .admin-table th:nth-child(8),
 .admin-list-page--video .admin-table td:nth-child(8) {
-  min-width: 100px;
+  min-width: 80px;
 }
 
 .admin-list-page--video .admin-table th:nth-child(9),
@@ -55,7 +55,7 @@
 .admin-list-page--video .admin-table td:nth-child(11),
 .admin-list-page--video .admin-table th:nth-child(12),
 .admin-list-page--video .admin-table td:nth-child(12) {
-  min-width: 50px;
+  min-width: 30px;
   text-align: center;
 }
 
