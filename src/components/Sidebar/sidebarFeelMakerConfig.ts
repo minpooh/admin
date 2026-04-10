@@ -103,8 +103,8 @@ export const HOMEPAGE_MANAGEMENT = [
 
 export const ENTERPRISE_MANAGEMENT = [
   { id: 'enterpriseList', icon: HiChartBar, label: '기업 리스트' },
+  { id: 'enterpriseOrderList', icon: HiListBullet, label: '주문 내역' },
   { id: 'enterpriseInvoice', icon: HiDocumentText, label: '세금 계산서' },
-  { id: 'enterpriseInquiry', icon: HiQuestionMarkCircle, label: '기업 문의' },
 ];
 
 export const CREATOR_MANAGEMENT = [

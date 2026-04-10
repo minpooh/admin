@@ -534,9 +534,9 @@ export default function OrderEditStorePage() {
                 <th className="col-center">복사</th>
                 <th>NO</th>
                 <th>주문번호</th>
-                <th className="col-center">긴급보정</th>
                 <th>진행현황</th>
                 <th>상품정보</th>
+                <th className="col-center">긴급보정</th>
                 <th className="col-center">고객정보</th>
                 <th>결제현황</th>
                 <th>사진</th>
@@ -565,7 +565,6 @@ export default function OrderEditStorePage() {
                     </div>
                   </td>
                   <td>{order.orderNo}</td>
-                  <td className="col-center">{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
                   <td>
                     <div className={['progress-status', getProgressVariantClass(normalizeProgress(order.progress))].join(' ')}>
                       <span className="progress-status__dot" aria-hidden="true" />
@@ -602,6 +601,7 @@ export default function OrderEditStorePage() {
                       </span>
                     </div>
                   </td>
+                  <td className="col-center">{order.urgentAdded ? <span className="cell-line--danger">추가</span> : '없음'}</td>
                   <td className="col-center">
                     <div className="admin-cell-triple">
                       <span className="cell-line">{order.customerName}</span>

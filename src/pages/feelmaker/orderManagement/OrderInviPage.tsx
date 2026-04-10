@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Mail, Pencil, QrCode, RefreshCw, Trash2 } from 'lucide-react';
+import { Mail, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -834,7 +834,6 @@ export default function OrderInviPage() {
                 <th>예식일/만료일</th>
                 <th>옵션</th>
                 <th className="col-center">에디터</th>
-                <th className="col-center">QR코드</th>
                 <th className="col-center">삭제</th>
               </tr>
             </thead>
@@ -969,16 +968,6 @@ export default function OrderInviPage() {
                   <td className="col-center">
                     <button
                       type="button"
-                      className="row-icon-btn row-icon-btn--tone-purple"
-                      aria-label="QR코드"
-                      title="QR코드"
-                    >
-                      <QrCode size={16} aria-hidden="true" />
-                    </button>
-                  </td>
-                  <td className="col-center">
-                    <button
-                      type="button"
                       className="row-icon-btn row-icon-btn--danger"
                       aria-label="주문 삭제"
                       title="Delete"
@@ -992,7 +981,7 @@ export default function OrderInviPage() {
               })}
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
