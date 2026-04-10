@@ -10,6 +10,8 @@
 }
 
 .admin-search-field select {
+  height: 38px;
+  min-height: 38px;
   padding: 0.5rem 2rem 0.5rem 0.75rem;
   font-size: 0.8125rem;
   border: 1px solid #e5e7eb;
@@ -19,6 +21,8 @@
 }
 
 .admin-search-field input {
+  height: 38px;
+  min-height: 38px;
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;
   border: 1px solid #e5e7eb;
@@ -41,4 +45,9 @@
   width: auto;
   flex: 1 1 0;
   min-width: 0;
+}
+
+.admin-search-field .listselect--condition-type .listselect__trigger {
+  height: 38px;
+  min-height: 38px;
 }

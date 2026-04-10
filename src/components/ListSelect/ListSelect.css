@@ -22,7 +22,8 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.5rem 0.75rem;
-  min-height: 33px;
+  height: 38px;
+  min-height: 38px;
   background: #ffffff;
   border: 1px solid var(--gray-200);
   border-radius: 8px;

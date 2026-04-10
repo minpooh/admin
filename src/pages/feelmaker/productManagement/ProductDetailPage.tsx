@@ -228,6 +228,7 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                                 <label key={option} className="admin-accordion-check-item">
                                   <input
                                     type="checkbox"
+                                    className="admin-checkbox"
                                     checked={checked}
                                     onChange={() =>
                                       setHallRecommendValues((prev) =>
@@ -250,6 +251,7 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                                 <label key={option} className="admin-accordion-check-item">
                                   <input
                                     type="checkbox"
+                                    className="admin-checkbox"
                                     checked={checked}
                                     onChange={() =>
                                       setBadgeLabelValues((prev) =>
@@ -651,6 +653,7 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                           <label className="admin-accordion-check-item">
                             <input
                               type="checkbox"
+                              className="admin-checkbox"
                               checked={bgMusicChange === 'allowed'}
                               onChange={() =>
                                 setBgMusicChange((prev) => (prev === 'allowed' ? null : 'allowed'))
@@ -661,6 +664,7 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                           <label className="admin-accordion-check-item">
                             <input
                               type="checkbox"
+                              className="admin-checkbox"
                               checked={bgMusicChange === 'forbidden'}
                               onChange={() =>
                                 setBgMusicChange((prev) => (prev === 'forbidden' ? null : 'forbidden'))

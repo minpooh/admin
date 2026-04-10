@@ -726,17 +726,17 @@
 }
 
 .badge-square--strength-strong {
-  background: var(--danger-color-100);
+  background: var(--danger-color-50);
   color: var(--danger-color-500);
 }
 
 .badge-square--strength-medium {
-  background: var(--warning-color-100);
+  background: var(--warning-color-50);
   color: var(--warning-color-500);
 }
 
 .badge-square--strength-weak {
-  background: var(--secondary-color-100);
+  background: var(--secondary-color-50);
   color: var(--secondary-color-500);
 }
 

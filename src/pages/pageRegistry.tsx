@@ -89,11 +89,20 @@ registerPage('feelmaker/customerManagement/groupList', GroupListPage);
 
 import ProductListPage from './feelmaker/productManagement/ProductListPage';
 import RenderingPcPage from './feelmaker/productManagement/RenderingPcPage';
+import EnterpriseListPage from './feelmaker/enterpriseManagement/EnterpriseListPage';
+import EnterpriseOrderListPage from './feelmaker/enterpriseManagement/EnterpriseOrderListPage';
+import EnterpriseInvoicePage from './feelmaker/enterpriseManagement/EnterpriseInvoicePage';
 import EditorListPage from './feelmaker/marketingManagement/EditorListPage';
 registerPage('feelmaker/productManagement/productList', ProductListPage);
 registerPage('feelmaker/productManagement/renderingPc', RenderingPcPage);
+registerPage('feelmaker/enterpriseManagement/enterpriseList', EnterpriseListPage);
+registerPage('feelmaker/enterpriseManagement/enterpriseOrderList', EnterpriseOrderListPage);
+registerPage('feelmaker/enterpriseManagement/enterpriseInvoice', EnterpriseInvoicePage);
 registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
 registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
+
+import CreatorListPage from './feelmaker/creatorManagement/CreatorListPage';
+registerPage('feelmaker/creatorManagement/creatorList', CreatorListPage);
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

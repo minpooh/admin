@@ -277,39 +277,39 @@
 }
 
 .row-icon-btn--danger {
-  background: var(--danger-color-100);
-  color: var(--danger-color-500);
+  background: var(--danger-color-50);
+  color: var(--danger-color-400);
 }
 
 .row-icon-btn--danger:hover {
-  background: var(--danger-color-200);
+  background: var(--danger-color-100);
 }
 
 .row-icon-btn--tone-secondary {
-  background: var(--secondary-color-100);
+  background: var(--secondary-color-50);
   color: var(--secondary-color-500);
 }
 
 .row-icon-btn--tone-secondary:hover {
-  background: var(--secondary-color-200);
+  background: var(--secondary-color-100);
 }
 
 .row-icon-btn--tone-primary {
-  background: var(--primary-color-100);
+  background: var(--primary-color-50);
   color: var(--primary-color-500);
 }
 
 .row-icon-btn--tone-primary:hover {
-  background: var(--primary-color-200);
+  background: var(--primary-color-100);
 }
 
 .row-icon-btn--tone-purple {
-  background: var(--purple-color-100);
+  background: var(--purple-color-50);
   color: var(--purple-color-500);
 }
 
 .row-icon-btn--tone-purple:hover {
-  background: var(--purple-color-200);
+  background: var(--purple-color-100);
 }
 
 .row-icon-btn--tone-gray {
@@ -355,33 +355,43 @@
 }
 
 /* 결제현황 버튼: 상태 dot 색상과 매칭 */
+.row-btn--status-primary {
+  background: var(--primary-color-50);
+  color: var(--primary-color-500);
+}
+
+.row-btn--status-primary:hover {
+  background: var(--primary-color-100);
+  color: var(--primary-color-500);
+}
+
 .row-btn--status-secondary {
-  background: var(--secondary-color-100);
+  background: var(--secondary-color-50);
   color: var(--secondary-color-500);
 }
 
 .row-btn--status-secondary:hover {
-  background: var(--secondary-color-200);
+  background: var(--secondary-color-100);
   color: var(--secondary-color-500);
 }
 
 .row-btn--status-warning {
-  background: var(--warning-color-100);
+  background: var(--warning-color-50);
   color: var(--warning-color-500);
 }
 
 .row-btn--status-warning:hover {
-  background: var(--warning-color-200);
+  background: var(--warning-color-100);
   color: var(--warning-color-500);
 }
 
 .row-btn--status-danger {
-  background: var(--danger-color-100);
-  color: var(--danger-color-500);
+  background: var(--danger-color-50);
+  color: var(--danger-color-400);
 }
 
 .row-btn--status-danger:hover {
-  background: var(--danger-color-200);
+  background: var(--danger-color-100);
   color: var(--danger-color-500);
 }
 
@@ -497,6 +507,95 @@
 /* 컬럼 수가 적은 목록용 테이블 */
 .admin-table--min-w-800 {
   min-width: 800px;
+}
+
+/* 엔터프라이즈 주문: NO·주문일시·업체·금액·입금자+결제·쿠폰 */
+.admin-table.admin-table--enterprise-orders {
+  min-width: 1080px;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(1),
+.admin-table.admin-table--enterprise-orders td:nth-child(1) {
+  min-width: 48px;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(2),
+.admin-table.admin-table--enterprise-orders td:nth-child(2) {
+  min-width: 156px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(3),
+.admin-table.admin-table--enterprise-orders td:nth-child(3) {
+  min-width: 140px;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(4),
+.admin-table.admin-table--enterprise-orders td:nth-child(4) {
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(5),
+.admin-table.admin-table--enterprise-orders td:nth-child(5) {
+  min-width: 120px;
+}
+
+.admin-table.admin-table--enterprise-orders th:nth-child(6),
+.admin-table.admin-table--enterprise-orders td:nth-child(6) {
+  min-width: 140px;
+}
+
+/* 엔터프라이즈 세금계산서: 신청자/연락처/이메일/신청일/발행일/업체/금액/사업자번호 */
+.admin-table.admin-table--enterprise-invoices {
+  min-width: 1360px;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(1),
+.admin-table.admin-table--enterprise-invoices td:nth-child(1) {
+  min-width: 52px;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(2),
+.admin-table.admin-table--enterprise-invoices td:nth-child(2) {
+  min-width: 86px;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(3),
+.admin-table.admin-table--enterprise-invoices td:nth-child(3) {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(4),
+.admin-table.admin-table--enterprise-invoices td:nth-child(4) {
+  min-width: 180px;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(5),
+.admin-table.admin-table--enterprise-invoices td:nth-child(5),
+.admin-table.admin-table--enterprise-invoices th:nth-child(6),
+.admin-table.admin-table--enterprise-invoices td:nth-child(6) {
+  min-width: 148px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(7),
+.admin-table.admin-table--enterprise-invoices td:nth-child(7) {
+  min-width: 180px;
+}
+
+.admin-table.admin-table--enterprise-invoices th:nth-child(8),
+.admin-table.admin-table--enterprise-invoices td:nth-child(8),
+.admin-table.admin-table--enterprise-invoices th:nth-child(9),
+.admin-table.admin-table--enterprise-invoices td:nth-child(9) {
+  min-width: 118px;
+  white-space: nowrap;
+}
+
+/* 크리에이터 목록: 식별·연락처·상태·정산·접속일 */
+.admin-table.admin-table--creator-list {
+  min-width: 1260px;
 }
 
 /* 스팜 영상: 주문일·식별·결제·주문상품(넓게)·옵션 */
@@ -688,4 +787,8 @@ button.admin-link {
   display: flex;
   justify-content: flex-end;
   margin-top: 1rem;
+}
+
+.admin-list-add-row--align-start {
+  justify-content: flex-start;
 }

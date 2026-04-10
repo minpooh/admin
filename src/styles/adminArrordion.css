@@ -210,61 +210,6 @@
   box-sizing: border-box;
 }
 
-.admin-accordion-check-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-}
-
-.admin-accordion-check-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8125rem;
-  color: #374151;
-  cursor: pointer;
-}
-
-/* ListSelect 트리거(.listselect__trigger)와 동일한 보더·배경·포커스 토큰 */
-.admin-accordion-check-item input[type='checkbox'] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  border: 1px solid var(--gray-200);
-  border-radius: 6px;
-  background: #ffffff;
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    background-color 0.15s,
-    box-shadow 0.15s;
-}
-
-.admin-accordion-check-item input[type='checkbox']:hover {
-  border-color: var(--gray-300);
-}
-
-.admin-accordion-check-item input[type='checkbox']:focus {
-  outline: none;
-}
-
-.admin-accordion-check-item input[type='checkbox']:focus-visible {
-  box-shadow: 0 0 0 3px var(--gray-100);
-}
-
-.admin-accordion-check-item input[type='checkbox']:checked {
-  background-color: var(--gray-900);
-  border-color: var(--gray-900);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.2l3 3 6-6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 12px 12px;
-}
-
 .admin-accordion-field__label {
   display: block;
   margin-bottom: 0.4rem;

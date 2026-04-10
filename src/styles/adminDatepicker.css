@@ -19,6 +19,11 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+/* 캘린더 팝업이 테이블/리스트 위로 오도록 레이어 우선순위 고정 */
+.react-datepicker-popper {
+  z-index: 1200 !important;
+}
 .react-datepicker__close-icon::after {
   background-color: #dbeafe;
   color: #333;
