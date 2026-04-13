@@ -193,7 +193,7 @@ export default function CreatorListPage() {
 
   return (
     <div className="admin-list-page">
-      <h1 className="page-title">크리에이터관리</h1>
+      <h1 className="page-title">크리에이터 목록</h1>
 
       <section className="admin-list-box" aria-label="크리에이터 검색 필터">
         <div className="filter-top-row admin-filter-row--equal-4">

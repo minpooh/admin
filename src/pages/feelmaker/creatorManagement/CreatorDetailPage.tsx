@@ -401,7 +401,13 @@ startxref
         <PdfPreviewSection pdfUrl={contractPdfUrl} iframeTitle="계약서 PDF 미리보기" />
       </section>
 
-      <Modal open={isSettlementModalOpen} onClose={() => setIsSettlementModalOpen(false)} ariaLabel="최근 정산 내역" variant="option">
+      <Modal
+        open={isSettlementModalOpen}
+        onClose={() => setIsSettlementModalOpen(false)}
+        ariaLabel="최근 정산 내역"
+        variant="option"
+        panelClassName="option-modal__panel--wide"
+      >
         <Modal.Header>
           <Modal.Title>전체 정산 내역</Modal.Title>
           <Modal.Close />

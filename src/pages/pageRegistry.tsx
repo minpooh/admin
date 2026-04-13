@@ -102,7 +102,13 @@ registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
 registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
 
 import CreatorListPage from './feelmaker/creatorManagement/CreatorListPage';
+import CreatorInvoicePage from './feelmaker/creatorManagement/CreatorInvoicePage';
+import CreatorTemplatePage from './feelmaker/creatorManagement/CreatorTemplatePage';
+import CreatorBoardPage from './feelmaker/creatorManagement/CreatorBoardPage';
 registerPage('feelmaker/creatorManagement/creatorList', CreatorListPage);
+registerPage('feelmaker/creatorManagement/creatorInvoice', CreatorInvoicePage);
+registerPage('feelmaker/creatorManagement/creatorTemplate', CreatorTemplatePage);
+registerPage('feelmaker/creatorManagement/creatorBoard', CreatorBoardPage);
 
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);

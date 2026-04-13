@@ -598,6 +598,327 @@
   min-width: 1260px;
 }
 
+/* 크리에이터 정산: 선택 요약·일괄 처리 (한 줄) */
+.admin-settlement-bulk {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-100, #f3f4f6);
+  background: #fafafa;
+  overflow-x: auto;
+}
+
+.admin-settlement-bulk__bar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.admin-settlement-bulk__summary {
+  margin: 0;
+  flex: 0 0 auto;
+  font-size: 0.9375rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.admin-settlement-bulk__summary strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+.admin-settlement-bulk__bar .filter-btn {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.admin-settlement-bulk__input {
+  flex: 1 1 7rem;
+  min-width: 7rem;
+  max-width: 14rem;
+  height: 38px;
+  min-height: 38px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.admin-settlement-bulk__input:focus,
+.admin-settlement-bulk__input:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+/* 크리에이터 정산: 체크·ID·계좌·주문·상태·일자·메모 */
+.admin-table.admin-table--creator-settlement-invoice {
+  min-width: 1280px;
+}
+
+.admin-table.admin-table--creator-settlement-invoice .admin-table-col-checkbox {
+  width: 44px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.admin-table.admin-table--creator-settlement-invoice .admin-table-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.admin-table.admin-table--creator-settlement-invoice .admin-table-cell--memo {
+  white-space: normal;
+  min-width: 120px;
+  max-width: 220px;
+}
+
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(2),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(2) {
+  min-width: 120px;
+}
+
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(4),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(4) {
+  min-width: 140px;
+}
+
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(5),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(5) {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(6),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(6) {
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(8),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(8),
+.admin-table.admin-table--creator-settlement-invoice th:nth-child(9),
+.admin-table.admin-table--creator-settlement-invoice td:nth-child(9) {
+  min-width: 158px;
+  white-space: nowrap;
+}
+
+/* 크리에이터 템플릿: ID·이름·제목·가격·설명·상태·등록일 */
+.admin-table.admin-table--creator-template {
+  min-width: 1100px;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(1),
+.admin-table.admin-table--creator-template td:nth-child(1) {
+  min-width: 88px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(2),
+.admin-table.admin-table--creator-template td:nth-child(2) {
+  min-width: 100px;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(3),
+.admin-table.admin-table--creator-template td:nth-child(3) {
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(4),
+.admin-table.admin-table--creator-template td:nth-child(4) {
+  min-width: 96px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--creator-template .admin-table-cell--desc {
+  white-space: normal;
+  min-width: 180px;
+  max-width: 280px;
+  font-size: 0.8125rem;
+  color: #4b5563;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(6),
+.admin-table.admin-table--creator-template td:nth-child(6) {
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--creator-template th:nth-child(7),
+.admin-table.admin-table--creator-template td:nth-child(7) {
+  min-width: 96px;
+  white-space: nowrap;
+}
+
+/* 템플릿 상세: 좌측 정보 스택·우측 스택 */
+.admin-template-detail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-template-detail-field .filter-label {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.admin-template-detail-value {
+  font-size: 0.875rem;
+  color: #111827;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.admin-template-detail-value--mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  word-break: break-all;
+}
+
+.admin-template-detail-readonly-textarea {
+  display: block;
+  width: 100%;
+  height: 120px;
+  min-height: 120px;
+  max-height: 120px;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: #f9fafb;
+  color: #374151;
+  resize: none;
+  overflow-y: auto;
+}
+
+.admin-template-detail-readonly-textarea:focus,
+.admin-template-detail-readonly-textarea:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.admin-template-detail-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #9ca3af;
+}
+
+.admin-template-detail__right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 100%;
+}
+
+.admin-template-detail__right-stack > .admin-list-box {
+  margin-bottom: 0;
+}
+
+.admin-template-detail__review-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-template-detail-field--review-with-save .admin-template-detail__review-row .listselect {
+  flex: 1 1 auto;
+  min-width: 140px;
+  max-width: 280px;
+  width: 100%;
+}
+
+.admin-template-detail__review-row .filter-btn {
+  flex-shrink: 0;
+}
+
+.admin-template-detail-page > .admin-detail-id {
+  margin-bottom: 1rem;
+}
+
+.admin-template-detail-input,
+.admin-template-detail-textarea {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #111827;
+  background: #fff;
+}
+
+.admin-template-detail-textarea {
+  resize: vertical;
+  min-height: 200px;
+  font-family: inherit;
+}
+
+.admin-template-detail-input:focus,
+.admin-template-detail-input:focus-visible,
+.admin-template-detail-textarea:focus,
+.admin-template-detail-textarea:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.admin-template-detail-field--actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.admin-table.admin-table--creator-board {
+  min-width: 920px;
+}
+
+.admin-table.admin-table--creator-board th:nth-child(3),
+.admin-table.admin-table--creator-board td:nth-child(3) {
+  min-width: 180px;
+}
+
+.admin-board-secret-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-board-secret-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #111827;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.admin-board-secret-password-input {
+  flex: 1 1 200px;
+  min-width: 180px;
+  max-width: 320px;
+}
+
 /* 스팜 영상: 주문일·식별·결제·주문상품(넓게)·옵션 */
 .admin-table.admin-table--crawling-video {
   min-width: 1000px;
