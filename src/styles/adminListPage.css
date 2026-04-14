@@ -77,11 +77,11 @@
 .admin-table th {
   font-weight: 600;
   color: #333;
-  background: #f8f8f8;
+  background: var(--gray-50);
 }
 
 .admin-table tbody tr:hover {
-  background: #fafafa;
+  background: var(--gray-50);
 }
 
 .admin-table td {

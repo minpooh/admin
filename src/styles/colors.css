@@ -1,23 +1,35 @@
 /**
  * 색상 토큰 — primary / secondary / gray
- * Primary 기준: #dbeafe
+ * Primary 기준: #5f5cff
  * Secondary 기준: #e5f8ed
- * Gray: Tailwind gray 스케일 (--gray-50 ~)
+ * Gray: Primary 톤에 맞춘 cool gray 스케일 (--gray-50 ~)
  */
 :root {
-  --bg-color: var(--gray-50);
+  --bg-color: #f8f9fc;
   
-  /* Primary — 블루 */
-  --primary-color-50: #eff6ff;
-  --primary-color-100: #dbeafe;
-  --primary-color-200: #bfdbfe;
-  --primary-color-300: #93c5fd;
-  --primary-color-400: #60a5fa;
-  --primary-color-500: #3b82f6;
-  --primary-color-600: #2563eb;
-  --primary-color-700: #1d4ed8;
-  --primary-color-800: #1e40af;
-  --primary-color-900: #1e3a8a;
+  /* Primary — 인디고/블루 */
+  --primary-color-50: #f4f4ff;
+  --primary-color-100: #eeeeff;
+  --primary-color-200: #ecebff;
+  --primary-color-300: #cdccff;
+  --primary-color-400: #9c99ff;
+  --primary-color-500: #5f5cff;
+  --primary-color-600: #514eee;
+  --primary-color-700: #4340d2;
+  --primary-color-800: #3432a8;
+  --primary-color-900: #28267d;
+
+   /* Primary — 블루 */
+   /* --primary-color-50: #eff6ff;
+   --primary-color-100: #dbeafe;
+   --primary-color-200: #bfdbfe;
+   --primary-color-300: #93c5fd;
+   --primary-color-400: #60a5fa;
+   --primary-color-500: #3b82f6;
+   --primary-color-600: #2563eb;
+   --primary-color-700: #1d4ed8;
+   --primary-color-800: #1e40af;
+   --primary-color-900: #1e3a8a; */
 
   /* Secondary — 민트/그린 (#e5f8ed 기준) */
   --secondary-color-50: #f2fcf8;
@@ -51,8 +63,20 @@
   --purple-color-400: #9992f2;
   --purple-color-500: #4f46e5;
 
+  /* Gray — cool neutral */
+  --gray-50: #f8f9fc;
+  --gray-100: #f1f3f9;
+  --gray-200: #e4e8f2;
+  --gray-300: #ccd4e2;
+  --gray-400: #98a3b8;
+  --gray-500: #6f7b93;
+  --gray-600: #556079;
+  --gray-700: #3f495f;
+  --gray-800: #293142;
+  --gray-900: #1a2130;
+
   /* Gray */
-  --gray-50: #f9fafb;
+  /* --gray-50: #f9fafb;
   --gray-100: #f3f4f6;
   --gray-200: #e5e7eb;
   --gray-300: #d1d5db;
@@ -61,7 +85,6 @@
   --gray-600: #4b5563;
   --gray-700: #374151;
   --gray-800: #1f2937;
-  --gray-900: #111827;
-
+  --gray-900: #111827; */
 
 }

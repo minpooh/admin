@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import type { IconType } from 'react-icons';
 import {
   HiFilm,
@@ -52,9 +52,7 @@ const PANEL_SECTIONS_CONFIG: Partial<
 };
 
 function LogoIcon() {
-  return (
-    <img src={logo} alt="FEEL logo" style={{ width: '80%', height: '80%' }} />
-  );
+  return <img src={logo} alt="FEEL logo" className="sidebar-logo-img" />;
 }
 
 type PanelSectionProps = {
@@ -111,6 +109,8 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMainHub = location.pathname === '/home';
   const { navId: paramNavId, sectionId: paramSectionId, itemId: paramItemId, subId: paramSubId } = useParams<{
     navId?: string;
     sectionId?: string;
@@ -183,20 +183,28 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`sidebar ${!isPanelOpen ? 'panel-collapsed' : ''}`} data-name="Container">
+    <div
+      className={`sidebar ${!isPanelOpen ? 'panel-collapsed' : ''} ${isMainHub ? 'sidebar--hub' : ''}`}
+      data-name="Container"
+    >
       {/* Left icon bar */}
       <aside className="sidebar-icon-bar">
-        <div className="sidebar-logo">
+        <button
+          type="button"
+          className="sidebar-logo"
+          onClick={() => navigate('/home')}
+          aria-label="메인 홈으로 이동"
+        >
           <LogoIcon />
-        </div>
+        </button>
         <nav className="sidebar-nav">
           {SIDEBAR_NAV.map((item) => (
             <button
               key={item.id}
               type="button"
-              className={`sidebar-nav-item ${activeNavId === item.id ? 'active' : ''}`}
+              className={`sidebar-nav-item ${!isMainHub && activeNavId === item.id ? 'active' : ''}`}
               aria-label={item.label}
-              aria-current={activeNavId === item.id ? 'true' : undefined}
+              aria-current={!isMainHub && activeNavId === item.id ? 'true' : undefined}
               onClick={() => handleNavClick(item.id)}
             >
               <item.icon size={16} />
@@ -214,8 +222,9 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Right nav panel */}
-      <div className={`sidebar-panel ${!isPanelOpen ? 'sidebar-panel--collapsed' : ''}`} aria-hidden={!isPanelOpen}>
+      {/* 메인(/home)에서는 우측 메뉴 패널을 표시하지 않음 */}
+      {!isMainHub && (
+        <div className={`sidebar-panel ${!isPanelOpen ? 'sidebar-panel--collapsed' : ''}`} aria-hidden={!isPanelOpen}>
         <header className="panel-header">
           <h1 className="panel-title">{PANEL_TITLES[activeNavId]}</h1>
           <button
@@ -368,6 +377,7 @@ export default function Sidebar() {
           })}
         </div>
       </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import useDragScroll from './hooks/useDragScroll';
+import AdminHomePage from './pages/AdminHomePage';
+import LoginPage from './pages/LoginPage';
 import PageRouter from './pages/PageRouter';
 import './App.css';
 
@@ -21,8 +23,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LoginPage />} />
         <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/feelmaker" replace />} />
+          <Route path="home" element={<AdminHomePage />} />
           <Route path=":navId" element={<PageRouter />} />
           <Route path=":navId/:sectionId/:itemId" element={<PageRouter />} />
           <Route path=":navId/:sectionId/:itemId/:subId" element={<PageRouter />} />
