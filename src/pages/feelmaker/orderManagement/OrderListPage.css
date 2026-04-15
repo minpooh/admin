@@ -92,7 +92,7 @@
 
 .admin-list-page--edit .admin-table th:nth-child(3),
 .admin-list-page--edit .admin-table td:nth-child(3) {
-  min-width: 60px;
+  min-width: 130px;
 }
 
 .admin-list-page--edit .admin-table th:nth-child(4),
@@ -107,7 +107,7 @@
 
 .admin-list-page--edit .admin-table th:nth-child(6),
 .admin-list-page--edit .admin-table td:nth-child(6) {
-  min-width: 100px;
+  min-width: 60px;
 }
 
 .admin-list-page--edit .admin-table th:nth-child(7),
@@ -121,9 +121,10 @@
 }
 
 .admin-list-page--edit .admin-table th:nth-child(9),
-.admin-list-page--edit .admin-table td:nth-child(9),
-.admin-list-page--edit .admin-table th:nth-child(10),
-.admin-list-page--edit .admin-table td:nth-child(10),
+.admin-list-page--edit .admin-table td:nth-child(9) {
+  min-width: 140px;
+}
+
 .admin-list-page--edit .admin-table th:nth-child(11),
 .admin-list-page--edit .admin-table td:nth-child(11) {
   min-width: 50px;
@@ -164,17 +165,17 @@
 
 .admin-list-page--edit-store .admin-table th:nth-child(4),
 .admin-list-page--edit-store .admin-table td:nth-child(4) {
-  min-width: 130px;
+  min-width: 100px;
 }
 
 .admin-list-page--edit-store .admin-table th:nth-child(5),
 .admin-list-page--edit-store .admin-table td:nth-child(5) {
-  min-width: 200px;
+  min-width: 110px;
 }
 
 .admin-list-page--edit-store .admin-table th:nth-child(6),
 .admin-list-page--edit-store .admin-table td:nth-child(6) {
-  min-width: 90px;
+  min-width: 80px;
 }
 
 .admin-list-page--edit-store .admin-table th:nth-child(7),
@@ -186,14 +187,11 @@
 .admin-list-page--edit-store .admin-table td:nth-child(8) {
   min-width: 100px;
 }
-
 .admin-list-page--edit-store .admin-table th:nth-child(10),
 .admin-list-page--edit-store .admin-table td:nth-child(10) {
   min-width: 120px;
 }
 
-.admin-list-page--edit-store .admin-table th:nth-child(9),
-.admin-list-page--edit-store .admin-table td:nth-child(9),
 .admin-list-page--edit-store .admin-table th:nth-child(11),
 .admin-list-page--edit-store .admin-table td:nth-child(11){
   min-width: 50px;

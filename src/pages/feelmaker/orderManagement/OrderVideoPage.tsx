@@ -23,6 +23,16 @@ function formatPurchaseVideoRowCopy(order: OrderItem): string {
 }
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
+const DETAIL_SEARCH_SCOPE_OPTIONS = [
+  { value: '전체', label: '전체' },
+  { value: '이름', label: '이름' },
+  { value: '아이디', label: '아이디' },
+  { value: '주문번호', label: '주문번호' },
+  { value: '전화번호', label: '전화번호' },
+  { value: '에디터번호', label: '에디터번호' },
+  { value: '상품명', label: '상품명' },
+] as const;
+type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
 function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   const today = new Date();
@@ -146,7 +156,7 @@ type AppliedSearch = {
   dateRange: string;
   startDate: Date | null;
   endDate: Date | null;
-  conditionType: string;
+  conditionType: DetailSearchScope;
   keyword: string;
   category: string | null;
   condition: string | null;
@@ -216,6 +226,18 @@ function applyFilters(orders: OrderItem[], applied: AppliedSearch | null): Order
     }
     if (applied.keyword.trim()) {
       const k = applied.keyword.trim().toLowerCase();
+      if (applied.conditionType === '전체') {
+        const normalizedKeyword = k.replace(/[^0-9]/g, '');
+        const normalizedPhone = order.customerPhone.replace(/[^0-9]/g, '');
+        const matchesAny =
+          order.customerName.toLowerCase().includes(k) ||
+          order.customerId.toLowerCase().includes(k) ||
+          order.no.toLowerCase().includes(k) ||
+          normalizedPhone.includes(normalizedKeyword) ||
+          order.noSub.toLowerCase().includes(k) ||
+          order.productName.toLowerCase().includes(k);
+        if (!matchesAny) return false;
+      }
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(k)) return false;
       if (applied.conditionType === '주문번호' && !order.no.includes(k)) return false;
@@ -266,7 +288,7 @@ export default function OrderVideoPage() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [startDateOpen, setStartDateOpen] = useState(false);
   const [endDateOpen, setEndDateOpen] = useState(false);
-  const [conditionType, setConditionType] = useState('이름');
+  const [conditionType, setConditionType] = useState<DetailSearchScope>('전체');
   const [keyword, setKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
@@ -857,21 +879,14 @@ export default function OrderVideoPage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색 타입"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={conditionType}
-                onChange={setConditionType}
-                options={[
-                  { value: '이름', label: '이름' },
-                  { value: '아이디', label: '아이디' },
-                  { value: '주문번호', label: '주문번호' },
-                  { value: '전화번호', label: '전화번호' },
-                  { value: '에디터번호', label: '에디터번호' },
-                  { value: '상품명', label: '상품명' },
-                ]}
+                onChange={(next) => setConditionType(next as DetailSearchScope)}
+                options={[...DETAIL_SEARCH_SCOPE_OPTIONS]}
               />
               <input
                 type="text"
@@ -1128,7 +1143,7 @@ export default function OrderVideoPage() {
                         order.paymentStatus === '결제취소됨'
                           ? 'progress-status--danger'
                           : order.progress.includes('제작전')
-                          ? 'progress-status--primary'
+                          ? 'progress-status--blue'
                           : order.progress.includes('제작중')
                             ? 'progress-status--danger'
                             : order.progress.includes('제작완료')
@@ -1249,7 +1264,7 @@ export default function OrderVideoPage() {
                       <span className="cell-line amount-red">{order.amount.toLocaleString()}원</span>
                       <button
                         type="button"
-                        className="row-btn row-btn--blue"
+                        className="row-btn row-btn--default"
                         onClick={() => {
                           setAmountChangeModalOrderId(order.id);
                           setChangedAmount(String(order.amount));

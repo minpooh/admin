@@ -18,10 +18,10 @@ export default function StorefarmErrorPage() {
 
       <section className="admin-list-box" aria-label="스토어팜 오류 검색 필터">
         <div className="filter-section" style={{ width: '100%', maxWidth: 680, marginBottom: 0 }}>
-          <span className="filter-label">조건검색</span>
+          <span className="filter-label">상세검색</span>
           <div className="admin-search-field">
             <ListSelect
-              ariaLabel="검색 조건"
+              ariaLabel="상세검색 조건"
               className="listselect--condition-type"
               value={searchCondition}
               onChange={setSearchCondition}

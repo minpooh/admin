@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ExternalLink, MoreHorizontal, Send, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Download, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,8 +10,15 @@ import Alert from '../../../components/Alert';
 import { MOCK_SAMPLE_EDIT_ORDERS, type SampleEditItem } from './mock/orderEditSample.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
+const DETAIL_SEARCH_SCOPE_OPTIONS = [
+  { value: '전체', label: '전체' },
+  { value: '이름', label: '이름' },
+  { value: '아이디', label: '아이디' },
+  { value: '전화번호', label: '전화번호' },
+] as const;
+type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
-type ConditionType = '이름' | '아이디' | '전화번호';
+type ConditionType = DetailSearchScope;
 type AppliedSearch = {
   requestDateRange: string;
   requestStartDate: Date | null;
@@ -91,7 +97,7 @@ function getStrengthBadgeClass(strength: SampleEditItem['correctionStrength']): 
 function getProgressVariantClass(progress: string): string {
   if (progress === '고객업로드') return 'progress-status--danger';
   if (progress === '관리자업로드') return 'progress-status--secondary';
-  if (progress === '원본업로드') return 'progress-status--primary';
+  if (progress === '원본업로드') return 'progress-status--blue';
   if (progress === '재수정대기중') return 'progress-status--warning';
   if (progress === '재수정작업중') return 'progress-status--danger';
   return 'progress-status--warning';
@@ -106,6 +112,17 @@ function getPhotoMenuItemsByProgress(progress: string): string[] {
   return ['사진등록', '원본다운로드'];
 }
 
+function renderPhotoActionLabel(item: string) {
+  if (!item.endsWith('다운로드')) return item;
+  const prefix = item.replace(/다운로드$/, '');
+  return (
+    <span className="row-btn--text-icon__label">
+      {prefix}
+      <Download size={12} aria-hidden="true" />
+    </span>
+  );
+}
+
 function applyFilters(rows: SampleEditItem[], applied: AppliedSearch | null): SampleEditItem[] {
   if (!applied) return rows;
   const keywordTrim = applied.keyword.trim().toLowerCase();
@@ -118,6 +135,13 @@ function applyFilters(rows: SampleEditItem[], applied: AppliedSearch | null): Sa
     }
 
     if (keywordTrim) {
+      if (applied.conditionType === '전체') {
+        const matchesAny =
+          row.customerName.toLowerCase().includes(keywordTrim) ||
+          row.customerId.toLowerCase().includes(keywordTrim) ||
+          row.customerPhone.toLowerCase().includes(keywordTrim);
+        if (!matchesAny) return false;
+      }
       if (applied.conditionType === '이름' && !row.customerName.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '아이디' && !row.customerId.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '전화번호' && !row.customerPhone.toLowerCase().includes(keywordTrim)) return false;
@@ -136,15 +160,12 @@ export default function OrderEditSamplePage() {
   const [requestStartDate, setRequestStartDate] = useState<Date | null>(null);
   const [requestEndDate, setRequestEndDate] = useState<Date | null>(null);
 
-  const [conditionType, setConditionType] = useState<ConditionType>('이름');
+  const [conditionType, setConditionType] = useState<ConditionType>('전체');
   const [keyword, setKeyword] = useState('');
 
   const [workStatus, setWorkStatus] = useState('');
   const [reviewStatus, setReviewStatus] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
-  const [openPhotoOrderId, setOpenPhotoOrderId] = useState<string | null>(null);
-  const [photoDropdownPos, setPhotoDropdownPos] = useState<{ top: number; right: number } | null>(null);
-  const photoDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -157,11 +178,6 @@ export default function OrderEditSamplePage() {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredRows.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredRows, currentPage]);
-  const portalPhotoRow = useMemo(
-    () => (openPhotoOrderId ? rows.find((row) => row.id === openPhotoOrderId) ?? null : null),
-    [openPhotoOrderId, rows]
-  );
-
   useEffect(() => {
     queueMicrotask(() => {
       setCurrentPage(1);
@@ -174,33 +190,6 @@ export default function OrderEditSamplePage() {
       });
     }
   }, [currentPage, totalPages]);
-  useLayoutEffect(() => {
-    if (!openPhotoOrderId || !photoDropdownAnchorRef.current) return;
-    const update = () => {
-      const r = photoDropdownAnchorRef.current?.getBoundingClientRect();
-      if (!r) return;
-      setPhotoDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-    };
-    update();
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [openPhotoOrderId]);
-  useEffect(() => {
-    if (!openPhotoOrderId) return;
-    const handlePointerDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-      if (target.closest('.row-options') || target.closest('.row-options__menu-portal')) return;
-      setOpenPhotoOrderId(null);
-    };
-    document.addEventListener('mousedown', handlePointerDown);
-    return () => document.removeEventListener('mousedown', handlePointerDown);
-  }, [openPhotoOrderId]);
-
   const handleSearch = () => {
     setAppliedSearch({
       requestDateRange,
@@ -368,18 +357,14 @@ export default function OrderEditSamplePage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색 타입"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={conditionType}
                 onChange={(next) => setConditionType(next as ConditionType)}
-                options={[
-                  { value: '이름', label: '이름' },
-                  { value: '아이디', label: '아이디' },
-                  { value: '전화번호', label: '전화번호' },
-                ]}
+                options={[...DETAIL_SEARCH_SCOPE_OPTIONS]}
               />
               <input
                 type="text"
@@ -468,7 +453,7 @@ export default function OrderEditSamplePage() {
                 <th>전화번호</th>
                 <th>요청일</th>
                 <th className="col-center">보정강도</th>
-                <th className="col-center">사진</th>
+                <th>사진</th>
                 <th className="col-center">후기</th>
                 <th className="col-center">삭제</th>
               </tr>
@@ -500,30 +485,17 @@ export default function OrderEditSamplePage() {
                         {row.correctionStrength}
                       </span>
                     </td>
-                    <td className="col-center">
-                      <div className="row-options">
-                        <button
-                          type="button"
-                          className="row-options__trigger"
-                          aria-haspopup="menu"
-                          aria-expanded={openPhotoOrderId === row.id}
-                          aria-label="사진 옵션"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const closing = openPhotoOrderId === row.id;
-                            if (closing) {
-                              setOpenPhotoOrderId(null);
-                              setPhotoDropdownPos(null);
-                              return;
-                            }
-                            photoDropdownAnchorRef.current = e.currentTarget;
-                            const r = e.currentTarget.getBoundingClientRect();
-                            setPhotoDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-                            setOpenPhotoOrderId(row.id);
-                          }}
-                        >
-                          <MoreHorizontal size={16} aria-hidden="true" />
-                        </button>
+                    <td>
+                      <div className="cell-line--with-action">
+                        {getPhotoMenuItemsByProgress(row.workStatus).map((item) => (
+                          <button
+                            key={`${row.id}-${item}`}
+                            type="button"
+                            className={['row-btn', 'row-btn--text-icon', item === '사진등록' ? 'row-btn--blue' : 'row-btn--default'].join(' ')}
+                          >
+                            {renderPhotoActionLabel(item)}
+                          </button>
+                        ))}
                       </div>
                     </td>
                     <td className="col-center">
@@ -531,22 +503,20 @@ export default function OrderEditSamplePage() {
                         <div className="cell-line--with-action">
                           <button
                             type="button"
-                            className="row-icon-btn row-icon-btn--tone-primary"
-                            aria-label="후기 확인하기"
+                            className="row-btn row-btn--blue"
                             onClick={() => openExternal(row.reviewUrl as string)}
                           >
-                            <ExternalLink size={18} aria-hidden="true" />
+                            후기
                           </button>
                           {row.originalDeliveryUrl ? (
                             <button
                               type="button"
-                              className="row-icon-btn row-icon-btn--tone-purple"
-                              aria-label="원본 전달하기"
+                              className="row-btn row-btn--secondary"
                               onClick={() => {
                                 setAlertMessage('원본이 전달되었습니다.');
                               }}
                             >
-                              <Send size={18} aria-hidden="true" />
+                              원본전달
                             </button>
                           ) : null}
                         </div>
@@ -622,33 +592,6 @@ export default function OrderEditSamplePage() {
           </div>
         </div>
       </section>
-      {portalPhotoRow && photoDropdownPos
-        ? createPortal(
-            <div
-              className="row-options__menu-portal"
-              role="menu"
-              style={{
-                position: 'fixed',
-                top: photoDropdownPos.top,
-                right: photoDropdownPos.right,
-                zIndex: 10000,
-              }}
-            >
-              {getPhotoMenuItemsByProgress(portalPhotoRow.workStatus).map((item) => (
-                <button
-                  key={`${portalPhotoRow.id}-${item}`}
-                  type="button"
-                  className="row-options__item"
-                  role="menuitem"
-                  onClick={() => setOpenPhotoOrderId(null)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>,
-            document.body
-          )
-        : null}
       <Confirm
         open={Boolean(confirmDialog)}
         title={confirmDialog?.title}

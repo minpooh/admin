@@ -13,22 +13,30 @@ function getStatusVariantClass(status: VideoMixItem['status']) {
   if (status === '병합완료') return 'progress-status--secondary';
   if (status === '병합실패') return 'progress-status--danger';
   if (status === '병합중') return 'progress-status--warning';
-  return 'progress-status--primary';
+  return 'progress-status--blue';
 }
+
+const DETAIL_SEARCH_SCOPE_OPTIONS = [
+  { value: '전체', label: '전체' },
+  { value: '이름', label: '이름' },
+  { value: '아이디', label: '아이디' },
+  { value: '전화번호', label: '전화번호' },
+] as const;
+type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
 export default function OrderVideoMixPage() {
   const [orders, setOrders] = useState<VideoMixItem[]>(() => MOCK_VIDEO_MIX_ORDERS);
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '전화번호'>('이름');
+  const [conditionType, setConditionType] = useState<DetailSearchScope>('전체');
   const [keyword, setKeyword] = useState('');
   const [status, setStatus] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<{
     dateRange: string;
     startDate: Date | null;
     endDate: Date | null;
-    conditionType: '이름' | '아이디' | '전화번호';
+    conditionType: DetailSearchScope;
     keyword: string;
     status: string;
   } | null>(null);
@@ -96,6 +104,13 @@ export default function OrderVideoMixPage() {
       }
 
       if (keywordTrim) {
+        if (appliedSearch.conditionType === '전체') {
+          const matchesAny =
+            order.customerName.toLowerCase().includes(keywordTrim) ||
+            order.customerId.toLowerCase().includes(keywordTrim) ||
+            order.customerPhone.toLowerCase().includes(keywordTrim);
+          if (!matchesAny) return false;
+        }
         if (appliedSearch.conditionType === '이름' && !order.customerName.toLowerCase().includes(keywordTrim))
           return false;
         if (appliedSearch.conditionType === '아이디' && !order.customerId.toLowerCase().includes(keywordTrim))
@@ -289,18 +304,14 @@ export default function OrderVideoMixPage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색 타입"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={conditionType}
-                onChange={(next) => setConditionType(next as '이름' | '아이디' | '전화번호')}
-                options={[
-                  { value: '이름', label: '이름' },
-                  { value: '아이디', label: '아이디' },
-                  { value: '전화번호', label: '전화번호' },
-                ]}
+                onChange={(next) => setConditionType(next as DetailSearchScope)}
+                options={[...DETAIL_SEARCH_SCOPE_OPTIONS]}
               />
               <input
                 type="text"

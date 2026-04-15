@@ -388,10 +388,10 @@ export default function CrawlingListTemplate<T extends { id: string }>({
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="검색 조건"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={searchScope}
                 onChange={setSearchScope}

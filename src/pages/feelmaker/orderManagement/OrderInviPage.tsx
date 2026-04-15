@@ -69,7 +69,7 @@ type AppliedSearch = {
   detailOrderEndDate: Date | null;
   detailWeddingStartDate: Date | null;
   detailWeddingEndDate: Date | null;
-  conditionType: '아이디' | 'URL' | '신랑명' | '신부명' | '아기이름';
+  conditionType: DetailSearchScope;
   keyword: string;
   skinType: string;
   optionStatus: string;
@@ -95,6 +95,16 @@ type AppliedChipKey =
   | 'optionStatus'
   | 'urlStatus'
   | 'paymentStatus';
+
+const DETAIL_SEARCH_SCOPE_OPTIONS = [
+  { value: '전체', label: '전체' },
+  { value: '아이디', label: '아이디' },
+  { value: 'URL', label: 'URL' },
+  { value: '신랑명', label: '신랑명' },
+  { value: '신부명', label: '신부명' },
+  { value: '아기이름', label: '아기이름' },
+] as const;
+type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
 const SKIN_TYPE_OPTIONS = [
   { value: '', label: '전체보기' },
@@ -205,7 +215,7 @@ export default function OrderInviPage() {
   const [selectedSkinType, setSelectedSkinType] = useState('');
   const [selectedOptionStatus, setSelectedOptionStatus] = useState('');
   const [selectedUrlStatus, setSelectedUrlStatus] = useState('');
-  const [conditionType, setConditionType] = useState<'아이디' | 'URL' | '신랑명' | '신부명' | '아기이름'>('아이디');
+  const [conditionType, setConditionType] = useState<DetailSearchScope>('전체');
   const [keyword, setKeyword] = useState('');
   const [selectedPayment, setSelectedPayment] = useState<PaymentFilterValue>('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
@@ -259,6 +269,15 @@ export default function OrderInviPage() {
       if (appliedSearch.urlStatus === '입력전' && order.url.trim() !== '') return false;
       if (appliedSearch.urlStatus === '입력완료' && order.url.trim() === '') return false;
       if (!q) return true;
+      if (appliedSearch.conditionType === '전체') {
+        return (
+          order.customerId.toLowerCase().includes(q) ||
+          order.url.toLowerCase().includes(q) ||
+          (order.groomName ?? '').toLowerCase().includes(q) ||
+          (order.brideName ?? '').toLowerCase().includes(q) ||
+          (order.babyName ?? '').toLowerCase().includes(q)
+        );
+      }
       if (appliedSearch.conditionType === '아이디') return order.customerId.toLowerCase().includes(q);
       if (appliedSearch.conditionType === 'URL') return order.url.toLowerCase().includes(q);
       if (appliedSearch.conditionType === '신랑명') return (order.groomName ?? '').toLowerCase().includes(q);
@@ -535,22 +554,14 @@ export default function OrderInviPage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색 타입"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={conditionType}
-                onChange={(next) =>
-                  setConditionType(next as '아이디' | 'URL' | '신랑명' | '신부명' | '아기이름')
-                }
-                options={[
-                  { value: '아이디', label: '아이디' },
-                  { value: 'URL', label: 'URL' },
-                  { value: '신랑명', label: '신랑명' },
-                  { value: '신부명', label: '신부명' },
-                  { value: '아기이름', label: '아기이름' },
-                ]}
+                onChange={(next) => setConditionType(next as DetailSearchScope)}
+                options={[...DETAIL_SEARCH_SCOPE_OPTIONS]}
               />
               <input
                 type="text"

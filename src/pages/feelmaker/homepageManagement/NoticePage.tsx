@@ -12,6 +12,7 @@ import type { NoticeRow } from './mock/notice.mock';
 import { NOTICE_ROWS_MOCK } from './mock/notice.mock';
 
 const SEARCH_SCOPE_OPTIONS = [
+  { value: 'all', label: '전체' },
   { value: 'title', label: '제목' },
   { value: 'content', label: '내용' },
   { value: 'author', label: '작성자' },
@@ -60,7 +61,7 @@ export default function NoticePage() {
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [searchScope, setSearchScope] = useState('title');
+  const [searchScope, setSearchScope] = useState('all');
   const [keyword, setKeyword] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,7 +99,13 @@ export default function NoticePage() {
       if (endBoundary && createdAt > endBoundary) return false;
 
       if (keywordTrim) {
-        if (appliedSearch.searchScope === 'title') {
+        if (appliedSearch.searchScope === 'all') {
+          const matchesAny =
+            row.title.toLowerCase().includes(keywordTrim) ||
+            row.content.toLowerCase().includes(keywordTrim) ||
+            row.createdBy.toLowerCase().includes(keywordTrim);
+          if (!matchesAny) return false;
+        } else if (appliedSearch.searchScope === 'title') {
           if (!row.title.toLowerCase().includes(keywordTrim)) return false;
         } else if (appliedSearch.searchScope === 'content') {
           if (!row.content.toLowerCase().includes(keywordTrim)) return false;
@@ -143,7 +150,7 @@ export default function NoticePage() {
       chips.push({ key: 'date', label: `작성일: ${appliedSearch.dateRange}` });
     }
     if (appliedSearch.keyword.trim()) {
-      const scopeLabel = SEARCH_SCOPE_OPTIONS.find((o) => o.value === appliedSearch.searchScope)?.label ?? '제목';
+      const scopeLabel = SEARCH_SCOPE_OPTIONS.find((o) => o.value === appliedSearch.searchScope)?.label ?? '전체';
       chips.push({ key: 'keyword', label: `검색: ${scopeLabel} ${appliedSearch.keyword}` });
     }
     return chips;
@@ -339,10 +346,10 @@ export default function NoticePage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="검색 조건"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={searchScope}
                 onChange={setSearchScope}

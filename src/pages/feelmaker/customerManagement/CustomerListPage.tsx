@@ -751,7 +751,7 @@ export default function CustomerListPage() {
                     <td>
                       <button
                         type="button"
-                        className="row-btn row-btn--blue"
+                        className="row-btn row-btn--default"
                         onClick={() => window.alert('일반회원 전환(목업)')}
                       >
                         일반회원전환

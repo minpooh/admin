@@ -1,6 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Download, MoreHorizontal, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Download, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -24,6 +23,14 @@ function formatStoreEditRowCopy(order: StoreEditOrderItem): string {
 }
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
+const DETAIL_SEARCH_SCOPE_OPTIONS = [
+  { value: '전체', label: '전체' },
+  { value: '이름', label: '이름' },
+  { value: '아이디', label: '아이디' },
+  { value: '전화번호', label: '전화번호' },
+  { value: '스팜주문번호', label: '스팜주문번호' },
+] as const;
+type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
 type AppliedSearch = {
   uploadDateRange: string;
@@ -32,7 +39,7 @@ type AppliedSearch = {
   requestDateRange: string;
   requestStartDate: Date | null;
   requestEndDate: Date | null;
-  conditionType: '이름' | '아이디' | '전화번호' | '스팜주문번호';
+  conditionType: DetailSearchScope;
   keyword: string;
   workStatus: string;
   urgentPhotoEdit: string;
@@ -111,7 +118,7 @@ function getProgressVariantClass(progress: string): string {
   if (progress === '보정진행중') return 'progress-status--danger';
   if (progress === '관리자업로드') return 'progress-status--secondary';
   if (progress === '재수정진행중') return 'progress-status--warning';
-  if (progress === '확정') return 'progress-status--primary';
+  if (progress === '확정') return 'progress-status--blue';
   return 'progress-status--warning';
 }
 
@@ -121,6 +128,24 @@ function getPhotoMenuItemsByProgress(progress: string): string[] {
     return ['사진등록', '원본다운로드', '관리자사진다운로드', '재수정요청다운로드'];
   }
   return ['사진등록', '원본다운로드'];
+}
+
+function renderPhotoActionLabel(item: string) {
+  if (!item.endsWith('다운로드')) return item;
+  const prefix = item.replace(/다운로드$/, '');
+  return (
+    <span className="row-btn--text-icon__label">
+      {prefix}
+      <Download size={12} aria-hidden="true" />
+    </span>
+  );
+}
+
+function splitPhotoMenuButtonItems(items: string[]): { firstRow: string[]; secondRow: string[] } {
+  const firstRow = ['사진등록', '원본다운로드'].filter((label) => items.includes(label));
+  const firstSet = new Set(firstRow);
+  const secondRow = items.filter((item) => !firstSet.has(item));
+  return { firstRow, secondRow };
 }
 
 function getPaymentRowVariant(paymentStatus: string): { rowBtnClass: string; dotClass: string } {
@@ -163,6 +188,14 @@ function applyFilters(orders: StoreEditOrderItem[], applied: AppliedSearch | nul
     }
 
     if (keywordTrim) {
+      if (applied.conditionType === '전체') {
+        const matchesAny =
+          order.customerName.toLowerCase().includes(keywordTrim) ||
+          order.customerId.toLowerCase().includes(keywordTrim) ||
+          order.customerPhone.toLowerCase().includes(keywordTrim) ||
+          order.orderNo.toLowerCase().includes(keywordTrim);
+        if (!matchesAny) return false;
+      }
       if (applied.conditionType === '이름' && !order.customerName.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '아이디' && !order.customerId.toLowerCase().includes(keywordTrim)) return false;
       if (applied.conditionType === '전화번호' && !order.customerPhone.toLowerCase().includes(keywordTrim))
@@ -192,7 +225,7 @@ export default function OrderEditStorePage() {
   const [requestStartDate, setRequestStartDate] = useState<Date | null>(null);
   const [requestEndDate, setRequestEndDate] = useState<Date | null>(null);
 
-  const [conditionType, setConditionType] = useState<'이름' | '아이디' | '전화번호' | '스팜주문번호'>('이름');
+  const [conditionType, setConditionType] = useState<DetailSearchScope>('전체');
   const [keyword, setKeyword] = useState('');
   const [workStatus, setWorkStatus] = useState('');
   const [urgentPhotoEdit, setUrgentPhotoEdit] = useState('');
@@ -334,42 +367,6 @@ export default function OrderEditStorePage() {
     return chips;
   })();
 
-  const [openPhotoOrderId, setOpenPhotoOrderId] = useState<string | null>(null);
-  const [photoDropdownPos, setPhotoDropdownPos] = useState<{ top: number; right: number } | null>(null);
-  const photoDropdownAnchorRef = useRef<HTMLButtonElement | null>(null);
-  const portalPhotoOrder = useMemo(
-    () => (openPhotoOrderId ? orders.find((o) => o.id === openPhotoOrderId) ?? null : null),
-    [openPhotoOrderId, orders]
-  );
-
-  useLayoutEffect(() => {
-    if (!openPhotoOrderId || !photoDropdownAnchorRef.current) return;
-    const update = () => {
-      const r = photoDropdownAnchorRef.current?.getBoundingClientRect();
-      if (!r) return;
-      setPhotoDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-    };
-    update();
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [openPhotoOrderId]);
-
-  useEffect(() => {
-    if (!openPhotoOrderId) return;
-    const handlePointerDown = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-      if (target.closest('.row-options') || target.closest('.row-options__menu-portal')) return;
-      setOpenPhotoOrderId(null);
-    };
-    document.addEventListener('mousedown', handlePointerDown);
-    return () => document.removeEventListener('mousedown', handlePointerDown);
-  }, [openPhotoOrderId]);
-
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const [copyInfoAlertOpen, setCopyInfoAlertOpen] = useState(false);
   const [paymentModalOrderId, setPaymentModalOrderId] = useState<string | null>(null);
@@ -450,9 +447,9 @@ export default function OrderEditStorePage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
-              <ListSelect ariaLabel="조건검색 타입" className="listselect--condition-type" value={conditionType} onChange={(next) => setConditionType(next as '이름' | '아이디' | '전화번호' | '스팜주문번호')} options={[{ value: '이름', label: '이름' }, { value: '아이디', label: '아이디' }, { value: '전화번호', label: '전화번호' }, { value: '스팜주문번호', label: '스팜주문번호' }]} />
+              <ListSelect ariaLabel="상세검색 조건" className="listselect--condition-type" value={conditionType} onChange={(next) => setConditionType(next as DetailSearchScope)} options={[...DETAIL_SEARCH_SCOPE_OPTIONS]} />
               <input type="text" placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             </div>
           </div>
@@ -549,6 +546,9 @@ export default function OrderEditStorePage() {
                 <tr key={order.id}>
                   {(() => {
                     const paymentVariant = getPaymentRowVariant(order.paymentStatus);
+                    const { firstRow: photoFirstRow, secondRow: photoSecondRow } = splitPhotoMenuButtonItems(
+                      getPhotoMenuItemsByProgress(normalizeProgress(order.progress))
+                    );
                     return (
                       <>
                   <td className="col-center">
@@ -622,27 +622,31 @@ export default function OrderEditStorePage() {
                     </button>
                   </td>
                   <td>
-                    <div className="row-options">
-                      <button
-                        type="button"
-                        className="row-options__trigger"
-                        aria-haspopup="menu"
-                        aria-expanded={openPhotoOrderId === order.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (openPhotoOrderId === order.id) {
-                            setOpenPhotoOrderId(null);
-                            setPhotoDropdownPos(null);
-                            return;
-                          }
-                          photoDropdownAnchorRef.current = e.currentTarget;
-                          const r = e.currentTarget.getBoundingClientRect();
-                          setPhotoDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-                          setOpenPhotoOrderId(order.id);
-                        }}
-                      >
-                        <MoreHorizontal size={16} aria-hidden="true" />
-                      </button>
+                    <div className="cell-block">
+                      <span className="cell-line cell-line--with-action">
+                        {photoFirstRow.map((item) => (
+                          <button
+                            key={`${order.id}-${item}`}
+                            type="button"
+                            className={['row-btn', 'row-btn--text-icon', item === '사진등록' ? 'row-btn--blue' : 'row-btn--default'].join(' ')}
+                          >
+                            {renderPhotoActionLabel(item)}
+                          </button>
+                        ))}
+                      </span>
+                      {photoSecondRow.length > 0 ? (
+                        <span className="cell-line cell-line--with-action">
+                          {photoSecondRow.map((item) => (
+                            <button
+                              key={`${order.id}-${item}`}
+                              type="button"
+                              className={['row-btn', 'row-btn--text-icon', item === '사진등록' ? 'row-btn--blue' : 'row-btn--default'].join(' ')}
+                            >
+                              {renderPhotoActionLabel(item)}
+                            </button>
+                          ))}
+                        </span>
+                      ) : null}
                     </div>
                   </td>
                   <td>
@@ -700,19 +704,6 @@ export default function OrderEditStorePage() {
           </div>
         </div>
       </section>
-
-      {portalPhotoOrder && photoDropdownPos
-        ? createPortal(
-            <div className="row-options__menu-portal" role="menu" style={{ position: 'fixed', top: photoDropdownPos.top, right: photoDropdownPos.right, zIndex: 10000 }}>
-              {getPhotoMenuItemsByProgress(normalizeProgress(portalPhotoOrder.progress)).map((item) => (
-                <button key={`${portalPhotoOrder.id}-${item}`} type="button" className="row-options__item" role="menuitem" onClick={() => setOpenPhotoOrderId(null)}>
-                  {item}
-                </button>
-              ))}
-            </div>,
-            document.body
-          )
-        : null}
 
       {paymentModalOrderId && (() => {
         const order = orders.find((o) => o.id === paymentModalOrderId);

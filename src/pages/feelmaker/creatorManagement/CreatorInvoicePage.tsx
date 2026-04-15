@@ -412,10 +412,10 @@ export default function CreatorInvoicePage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={searchScope}
                 onChange={setSearchScope}

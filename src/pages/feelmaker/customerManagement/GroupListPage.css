@@ -47,7 +47,6 @@
 .admin-list-page--group-buy .admin-table td:nth-child(8) {
   min-width: 5.25rem;
   text-align: center;
-  vertical-align: middle;
 }
 
 /* 9 인원추가 */
@@ -55,7 +54,6 @@
 .admin-list-page--group-buy .admin-table td:nth-child(9) {
   min-width: 4.25rem;
   text-align: center;
-  vertical-align: middle;
 }
 
 /* 검색: 시작날짜·마감날짜 (날짜만) */

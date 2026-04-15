@@ -160,7 +160,7 @@
 /* 공통 라벨(구매/가입/스킨/URL/혜택) */
 .list-label {
   display: inline-block;
-  min-width: 1.75rem;
+  min-width: 1rem;
   font-size: 0.6875rem;
   font-weight: 600;
   color: #6b7280;
@@ -240,8 +240,6 @@
 .row-btn--default,
 .row-btn--pink,
 .row-btn--red,
-.row-btn--blue,
-.row-btn--blue-dark,
 .row-btn--yellow,
 .row-btn--gray,
 .row-btn--black {
@@ -252,13 +250,38 @@
 .row-btn--default:hover,
 .row-btn--pink:hover,
 .row-btn--red:hover,
-.row-btn--blue:hover,
-.row-btn--blue-dark:hover,
 .row-btn--yellow:hover,
 .row-btn--gray:hover,
 .row-btn--black:hover {
   background: var(--gray-200);
   color: var(--gray-700);
+}
+
+.row-btn--blue {
+  background: var(--blue-color-50);
+  color: var(--blue-color-500);
+}
+.row-btn--blue:hover {
+  background: var(--blue-color-100);
+  color: var(--blue-color-500);
+}
+.row-btn--blue-dark {
+  background: var(--blue-color-500);
+  color: #fff;
+}
+.row-btn--blue-dark:hover {
+  background: var(--blue-color-600);
+  color: #fff;
+}
+
+.row-btn--secondary {
+  background: var(--secondary-color-50);
+  color: var(--secondary-color-500);
+}
+
+.row-btn--secondary:hover {
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
 }
 
 /* 아이콘 버튼 (삭제 등) */
@@ -334,6 +357,19 @@
   gap: 6px;
 }
 
+.row-btn--text-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-btn--text-icon__label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
 .row-icon-btn--inline-sm {
   width: 16px;
   height: 16px;
@@ -355,14 +391,14 @@
 }
 
 /* 결제현황 버튼: 상태 dot 색상과 매칭 */
-.row-btn--status-primary {
-  background: var(--primary-color-50);
-  color: var(--primary-color-500);
+.row-btn--status-blue {
+  background: var(--blue-color-50);
+  color: var(--blue-color-500);
 }
 
-.row-btn--status-primary:hover {
-  background: var(--primary-color-100);
-  color: var(--primary-color-500);
+.row-btn--status-blue:hover {
+  background: var(--blue-color-100);
+  color: var(--blue-color-500);
 }
 
 .row-btn--status-secondary {
@@ -427,8 +463,8 @@
   flex: 0 0 auto;
 }
 
-.progress-status--primary .progress-status__dot {
-  background: var(--primary-color-500);
+.progress-status--blue .progress-status__dot {
+  background: var(--blue-color-500);
 }
 
 .progress-status--danger .progress-status__dot {

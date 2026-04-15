@@ -56,7 +56,7 @@ type BoardPostRow = {
 };
 
 function statusButtonClass(s: BoardStatus): string {
-  if (s === 'EXPOSED') return 'row-btn row-btn--status-primary';
+  if (s === 'EXPOSED') return 'row-btn row-btn--status-blue';
   return 'row-btn row-btn--status-secondary';
 }
 

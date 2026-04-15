@@ -19,18 +19,6 @@
   --primary-color-800: #3432a8;
   --primary-color-900: #28267d;
 
-   /* Primary — 블루 */
-   /* --primary-color-50: #eff6ff;
-   --primary-color-100: #dbeafe;
-   --primary-color-200: #bfdbfe;
-   --primary-color-300: #93c5fd;
-   --primary-color-400: #60a5fa;
-   --primary-color-500: #3b82f6;
-   --primary-color-600: #2563eb;
-   --primary-color-700: #1d4ed8;
-   --primary-color-800: #1e40af;
-   --primary-color-900: #1e3a8a; */
-
   /* Secondary — 민트/그린 (#e5f8ed 기준) */
   --secondary-color-50: #f2fcf8;
   --secondary-color-100: #e5f8ed;
@@ -62,6 +50,19 @@
   --purple-color-300: #b9b5fc;
   --purple-color-400: #9992f2;
   --purple-color-500: #4f46e5;
+
+  /* Blue — 블루 */
+  --blue-color-50: #eff6ff;
+  --blue-color-100: #dbeafe;
+  --blue-color-200: #bfdbfe;
+  --blue-color-300: #93c5fd;
+  --blue-color-400: #60a5fa;
+  --blue-color-500: #3b82f6;
+  --blue-color-600: #2563eb;
+  --blue-color-700: #1d4ed8;
+  --blue-color-800: #1e40af;
+  --blue-color-900: #1e3a8a;
+
 
   /* Gray — cool neutral */
   --gray-50: #f8f9fc;

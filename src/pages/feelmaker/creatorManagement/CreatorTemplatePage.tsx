@@ -53,7 +53,7 @@ const TITLES = [
 ];
 
 function approvalButtonClass(status: TemplateApprovalStatus): string {
-  if (status === 'APPROVED') return 'row-btn row-btn--status-primary';
+  if (status === 'APPROVED') return 'row-btn row-btn--status-secondary';
   if (status === 'REJECTED') return 'row-btn row-btn--status-danger';
   return 'row-btn row-btn--status-warning';
 }
@@ -357,10 +357,10 @@ export default function CreatorTemplatePage() {
           </div>
 
           <div className="filter-section">
-            <span className="filter-label">조건검색</span>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
-                ariaLabel="조건검색"
+                ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={searchScope}
                 onChange={setSearchScope}
