@@ -311,6 +311,48 @@
   font-size: 0.875rem;
   flex: 0 0 auto;
 }
+
+/* 범위 입력 공통 (금액 등) */
+.filter-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.filter-range-fields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  flex: 2 1 0;
+}
+
+.filter-range-fields .filter-range-input {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  height: 38px;
+  min-height: 38px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.filter-range-fields .filter-range-input:focus,
+.filter-range-fields .filter-range-input:focus-visible {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.filter-range-sep {
+  color: #6b7280;
+  font-size: 0.875rem;
+  flex: 0 0 auto;
+}
 /* 드롭다운만 (pg사, 옵션, 파트너) */
 .filter-select {
   padding: 0.5rem 2rem 0.5rem 0.75rem;

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { HiBanknotes, HiShoppingCart, HiUserPlus, HiFilm } from 'react-icons/hi2';
+import '../../styles/dashboardCommon.css';
 import './DashboardPage.css';
 import {
   AreaChart,

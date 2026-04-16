@@ -30,9 +30,11 @@ export function getPage(key: string): PageComponent | undefined {
 // 2. 아래에 import 추가 후 registerPage('navId/sectionId/itemId', 컴포넌트) 호출
 
 
+// 필메이커 페이지 시작 --------------------------------------------------------------
 import FeelmakerDashboardPage from './feelmaker/DashboardPage.tsx';
 registerPage('feelmaker', FeelmakerDashboardPage);
 
+// 주문관리
 import FeelmakerOrderVideoPage from './feelmaker/orderManagement/OrderVideoPage';
 import FeelmakerOrderVideoTestPage from './feelmaker/orderManagement/OrderVideoTestPage';
 import FeelmakerOrderInviPage from './feelmaker/orderManagement/OrderInviPage.tsx';
@@ -40,12 +42,6 @@ import FeelmakerOrderEditPage from './feelmaker/orderManagement/OrderEditPage.ts
 import FeelmakerOrderEditStorePage from './feelmaker/orderManagement/OrderEditStorePage.tsx';
 import FeelmakerOrderEditSamplePage from './feelmaker/orderManagement/OrderEditSamplePage.tsx';
 import FeelmakerOrderVideoMixPage from './feelmaker/orderManagement/OrderVideoMixPage.tsx';
-
-import BannerPage from './feelmaker/homepageManagement/BannerPage';
-import PopupPage from './feelmaker/homepageManagement/PopupPage';
-import EventPage from './feelmaker/homepageManagement/EventPage';
-import NoticePage from './feelmaker/homepageManagement/NoticePage';
-
 registerPage('feelmaker/orderManagement/orderVideo', FeelmakerOrderVideoPage);
 registerPage('feelmaker/orderManagement/orderTestVideo', FeelmakerOrderVideoTestPage);
 registerPage('feelmaker/orderManagement/orderInvi', FeelmakerOrderInviPage);
@@ -54,18 +50,7 @@ registerPage('feelmaker/orderManagement/orderEditStorePage', FeelmakerOrderEditS
 registerPage('feelmaker/orderManagement/orderEditSamplePage', FeelmakerOrderEditSamplePage);
 registerPage('feelmaker/orderManagement/orderVideoMixPage', FeelmakerOrderVideoMixPage);
 
-registerPage('feelmaker/homepageManagement/bannerList', BannerPage);
-registerPage('feelmaker/homepageManagement/popupList', PopupPage);
-registerPage('feelmaker/homepageManagement/eventList', EventPage);
-registerPage('feelmaker/homepageManagement/noticeList', NoticePage);
-
-import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
-import FaqPage from './feelmaker/reviewManagement/FaqPage';
-import ReviewPage from './feelmaker/reviewManagement/ReviewPage';
-registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
-registerPage('feelmaker/reviewManagement/faq', FaqPage);
-registerPage('feelmaker/reviewManagement/review', ReviewPage);
-
+// 크롤링
 import StorefarmVideoPage from './feelmaker/crawlingManagement/StorefarmVideoPage';
 import StorefarmCardPage from './feelmaker/crawlingManagement/StorefarmCardPage';
 import StorefarmMotionPage from './feelmaker/crawlingManagement/StorefarmMotionPage';
@@ -73,6 +58,7 @@ registerPage('feelmaker/crawlingManagement/storefarmMaker', StorefarmVideoPage);
 registerPage('feelmaker/crawlingManagement/storefarmCard', StorefarmCardPage);
 registerPage('feelmaker/crawlingManagement/storefarmMotion', StorefarmMotionPage);
 
+// 오류관리
 import StorefarmErrorPage from './feelmaker/errorManagement/StorefarmErrorPage';
 import OrderErrorPage from './feelmaker/errorManagement/OrderErrorPage';
 import DelayErrorPage from './feelmaker/errorManagement/DelayErrorPage';
@@ -80,6 +66,15 @@ registerPage('feelmaker/errorManagement/storefarmError', StorefarmErrorPage);
 registerPage('feelmaker/errorManagement/orderError', OrderErrorPage);
 registerPage('feelmaker/errorManagement/delayError', DelayErrorPage);
 
+// 문의/후기관리
+import InquiryPage from './feelmaker/reviewManagement/InquiryPage';
+import FaqPage from './feelmaker/reviewManagement/FaqPage';
+import ReviewPage from './feelmaker/reviewManagement/ReviewPage';
+registerPage('feelmaker/reviewManagement/inquiry', InquiryPage);
+registerPage('feelmaker/reviewManagement/faq', FaqPage);
+registerPage('feelmaker/reviewManagement/review', ReviewPage);
+
+// 고객관리
 import CustomerListPage from './feelmaker/customerManagement/CustomerListPage';
 import CouponListPage from './feelmaker/customerManagement/CouponListPage';
 import GroupListPage from './feelmaker/customerManagement/GroupListPage';
@@ -87,20 +82,32 @@ registerPage('feelmaker/customerManagement/customerList', CustomerListPage);
 registerPage('feelmaker/customerManagement/couponList', CouponListPage);
 registerPage('feelmaker/customerManagement/groupList', GroupListPage);
 
+// 상품관리
 import ProductListPage from './feelmaker/productManagement/ProductListPage';
 import RenderingPcPage from './feelmaker/productManagement/RenderingPcPage';
+registerPage('feelmaker/productManagement/productList', ProductListPage);
+registerPage('feelmaker/productManagement/renderingPc', RenderingPcPage);
+registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
+
+// 홈페이지관리
+import BannerPage from './feelmaker/homepageManagement/BannerPage';
+import PopupPage from './feelmaker/homepageManagement/PopupPage';
+import EventPage from './feelmaker/homepageManagement/EventPage';
+import NoticePage from './feelmaker/homepageManagement/NoticePage';
+registerPage('feelmaker/homepageManagement/bannerList', BannerPage);
+registerPage('feelmaker/homepageManagement/popupList', PopupPage);
+registerPage('feelmaker/homepageManagement/eventList', EventPage);
+registerPage('feelmaker/homepageManagement/noticeList', NoticePage);
+
+// 엔터프라이즈관리
 import EnterpriseListPage from './feelmaker/enterpriseManagement/EnterpriseListPage';
 import EnterpriseOrderListPage from './feelmaker/enterpriseManagement/EnterpriseOrderListPage';
 import EnterpriseInvoicePage from './feelmaker/enterpriseManagement/EnterpriseInvoicePage';
-import EditorListPage from './feelmaker/marketingManagement/EditorListPage';
-registerPage('feelmaker/productManagement/productList', ProductListPage);
-registerPage('feelmaker/productManagement/renderingPc', RenderingPcPage);
 registerPage('feelmaker/enterpriseManagement/enterpriseList', EnterpriseListPage);
 registerPage('feelmaker/enterpriseManagement/enterpriseOrderList', EnterpriseOrderListPage);
 registerPage('feelmaker/enterpriseManagement/enterpriseInvoice', EnterpriseInvoicePage);
-registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
-registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
 
+// 크리에이터관리
 import CreatorListPage from './feelmaker/creatorManagement/CreatorListPage';
 import CreatorInvoicePage from './feelmaker/creatorManagement/CreatorInvoicePage';
 import CreatorTemplatePage from './feelmaker/creatorManagement/CreatorTemplatePage';
@@ -110,5 +117,27 @@ registerPage('feelmaker/creatorManagement/creatorInvoice', CreatorInvoicePage);
 registerPage('feelmaker/creatorManagement/creatorTemplate', CreatorTemplatePage);
 registerPage('feelmaker/creatorManagement/creatorBoard', CreatorBoardPage);
 
+// 마케팅관리
+import EditorListPage from './feelmaker/marketingManagement/EditorListPage';
+registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
+
+
+// 필메이커 페이지 끝 --------------------------------------------------------------
+
+
+// 필프레임 페이지 시작 --------------------------------------------------------------
+import FeelframeDashboardPage from './feelframe/DashboardPage';
+registerPage('feelframe', FeelframeDashboardPage);
+
+// 주문관리
+import FeelframeOrderListPage from './feelframe/orderManagement/OrderListPage';
+import FeelframeOrderCancelPage from './feelframe/orderManagement/OrderCancelPage';
+import FeelframeOrderExchangePage from './feelframe/orderManagement/OrderExchangePage';
+registerPage('feelframe/orderManagement/orderList', FeelframeOrderListPage);
+registerPage('feelframe/orderManagement/orderCancel', FeelframeOrderCancelPage);
+registerPage('feelframe/orderManagement/orderExchange', FeelframeOrderExchangePage);
+
+// 업로드관리
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);
+// 필프레임 페이지 끝 --------------------------------------------------------------
