@@ -33,7 +33,8 @@
   grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
 }
 
-.filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn {
+.filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn,
+.filter-top-row.admin-filter-row--equal-4 .filter-section--search-btn .filter-btn {
   width: 100%;
 }
 

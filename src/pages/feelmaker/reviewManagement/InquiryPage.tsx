@@ -472,7 +472,7 @@ export default function InquiryPage() {
       </section>
 
       <section className="admin-list-box">
-        <div className="filter-top-row admin-filter-row--no-detail">
+        <div className="filter-top-row admin-filter-row--equal-4">
           <div className="filter-section">
             <span className="filter-label">작성일</span>
             <div className="date-range-wrap">

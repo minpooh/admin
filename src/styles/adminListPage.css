@@ -44,6 +44,8 @@
 
 /* 테이블: 좌우 스크롤, 박스 안에 꽉 채움 */
 .admin-table-wrap {
+  position: relative;
+  z-index: 0;
   overflow-x: auto;
   width: 100%;
   cursor: grab;
@@ -285,6 +287,16 @@
 .row-btn--blue-dark:hover {
   background: var(--blue-color-600);
   color: #fff;
+}
+
+.row-btn--primary {
+  background: var(--primary-color-50);
+  color: var(--primary-color-500);
+}
+
+.row-btn--primary:hover {
+  background: var(--primary-color-100);
+  color: var(--primary-color-500);
 }
 
 .row-btn--secondary {
@@ -649,16 +661,19 @@
 
 /* 크리에이터 정산: 선택 요약·일괄 처리 (한 줄) */
 .admin-settlement-bulk {
+  position: relative;
+  z-index: 2;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--gray-100, #f3f4f6);
   background: #fafafa;
-  overflow-x: auto;
+  /* overflow-x: auto 는 overflow-y 가 visible 이 아니게 되어 ListSelect 드롭다운이 잘림 */
+  overflow: visible;
 }
 
 .admin-settlement-bulk__bar {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 0.75rem;
   min-width: 0;
@@ -701,6 +716,76 @@
   outline: none;
   border-color: var(--gray-300);
   box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+/* 필프레임 액자 업로드: 체크박스 열 (크리에이터 정산과 동일 패턴) */
+.admin-table.admin-table--feelframe-upload-frame {
+  min-width: 1500px;
+}
+
+.admin-table.admin-table--feelframe-upload-frame .admin-table-col-checkbox {
+  width: 44px;
+  text-align: center;
+}
+
+.admin-table.admin-table--feelframe-upload-frame .admin-table-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.admin-table.admin-table--feelframe-upload-frame .admin-upload-frame-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--gray-100, #f3f4f6);
+  border: 1px solid var(--gray-200, #e5e7eb);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--gray-500, #6b7280);
+}
+
+.admin-table.admin-table--feelframe-upload-frame .admin-table-cell--memo {
+  white-space: normal;
+  min-width: 100px;
+  max-width: 200px;
+}
+
+.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.4rem;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--strong {
+  background: var(--danger-color-50);
+  color: var(--danger-color-500);
+}
+
+.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--medium {
+  background: var(--warning-color-50);
+  color: var(--warning-color-500);
+}
+
+.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--weak {
+  background: var(--secondary-color-50);
+  color: var(--secondary-color-500);
+}
+
+.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--designer {
+  background: var(--gray-100);
+  color: var(--gray-500);
 }
 
 /* 크리에이터 정산: 체크·ID·계좌·주문·상태·일자·메모 */

@@ -6,11 +6,6 @@ import ListSelect from '../../../components/ListSelect';
 import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
-import '../../../styles/adminListPage.css';
-import '../../../styles/adminFilter.css';
-import '../../../styles/adminFilterChips.css';
-import '../../../styles/adminSearchField.css';
-import '../../../styles/adminDatepicker.css';
 import { MOCK_FEELFRAME_ORDER_LIST, type FeelframeOrderListItem } from './mock/orderList.mock';
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;

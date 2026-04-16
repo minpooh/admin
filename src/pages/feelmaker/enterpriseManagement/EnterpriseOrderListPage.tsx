@@ -243,7 +243,7 @@ export default function EnterpriseOrderListPage() {
       </section>
 
       <section className="admin-list-box" aria-label="검색 조건">
-        <div className="filter-top-row admin-filter-row--no-detail">
+        <div className="filter-top-row admin-filter-row--equal-4">
           <div className="filter-section">
             <span className="filter-label">주문일</span>
             <div className="date-range-wrap">

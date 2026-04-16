@@ -9,6 +9,8 @@ type ListSelectProps = {
   options: ListSelectOption[];
   ariaLabel: string;
   className?: string;
+  /** 목록 테이블 바로 위 등에서 아래로 펼치면 잘릴 때 사용 */
+  menuPlacement?: 'below' | 'above';
 };
 
 export default function ListSelect({
@@ -17,6 +19,7 @@ export default function ListSelect({
   options,
   ariaLabel,
   className,
+  menuPlacement = 'below',
 }: ListSelectProps) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
@@ -76,7 +79,11 @@ export default function ListSelect({
       </button>
 
       {open && (
-        <ul className="listselect__menu" role="listbox" aria-label={ariaLabel}>
+        <ul
+          className={`listselect__menu ${menuPlacement === 'above' ? 'listselect__menu--above' : ''}`.trim()}
+          role="listbox"
+          aria-label={ariaLabel}
+        >
           {options.map((opt) => {
             const isSelected = opt.value === value;
             return (

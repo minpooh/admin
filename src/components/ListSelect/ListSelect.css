@@ -76,6 +76,11 @@
   overflow: auto;
 }
 
+.listselect__menu--above {
+  top: auto;
+  bottom: calc(100% + 0.35rem);
+}
+
 .listselect__item {
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;

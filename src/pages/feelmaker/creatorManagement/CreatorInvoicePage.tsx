@@ -322,7 +322,7 @@ export default function CreatorInvoicePage() {
       <h1 className="page-title">크리에이터 정산</h1>
 
       <section className="admin-list-box" aria-label="크리에이터 정산 검색 필터">
-        <div className="filter-top-row admin-filter-row--no-detail">
+        <div className="filter-top-row admin-filter-row--equal-4">
           <div className="filter-section">
             <span className="filter-label">요청일</span>
             <div className="date-range-wrap">

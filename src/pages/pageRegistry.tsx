@@ -139,5 +139,11 @@ registerPage('feelframe/orderManagement/orderExchange', FeelframeOrderExchangePa
 
 // 업로드관리
 import FeelframeUploadFramePage from './feelframe/uploadManagement/UploadFramePage';
+import FeelframeUploadPhotoPage from './feelframe/uploadManagement/UploadPhotoPage';
+import FeelframeUploadLPPage from './feelframe/uploadManagement/UploadLPPage';
+import FeelframeUploadReuploadPage from './feelframe/uploadManagement/UploadReuploadPage';
 registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage);
+registerPage('feelframe/uploadManagement/uploadPhoto', FeelframeUploadPhotoPage);
+registerPage('feelframe/uploadManagement/uploadLP', FeelframeUploadLPPage);
+registerPage('feelframe/uploadManagement/uploadReupload', FeelframeUploadReuploadPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------
