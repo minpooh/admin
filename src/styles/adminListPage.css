@@ -289,16 +289,6 @@
   color: #fff;
 }
 
-.row-btn--primary {
-  background: var(--primary-color-50);
-  color: var(--primary-color-500);
-}
-
-.row-btn--primary:hover {
-  background: var(--primary-color-100);
-  color: var(--primary-color-500);
-}
-
 .row-btn--secondary {
   background: var(--secondary-color-50);
   color: var(--secondary-color-500);
@@ -734,6 +724,19 @@
   justify-content: center;
   cursor: pointer;
 }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(2) { min-width: 130px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(3) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(4) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(5) { min-width: 80px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(6) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(7) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(8) { min-width: 90px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(9) { min-width: 100px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(10) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(11) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(12) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(13) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-frame th:nth-child(14) { min-width: 50px; }
 
 .admin-table.admin-table--feelframe-upload-frame .admin-upload-frame-thumb {
   display: inline-flex;
@@ -755,38 +758,64 @@
   max-width: 200px;
 }
 
-.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge {
+/* 필프레임 보정 업로드 */
+.admin-table.admin-table--feelframe-upload-photo {
+  min-width: 1300px;
+}
+
+.admin-table.admin-table--feelframe-upload-photo .admin-table-col-checkbox {
+  width: 44px;
+  text-align: center;
+}
+
+.admin-table.admin-table--feelframe-upload-photo .admin-table-checkbox-label {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 0.4rem;
-  border-radius: 3px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1;
+  cursor: pointer;
 }
 
-.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--strong {
-  background: var(--danger-color-50);
-  color: var(--danger-color-500);
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(2) { min-width: 130px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(3) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(4) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(5) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(6) { min-width: 60px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(7) { min-width: 80px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(8) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(9) { min-width: 80px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(10) { min-width: 70px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(11) { min-width: 80px; }
+.admin-table.admin-table--feelframe-upload-photo th:nth-child(12) { min-width: 60px; }
+
+/* 필프레임 LP 업로드 */
+.admin-table.admin-table--feelframe-upload-lp {
+  min-width: 1500px;
 }
 
-.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--medium {
-  background: var(--warning-color-50);
-  color: var(--warning-color-500);
+.admin-table.admin-table--feelframe-upload-lp .admin-table-col-checkbox {
+  width: 44px;
+  text-align: center;
 }
 
-.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--weak {
-  background: var(--secondary-color-50);
-  color: var(--secondary-color-500);
+.admin-table.admin-table--feelframe-upload-lp .admin-table-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
-
-.admin-table.admin-table--feelframe-upload-frame .upload-strength-badge--designer {
-  background: var(--gray-100);
-  color: var(--gray-500);
-}
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(2) { min-width: 130px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(3) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(4) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(5) { min-width: 80px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(6) { min-width: 120px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(7) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(8) { min-width: 90px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(9) { min-width: 100px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(10) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(11) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(12) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(13) { min-width: 50px; }
+.admin-table.admin-table--feelframe-upload-lp th:nth-child(14) { min-width: 50px; }
 
 /* 크리에이터 정산: 체크·ID·계좌·주문·상태·일자·메모 */
 .admin-table.admin-table--creator-settlement-invoice {
@@ -1352,3 +1381,15 @@ button.admin-link {
   display: flex;
   justify-content: flex-end;
 }
+
+/* 필프레임 재수정요청 관리 */
+.admin-table.admin-table--feelframe-reupload {
+  min-width: 900px;
+}
+
+.admin-table.admin-table--feelframe-reupload th:nth-child(1) { min-width: 160px; }
+.admin-table.admin-table--feelframe-reupload th:nth-child(2) { min-width: 80px; }
+.admin-table.admin-table--feelframe-reupload th:nth-child(4) { min-width: 150px; }
+.admin-table.admin-table--feelframe-reupload th:nth-child(5) { min-width: 150px; }
+.admin-table.admin-table--feelframe-reupload th:nth-child(6) { min-width: 120px; }
+.admin-table.admin-table--feelframe-reupload th:nth-child(7) { min-width: 60px; }

@@ -9,12 +9,13 @@ import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import {
   MOCK_FEELFRAME_UPLOAD_FRAME_LIST,
+  type FeelframeUploadFrameMemoEntry,
   type FeelframeUploadFrameProgress,
   type FeelframeUploadFrameRow,
-  type FeelframeUploadFrameMemoEntry,
 } from './mock/uploadFrame.mock';
 
 const CURRENT_LOGIN_AUTHOR = '관리자';
+
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 const DETAIL_SEARCH_OPTIONS = [
   { value: '이름', label: '이름' },
@@ -105,18 +106,6 @@ function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   return { start, end };
 }
 
-
-function formatDateTimeNow() {
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hh = String(now.getHours()).padStart(2, '0');
-  const min = String(now.getMinutes()).padStart(2, '0');
-  const ss = String(now.getSeconds()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-}
-
 function isAppliedSearchEmpty(search: AppliedSearch | null) {
   if (!search) return true;
   return (
@@ -184,21 +173,27 @@ function getCorrectionIntensityLabel(request: string, intensity: string) {
   return '디자이너 임의';
 }
 
+function formatDateTimeNow() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
 function getCorrectionIntensityBadgeClass(label: string) {
-  if (label === '강') return 'upload-strength-badge upload-strength-badge--strong';
-  if (label === '중') return 'upload-strength-badge upload-strength-badge--medium';
-  if (label === '약') return 'upload-strength-badge upload-strength-badge--weak';
-  if (label === '디자이너 임의') return 'upload-strength-badge upload-strength-badge--designer';
+  if (label === '강') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-strong';
+  if (label === '중') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-medium';
+  if (label === '약') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-weak';
+  if (label === '디자이너 임의') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-designer';
   return '';
 }
 
 export default function FeelframeUploadFramePage() {
   const [rows, setRows] = useState<FeelframeUploadFrameRow[]>(() => [...MOCK_FEELFRAME_UPLOAD_FRAME_LIST]);
-  const [memoModalRowId, setMemoModalRowId] = useState<string | null>(null);
-  const [memoTooltipRowId, setMemoTooltipRowId] = useState<string | null>(null);
-  const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
-  const memoTooltipAnchorRef = useRef<HTMLElement | null>(null);
-  const [memoInput, setMemoInput] = useState('');
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -209,6 +204,11 @@ export default function FeelframeUploadFramePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkManager, setBulkManager] = useState('');
+  const [memoModalRowId, setMemoModalRowId] = useState<string | null>(null);
+  const [memoTooltipRowId, setMemoTooltipRowId] = useState<string | null>(null);
+  const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const memoTooltipAnchorRef = useRef<HTMLElement | null>(null);
+  const [memoInput, setMemoInput] = useState('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const headerCheckboxRef = useRef<HTMLInputElement>(null);
 
@@ -251,6 +251,40 @@ export default function FeelframeUploadFramePage() {
       return next;
     });
   };
+
+  const updateMemoTooltipPosition = () => {
+    const anchorElement = memoTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    setMemoTooltipPosition({
+      top: rect.bottom + 8,
+      right: Math.max(viewportMargin, window.innerWidth - rect.right),
+    });
+  };
+
+  useLayoutEffect(() => {
+    if (!memoTooltipRowId) return;
+    updateMemoTooltipPosition();
+    window.addEventListener('scroll', updateMemoTooltipPosition, true);
+    window.addEventListener('resize', updateMemoTooltipPosition);
+    return () => {
+      window.removeEventListener('scroll', updateMemoTooltipPosition, true);
+      window.removeEventListener('resize', updateMemoTooltipPosition);
+    };
+  }, [memoTooltipRowId]);
+
+  const showMemoTooltip = (rowId: string, triggerElement: HTMLElement) => {
+    memoTooltipAnchorRef.current = triggerElement;
+    setMemoTooltipRowId(rowId);
+  };
+
+  const hideMemoTooltip = () => {
+    setMemoTooltipRowId(null);
+    setMemoTooltipPosition(null);
+    memoTooltipAnchorRef.current = null;
+  };
+
   const closeMemoModal = () => {
     setMemoModalRowId(null);
     setMemoInput('');
@@ -273,9 +307,7 @@ export default function FeelframeUploadFramePage() {
 
     setRows((prev) =>
       prev.map((row) =>
-        row.id === rowId
-          ? { ...row, memo: [...row.memo, nextMemo] }
-          : row
+        row.id === rowId ? { ...row, memo: [...row.memo, nextMemo] } : row
       )
     );
     setMemoInput('');
@@ -289,44 +321,6 @@ export default function FeelframeUploadFramePage() {
           : row
       )
     );
-  };
-
-  const updateMemoTooltipPosition = () => {
-    const anchorElement = memoTooltipAnchorRef.current;
-    if (!anchorElement) return;
-    const rect = anchorElement.getBoundingClientRect();
-    const viewportMargin = 12;
-    const top = rect.bottom + 8;
-    const right = Math.max(viewportMargin, window.innerWidth - rect.right);
-
-    setMemoTooltipPosition({
-      top,
-      right,
-    });
-  };
-
-  useLayoutEffect(() => {
-    if (!memoTooltipRowId) return;
-    const update = () => updateMemoTooltipPosition();
-    update();
-    window.addEventListener('scroll', update, true);
-    window.addEventListener('resize', update);
-    return () => {
-      window.removeEventListener('scroll', update, true);
-      window.removeEventListener('resize', update);
-    };
-  }, [memoTooltipRowId]);
-
-  const showMemoTooltip = (rowId: string, triggerElement: HTMLElement) => {
-    memoTooltipAnchorRef.current = triggerElement;
-    setMemoTooltipRowId(rowId);
-    updateMemoTooltipPosition();
-  };
-
-  const hideMemoTooltip = () => {
-    setMemoTooltipRowId(null);
-    setMemoTooltipPosition(null);
-    memoTooltipAnchorRef.current = null;
   };
 
   const handleSearch = () => {
@@ -645,24 +639,21 @@ export default function FeelframeUploadFramePage() {
                       <span className="progress-status__dot" aria-hidden="true" />
                       <span className="progress-status__text">{row.progressStatus}</span>
                     </span>
-                    {row.progressStatus === '시안확정' && (
-                      <div className="">{row.confirmedAt}</div>
-                    )}
                   </td>
                   <td className="col-center">
-                    <button type="button" className="row-btn row-btn--primary" aria-label={`${row.orderNo} 최초이미지 다운로드`}>
+                    <button type="button" className="row-btn row-btn--default" aria-label={`${row.orderNo} 최초이미지 다운로드`}>
                       다운로드
                     </button>
                   </td>
                   <td className="col-center">
-                    <button type="button" className="row-btn row-btn--secondary">
+                    <button type="button" className="row-btn row-btn--default">
                       업로드
                     </button>
                   </td>
                   <td className="col-center">
                     <div
                       className="admin-memo-trigger"
-                      onMouseEnter={(e) => {
+                      onMouseEnter={(e) => { 
                         if (row.memo.length === 0) return;
                         showMemoTooltip(row.id, e.currentTarget);
                       }}

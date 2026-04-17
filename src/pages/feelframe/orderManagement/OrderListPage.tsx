@@ -841,13 +841,13 @@ export default function FeelframeOrderListPage() {
                 <th>가입일/예식일</th>
                 <th>주문일</th>
                 <th>주문정보</th>
-                <th>구매수</th>
-                <th>결제금액</th>
-                <th>결제현황</th>
-                <th>진행현황</th>
-                <th>메모</th>
-                <th>상세정보</th>
-                <th>삭제</th>
+                <th className="col-center">구매수</th>
+                <th className="col-center">결제금액</th>
+                <th className="col-center">결제현황</th>
+                <th className="col-center">진행현황</th>
+                <th className="col-center">메모</th>
+                <th className="col-center">상세정보</th>
+                <th className="col-center">삭제</th>
               </tr>
             </thead>
             <tbody>
@@ -889,9 +889,9 @@ export default function FeelframeOrderListPage() {
                   </td>
                   <td>{order.orderedAt}</td>
                   <td>{order.orderInfo}</td>
-                  <td>{order.purchaseCount}</td>
-                  <td>{order.paymentAmount.toLocaleString()}원</td>
-                  <td>
+                  <td className="col-center">{order.purchaseCount}</td>
+                  <td className="col-center">{order.paymentAmount.toLocaleString()}원</td>
+                  <td className="col-center">
                     <div className="cell-block">
                       <button
                         type="button"
@@ -905,13 +905,13 @@ export default function FeelframeOrderListPage() {
                       </button>
                     </div>
                   </td>
-                  <td>
+                  <td className="col-center">
                     <span className={getProgressStatusClassName(order.progressStatus)}>
                       <span className="progress-status__dot" aria-hidden="true" />
                       <span className="progress-status__text">{order.progressStatus}</span>
                     </span>
                   </td>
-                  <td>
+                  <td className="col-center">
                     <div
                       className="admin-memo-trigger"
                       onMouseEnter={(e) => {
@@ -934,12 +934,12 @@ export default function FeelframeOrderListPage() {
                       </button>
                     </div>
                   </td>
-                  <td>
+                  <td className="col-center">
                     <button type="button" className="admin-link">
                       상세보기
                     </button>
                   </td>
-                  <td>
+                  <td className="col-center">
                     <button
                       type="button"
                       className="row-btn row-btn--red"

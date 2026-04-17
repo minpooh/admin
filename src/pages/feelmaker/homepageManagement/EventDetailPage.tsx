@@ -155,6 +155,7 @@ export default function EventDetailPage({
                       selectsStart
                       startDate={periodStart}
                       endDate={periodEnd}
+                      maxDate={periodEnd ?? undefined}
                       placeholderText="시작일"
                       dateFormat="yyyy-MM-dd"
                       locale={ko}

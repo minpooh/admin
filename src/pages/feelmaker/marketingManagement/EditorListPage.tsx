@@ -483,6 +483,7 @@ export default function EditorListPage() {
                   selectsStart
                   startDate={draftStartDate}
                   endDate={draftEndDate}
+                  maxDate={draftEndDate ?? undefined}
                   placeholderText="시작일"
                   dateFormat="yyyy-MM-dd"
                   locale={ko}
@@ -582,6 +583,7 @@ export default function EditorListPage() {
                   selectsStart
                   startDate={orderStartDate}
                   endDate={orderEndDate}
+                  maxDate={orderEndDate ?? undefined}
                   placeholderText="시작일"
                   dateFormat="yyyy-MM-dd"
                   locale={ko}

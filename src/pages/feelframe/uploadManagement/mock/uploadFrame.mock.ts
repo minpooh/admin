@@ -26,7 +26,6 @@ export type FeelframeUploadFrameRow = {
   correctionRequest: string;
   correctionIntensity: string;
   progressStatus: FeelframeUploadFrameProgress;
-  confirmedAt: string;
   firstImageLabel: string;
   memo: FeelframeUploadFrameMemoEntry[];
   manager: string;
@@ -43,9 +42,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     customerEmail: 'minsujung91@email.com',
     customerPhone: '010-2234-8899',
     correctionRequest: '밝기 보정',
-    correctionIntensity: '보통',
+    correctionIntensity: '디자이너 임의',
     progressStatus: '작업중',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
     memo: [],
     manager: '박채은',
@@ -60,18 +58,10 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     customerEmail: 'yuna.wed@example.com',
     customerPhone: '010-5123-9012',
     correctionRequest: '없음',
-    correctionIntensity: '약함',
+    correctionIntensity: '디자이너 임의',
     progressStatus: '작업전',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-2-memo-1',
-        author: '손하준',
-        content: '고객 요청 확인',
-        createdAt: '2026-04-16 10:48:33',
-      },
-    ],
+    memo: [{ id: 'uf-2-memo-1', author: '손하준', content: '고객 요청 확인', createdAt: '2026-04-16 10:48:33' }],
     manager: '손하준',
   },
   {
@@ -86,7 +76,6 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '색감 보정',
     correctionIntensity: '강함',
     progressStatus: '시안전달',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
     memo: [],
     manager: '문희수',
@@ -103,16 +92,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '피부 보정',
     correctionIntensity: '보통',
     progressStatus: '수정요청',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-4-memo-1',
-        author: '허예진',
-        content: '문구 위치 수정',
-        createdAt: '2026-04-16 09:55:41',
-      },
-    ],
+    memo: [{ id: 'uf-4-memo-1', author: '허예진', content: '문구 위치 수정', createdAt: '2026-04-16 09:55:41' }],
     manager: '허예진',
   },
   {
@@ -127,16 +108,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '시안확정',
-    confirmedAt: '2026-04-18 11:12:27',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-5-memo-1',
-        author: '정유진',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-16 09:12:27',
-      },
-    ],
+    memo: [],
     manager: '정유진',
   },
   {
@@ -151,16 +124,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '밝기 보정',
     correctionIntensity: '보통',
     progressStatus: '발주완료',
-    confirmedAt: '2026-04-16 18:40:09',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-6-memo-1',
-        author: '박채은',
-        content: '발주 완료',
-        createdAt: '2026-04-15 18:40:09',
-      },
-    ],
+    memo: [{ id: 'uf-6-memo-1', author: '박채은', content: '발주 완료', createdAt: '2026-04-15 18:40:09' }],
     manager: '박채은',
   },
   {
@@ -175,16 +140,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '색감 보정',
     correctionIntensity: '강함',
     progressStatus: '작업중',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-7-memo-1',
-        author: '손하준',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 17:22:51',
-      },
-    ],
+    memo: [],
     manager: '손하준',
   },
   {
@@ -199,16 +156,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '작업전',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-8-memo-1',
-        author: '문희수',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 16:08:14',
-      },
-    ],
+    memo: [],
     manager: '문희수',
   },
   {
@@ -223,16 +172,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '피부 보정',
     correctionIntensity: '보통',
     progressStatus: '시안전달',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-9-memo-1',
-        author: '허예진',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 15:33:46',
-      },
-    ],
+    memo: [],
     manager: '허예진',
   },
   {
@@ -247,16 +188,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '밝기 보정',
     correctionIntensity: '강함',
     progressStatus: '수정요청',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-10-memo-1',
-        author: '정유진',
-        content: '여백 조정 요청',
-        createdAt: '2026-04-15 14:19:02',
-      },
-    ],
+    memo: [{ id: 'uf-10-memo-1', author: '정유진', content: '여백 조정 요청', createdAt: '2026-04-15 14:19:02' }],
     manager: '정유진',
   },
   {
@@ -271,16 +204,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '시안확정',
-    confirmedAt: '2026-04-16 13:44:28',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-11-memo-1',
-        author: '박채은',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 13:44:28',
-      },
-    ],
+    memo: [],
     manager: '박채은',
   },
   {
@@ -295,16 +220,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '색감 보정',
     correctionIntensity: '보통',
     progressStatus: '작업중',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-12-memo-1',
-        author: '손하준',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 12:11:55',
-      },
-    ],
+    memo: [],
     manager: '손하준',
   },
   {
@@ -319,16 +236,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '피부 보정',
     correctionIntensity: '강함',
     progressStatus: '발주완료',
-    confirmedAt: '2026-04-15 11:05:37',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-13-memo-1',
-        author: '문희수',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 11:05:37',
-      },
-    ],
+    memo: [],
     manager: '문희수',
   },
   {
@@ -343,16 +252,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '작업전',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-14-memo-1',
-        author: '허예진',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 10:22:19',
-      },
-    ],
+    memo: [],
     manager: '허예진',
   },
   {
@@ -367,16 +268,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '밝기 보정',
     correctionIntensity: '보통',
     progressStatus: '시안전달',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-15-memo-1',
-        author: '정유진',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-15 09:41:02',
-      },
-    ],
+    memo: [],
     manager: '정유진',
   },
   {
@@ -391,16 +284,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '수정요청',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-16-memo-1',
-        author: '박채은',
-        content: '문구 수정',
-        createdAt: '2026-04-15 09:05:44',
-      },
-    ],
+    memo: [{ id: 'uf-16-memo-1', author: '박채은', content: '문구 수정', createdAt: '2026-04-15 09:05:44' }],
     manager: '박채은',
   },
   {
@@ -415,16 +300,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '색감 보정',
     correctionIntensity: '강함',
     progressStatus: '시안확정',
-    confirmedAt: '2026-04-14 17:33:11',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-17-memo-1',
-        author: '손하준',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-14 17:33:11',
-      },
-    ],
+    memo: [],
     manager: '손하준',
   },
   {
@@ -439,16 +316,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '피부 보정',
     correctionIntensity: '보통',
     progressStatus: '작업중',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-18-memo-1',
-        author: '문희수',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-14 16:12:08',
-      },
-    ],
+    memo: [],
     manager: '문희수',
   },
   {
@@ -463,16 +332,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '없음',
     correctionIntensity: '약함',
     progressStatus: '발주완료',
-    confirmedAt: '2026-04-14 15:28:56',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-19-memo-1',
-        author: '허예진',
-        content: '출고 대기',
-        createdAt: '2026-04-14 15:28:56',
-      },
-    ],
+    memo: [{ id: 'uf-19-memo-1', author: '허예진', content: '출고 대기', createdAt: '2026-04-14 15:28:56' }],
     manager: '허예진',
   },
   {
@@ -487,16 +348,8 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     correctionRequest: '밝기 보정',
     correctionIntensity: '보통',
     progressStatus: '작업전',
-    confirmedAt: '',
     firstImageLabel: 'IMG',
-    memo: [
-      {
-        id: 'uf-20-memo-1',
-        author: '정유진',
-        content: '시안 확인 완료',
-        createdAt: '2026-04-14 14:01:33',
-      },
-    ],
+    memo: [],
     manager: '정유진',
   },
 ];

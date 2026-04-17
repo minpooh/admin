@@ -583,6 +583,7 @@ export default function GroupListPage() {
                   selectsStart
                   startDate={startRangeStart}
                   endDate={startRangeEnd}
+                  maxDate={startRangeEnd ?? undefined}
                   placeholderText="시작일"
                   dateFormat="yyyy-MM-dd"
                   locale={ko}
@@ -697,6 +698,7 @@ export default function GroupListPage() {
                   selectsStart
                   startDate={endRangeStart}
                   endDate={endRangeEnd}
+                  maxDate={endRangeEnd ?? undefined}
                   placeholderText="시작일"
                   dateFormat="yyyy-MM-dd"
                   locale={ko}

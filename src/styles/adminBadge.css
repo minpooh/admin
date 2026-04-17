@@ -1,0 +1,72 @@
+/**
+ * 관리자 뱃지 공통
+ */
+
+.badge-square {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 0;
+  border-radius: 3px;
+  background: var(--gray-100);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.badge-square:hover {
+  background: var(--gray-200);
+}
+
+.badge-square--private {
+  color: var(--gray-500);
+  background: var(--gray-100);
+}
+
+.badge-square--open {
+  color: var(--primary-color-500);
+  background: var(--primary-color-100);
+}
+
+.badge-square--open:hover {
+  background: var(--primary-color-200);
+}
+
+.badge-square--inline {
+  width: auto;
+  height: 1.25rem;
+  padding: 0 0.4rem;
+}
+
+.badge-square--strength-strong {
+  background: var(--danger-color-50);
+  color: var(--danger-color-500);
+}
+
+.badge-square--strength-medium {
+  background: var(--warning-color-50);
+  color: var(--warning-color-500);
+}
+
+.badge-square--strength-weak {
+  background: var(--secondary-color-50);
+  color: var(--secondary-color-500);
+}
+
+.badge-square--strength-designer {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.badge-square--no-transition {
+  cursor: default;
+  pointer-events: none;
+  transition: none;
+}
