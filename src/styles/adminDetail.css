@@ -98,6 +98,11 @@
   margin: 0;
 }
 
+/* 상세 박스: 메타(dl) 바로 다음 답변 에디터와의 간격 (문의 상세 inquiry-thread-hint 하단 여백과 동일 톤) */
+.admin-list-box > .admin-detail-meta + .reply-editor {
+  margin-top: 1rem;
+}
+
 .admin-detail-section-title {
   font-size: 0.9375rem;
   font-weight: 600;
@@ -156,6 +161,12 @@
 }
 
 .admin-status-pill--미답변 {
+  background: var(--warning-color-100);
+  color: var(--warning-color-500);
+}
+
+/* 재수정요청 등: 문구는 '답변전'이지만 리뷰 상세의 미답변과 동일 톤 */
+.admin-status-pill--답변전 {
   background: var(--warning-color-100);
   color: var(--warning-color-500);
 }

@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
+import { pagePath } from '../../../routes';
+import UploadReuploadDetailPage from './UploadReuploadDetailPage';
 import {
   MOCK_FEELFRAME_REUPLOAD_LIST,
   type FeelframeReuploadRow,
@@ -82,6 +85,7 @@ function getStatusClassName(status: FeelframeReuploadStatus) {
 }
 
 export default function FeelframeUploadReuploadPage() {
+  const { subId } = useParams<{ subId?: string }>();
   const [rows, setRows] = useState<FeelframeReuploadRow[]>(() => [...MOCK_FEELFRAME_REUPLOAD_LIST]);
   const [detailSearchType, setDetailSearchType] = useState<string>('전체');
   const [keyword, setKeyword] = useState('');
@@ -166,6 +170,8 @@ export default function FeelframeUploadReuploadPage() {
     });
   };
 
+  if (subId) return <UploadReuploadDetailPage />;
+
   return (
     <div className="admin-list-page">
       <h1 className="page-title">재수정요청 관리</h1>
@@ -246,9 +252,17 @@ export default function FeelframeUploadReuploadPage() {
                   <td>{row.orderNo}</td>
                   <td>{row.manager}</td>
                   <td>
-                    <button type="button" className="admin-link">
+                    <Link
+                      to={pagePath({
+                        navId: 'feelframe',
+                        sectionId: 'uploadManagement',
+                        itemId: 'uploadReupload',
+                        subId: row.id,
+                      })}
+                      className="admin-link"
+                    >
                       {row.title}
-                    </button>
+                    </Link>
                   </td>
                   <td>
                     <div className="cell-block">

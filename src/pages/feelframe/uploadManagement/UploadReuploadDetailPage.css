@@ -1,0 +1,46 @@
+.reupload-detail-request-body {
+  white-space: pre-wrap;
+  margin-bottom: 1rem;
+}
+
+.admin-detail-section-subtitle {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.reupload-detail-reply-title-row {
+  margin-bottom: 0.75rem;
+}
+
+.reupload-detail-reply-title-row .admin-detail-section-title {
+  margin-bottom: 0;
+}
+
+.reupload-detail-product-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.reupload-detail-product-thumb {
+  flex: 0 0 92px;
+  width: 92px;
+  height: 92px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.reupload-detail-product-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reupload-detail-product-meta-wrap {
+  min-width: 0;
+  flex: 1 1 auto;
+}

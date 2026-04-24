@@ -13,6 +13,44 @@ export type FeelframeReuploadRow = {
   answeredAt: string;
 };
 
+export type FeelframeReuploadAttachment = {
+  id: string;
+  fileName: string;
+};
+
+export type FeelframeReuploadDetail = FeelframeReuploadRow & {
+  customerInfoText: string;
+  productName: string;
+  orderOptionSummary: string;
+  requestContent: string;
+  answererName: string;
+  answerContent: string;
+  attachments: FeelframeReuploadAttachment[];
+};
+
+const REUPLOAD_DETAIL_PRODUCT_NAMES = [
+  '필프레임 클래식 웨딩 액자 보정',
+  '필프레임 프리미엄 메탈 프레임 보정',
+  '필프레임 미니 액자 세트 보정',
+  '필프레임 원목 프레임 보정',
+  '필프레임 매트 프레임 보정',
+] as const;
+
+const REUPLOAD_DETAIL_ORDER_OPTIONS = [
+  '사이즈 대형 · 프레임 우드 무광 · 배송 일반',
+  '사이즈 중형 · 프레임 블랙 유광 · 배송 당일',
+  '사이즈 소형 · 프레임 화이트 · 배송 일반',
+  '사이즈 대형 · 프레임 실버 메탈 · 배송 일반',
+  '사이즈 중형 · 프레임 원목 엣지 · 배송 예약',
+] as const;
+
+function reuploadRowIndex(row: FeelframeReuploadRow): number {
+  const m = /^rr-(\d+)$/.exec(row.id);
+  if (!m) return 0;
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? n - 1 : 0;
+}
+
 export const MOCK_FEELFRAME_REUPLOAD_LIST: FeelframeReuploadRow[] = [
   {
     id: 'rr-1',
@@ -180,3 +218,29 @@ export const MOCK_FEELFRAME_REUPLOAD_LIST: FeelframeReuploadRow[] = [
     answeredAt: '',
   },
 ];
+
+export function getFeelframeReuploadDetailById(id: string): FeelframeReuploadDetail | undefined {
+  const row = MOCK_FEELFRAME_REUPLOAD_LIST.find((item) => item.id === id);
+  if (!row) return undefined;
+
+  const idx = reuploadRowIndex(row);
+  const productName = REUPLOAD_DETAIL_PRODUCT_NAMES[idx % REUPLOAD_DETAIL_PRODUCT_NAMES.length];
+  const orderOptionSummary = REUPLOAD_DETAIL_ORDER_OPTIONS[idx % REUPLOAD_DETAIL_ORDER_OPTIONS.length];
+
+  return {
+    ...row,
+    customerInfoText: `${row.customerName} (${row.customerId})`,
+    productName,
+    orderOptionSummary,
+    requestContent: `${row.title}\n보정 결과물에서 요청사항이 충분히 반영되지 않아 재수정 요청드립니다.`,
+    answererName: row.manager,
+    answerContent:
+      row.status === '답변완료'
+        ? '<p>요청하신 내용을 반영하여 재수정 진행 후 재업로드 완료했습니다.</p>'
+        : '',
+    attachments: [
+      { id: `${row.id}-att-1`, fileName: `${row.orderNo}-요청원본.jpg` },
+      { id: `${row.id}-att-2`, fileName: `${row.orderNo}-요청메모.txt` },
+    ],
+  };
+}

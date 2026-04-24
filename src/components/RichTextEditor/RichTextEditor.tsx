@@ -378,6 +378,8 @@ export type RichTextEditorProps = {
   onEmpty?: () => void;
   renderTop?: (helpers: { insertPlainText: (text: string) => void }) => ReactNode;
   showActions?: boolean;
+  cancelLabel?: string;
+  saveLabel?: string;
 };
 
 export function RichTextEditor({
@@ -387,6 +389,8 @@ export function RichTextEditor({
   onEmpty,
   renderTop,
   showActions = true,
+  cancelLabel = '취소',
+  saveLabel = '저장',
 }: RichTextEditorProps) {
   const initialHtml = initialBodyToEditorHtml(initialBody);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -531,10 +535,10 @@ export function RichTextEditor({
       {showActions ? (
         <div className="reply-editor__actions">
           <button type="button" className="filter-btn filter-btn--outline" onClick={onCancel}>
-            취소
+            {cancelLabel}
           </button>
           <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
-            저장
+            {saveLabel}
           </button>
         </div>
       ) : null}

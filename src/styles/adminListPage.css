@@ -225,6 +225,26 @@
   gap: 0.5rem;
 }
 
+/**
+ * 파일명(텍스트) + 다운로드 아이콘 버튼을 가로로 여러 개 나열
+ * (OrderEditStorePage 샘플번호 열: cell-line--with-action + row-icon-btn--inline-sm 과 동일 톤)
+ */
+.cell-block.cell-block--inline-file-chips {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.cell-block.cell-block--inline-file-chips .cell-line-file-label {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
 .cell-line {
   line-height: 1.4;
 }

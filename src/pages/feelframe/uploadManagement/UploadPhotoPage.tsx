@@ -646,7 +646,7 @@ export default function FeelframeUploadPhotoPage() {
                       )}
                     </td>
                     <td className="col-center">
-                      <button type="button" className="row-btn row-btn--primary" aria-label={`${row.orderNo} 최초이미지 다운로드`}>
+                      <button type="button" className="row-btn row-btn--gray" aria-label={`${row.orderNo} 최초이미지 다운로드`}>
                         다운로드
                       </button>
                     </td>
