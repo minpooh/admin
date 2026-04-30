@@ -26,6 +26,8 @@ export type FeelframeOrderListItem = {
   ceremonyAt: string;
   orderedAt: string;
   orderInfo: string;
+  /** 배송 업체명 (목록 주문정보/배송정보 셀 하단 표시) */
+  shippingCarrierName: string;
   purchaseCount: number;
   paymentAmount: number;
   paymentStatus: FeelframeOrderPaymentStatus;
@@ -47,10 +49,91 @@ export type FeelframeOrderListItem = {
   exchangeShippingInfo?: string;
   purchasePath: string;
   progressStatus: FeelframeOrderProgressStatus;
+  /** 진행현황 보조(목록 두 번째 줄): 업로드전 → 업로드 예정일 */
+  progressUploadScheduledAt?: string;
+  /** 상품준비중·업로드완료(고객업로드) → 업로드일 */
+  progressUploadedAt?: string;
+  /** 발송완료+방문수령 → 수령일 */
+  progressVisitReceivedAt?: string;
+  /** 송장등록·배송완료 → 송장번호 */
+  progressTrackingNo?: string;
+  /** 택배 발송완료 → 발송일 */
+  progressShippedAt?: string;
+  /** 배송완료 → 배송완료일 */
+  progressDeliveredAt?: string;
   memoEntries: FeelframeOrderMemoEntry[];
 };
 
-export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
+type FeelframeOrderListItemDraft = Omit<FeelframeOrderListItem, 'shippingCarrierName'>;
+
+const MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS = [
+  '방문수령',
+  'CJ대한통운',
+  '한진택배',
+  '롯데택배',
+  '우체국택배',
+  '경동택배',
+  '대신택배',
+] as const;
+
+function feelframeMockAddDays(ymd: string, deltaDays: number): string {
+  const base = ymd.slice(0, 10);
+  const d = new Date(`${base}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return base;
+  d.setDate(d.getDate() + deltaDays);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+type FeelframeProgressDetailFields = Pick<
+  FeelframeOrderListItem,
+  | 'progressUploadScheduledAt'
+  | 'progressUploadedAt'
+  | 'progressVisitReceivedAt'
+  | 'progressTrackingNo'
+  | 'progressShippedAt'
+  | 'progressDeliveredAt'
+>;
+
+function feelframeMockProgressDetailFields(
+  row: FeelframeOrderListItemDraft,
+  idx: number,
+  shippingCarrierName: string
+): FeelframeProgressDetailFields {
+  const ord = row.orderedAt.slice(0, 10);
+  const visit = shippingCarrierName === '방문수령';
+  const trackingNo = `${123456789000 + idx}`;
+
+  switch (row.progressStatus) {
+    case '업로드전':
+      return { progressUploadScheduledAt: feelframeMockAddDays(ord, 5 + (idx % 4)) };
+    case '발송대기중':
+      return {};
+    case '상품준비중':
+      return { progressUploadedAt: `${feelframeMockAddDays(ord, -3 - (idx % 2))} 14:20` };
+    case '업로드완료':
+      return { progressUploadedAt: `${feelframeMockAddDays(ord, -1)} 11:08` };
+    case '발송완료':
+      if (visit) {
+        return { progressVisitReceivedAt: `${feelframeMockAddDays(ord, 1)} 16:30` };
+      }
+      return {
+        progressTrackingNo: trackingNo,
+        progressShippedAt: `${feelframeMockAddDays(ord, 0)} 09:15`,
+      };
+    case '배송완료':
+      return {
+        progressTrackingNo: trackingNo,
+        progressDeliveredAt: `${feelframeMockAddDays(ord, 2)} 13:40`,
+      };
+    default:
+      return {};
+  }
+}
+
+const MOCK_FEELFRAME_ORDER_LIST_RAW: FeelframeOrderListItemDraft[] = [
   {
     id: 'ff-order-1',
     orderNo: '20260415-00024112',
@@ -65,7 +148,7 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
     orderInfo: '아크릴 액자 20x30 + 보정 1건',
     purchaseCount: 2,
     paymentAmount: 189000,
-    paymentStatus: '환불완료',
+    paymentStatus: '결제완료',
     paymentMethod: '카드결제',
     paymentNo: 'CARD-9213-5512',
     cancelRequestedAt: '2026-04-15 15:12:02',
@@ -97,7 +180,7 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
     orderInfo: '실버 프레임 액자 단품',
     purchaseCount: 1,
     paymentAmount: 79000,
-    paymentStatus: '결제취소',
+    paymentStatus: '결제완료',
     paymentMethod: '무통장입금',
     paymentNo: 'BANK-20260415-0011',
     depositor: '유나',
@@ -162,7 +245,7 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
     orderInfo: '프리미엄 액자 + 보정 2건',
     purchaseCount: 4,
     paymentAmount: 312000,
-    paymentStatus: '결제취소',
+    paymentStatus: '결제전',
     paymentMethod: '실시간계좌이체',
     paymentNo: 'VBANK-66301924',
     cancelRequestedAt: '2026-04-15 13:58:55',
@@ -500,7 +583,7 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
     exchangeRejectInfo: '-',
     exchangeShippingInfo: '로젠택배 4620-8811-0094',
     purchasePath: '홈페이지',
-    progressStatus: '상품준비중',
+    progressStatus: '발송완료',
     memoEntries: [],
   },
   {
@@ -780,3 +863,61 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = [
     memoEntries: [],
   },
 ];
+
+export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = MOCK_FEELFRAME_ORDER_LIST_RAW.map((row, idx) => {
+  const shippingCarrierName = MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS[idx % MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS.length];
+  return {
+    ...row,
+    shippingCarrierName,
+    ...feelframeMockProgressDetailFields(row, idx, shippingCarrierName),
+  };
+});
+
+/** 필프레임 주문 목록 · 진행현황 셀 표시용 (상태별 라벨·부가 줄) */
+export type FeelframeOrderProgressCellDisplay = {
+  primaryLabel: string;
+  detailLines: string[];
+  statusForStyle: FeelframeOrderProgressStatus;
+};
+
+export function getFeelframeOrderProgressCellDisplay(order: FeelframeOrderListItem): FeelframeOrderProgressCellDisplay {
+  const s = order.progressStatus;
+  const visit = order.shippingCarrierName === '방문수령';
+
+  if (s === '업로드전') {
+    const lines: string[] = [];
+    if (order.progressUploadScheduledAt) lines.push(`업로드 예정일 ${order.progressUploadScheduledAt}`);
+    return { primaryLabel: '업로드전', detailLines: lines, statusForStyle: s };
+  }
+  if (s === '발송대기중') {
+    return { primaryLabel: '배송준비중', detailLines: [], statusForStyle: s };
+  }
+  if (s === '상품준비중') {
+    const lines: string[] = [];
+    if (order.progressUploadedAt) lines.push(`업로드일 ${order.progressUploadedAt}`);
+    return { primaryLabel: '상품준비중', detailLines: lines, statusForStyle: s };
+  }
+  if (s === '업로드완료') {
+    const lines: string[] = [];
+    if (order.progressUploadedAt) lines.push(`업로드일 ${order.progressUploadedAt}`);
+    return { primaryLabel: '고객업로드', detailLines: lines, statusForStyle: s };
+  }
+  if (s === '발송완료' && visit) {
+    const lines: string[] = [];
+    if (order.progressVisitReceivedAt) lines.push(`수령일 ${order.progressVisitReceivedAt}`);
+    return { primaryLabel: '방문수령완료', detailLines: lines, statusForStyle: s };
+  }
+  if (s === '발송완료' && !visit) {
+    const lines: string[] = [];
+    if (order.progressTrackingNo) lines.push(`송장번호 ${order.progressTrackingNo}`);
+    if (order.progressShippedAt) lines.push(`발송일 ${order.progressShippedAt}`);
+    return { primaryLabel: '송장등록완료', detailLines: lines, statusForStyle: s };
+  }
+  if (s === '배송완료') {
+    const lines: string[] = [];
+    if (order.progressTrackingNo) lines.push(`송장번호 ${order.progressTrackingNo}`);
+    if (order.progressDeliveredAt) lines.push(`배송완료일 ${order.progressDeliveredAt}`);
+    return { primaryLabel: '배송완료', detailLines: lines, statusForStyle: s };
+  }
+  return { primaryLabel: s, detailLines: [], statusForStyle: s };
+}

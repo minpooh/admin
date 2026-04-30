@@ -9,6 +9,7 @@ import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import {
   MOCK_FEELFRAME_ORDER_LIST,
+  getFeelframeOrderProgressCellDisplay,
   type FeelframeOrderListItem,
   type FeelframeOrderMemoEntry,
 } from './mock/orderList.mock';
@@ -198,6 +199,7 @@ function applyOrderListFilters(orders: FeelframeOrderListItem[], search: Applied
           order.customerPhone,
           order.orderNo,
           order.orderInfo,
+          order.shippingCarrierName,
           paymentInfo,
         ]
           .join(' ')
@@ -207,14 +209,20 @@ function applyOrderListFilters(orders: FeelframeOrderListItem[], search: Applied
         이메일: order.customerEmail.toLowerCase(),
         전화번호: order.customerPhone.toLowerCase(),
         주문번호: order.orderNo.toLowerCase(),
-        상품명: order.orderInfo.toLowerCase(),
+        상품명: `${order.orderInfo} ${order.shippingCarrierName}`.toLowerCase(),
         결제정보: paymentInfo,
       };
 
       if (!fieldMap[search.detailSearchType].includes(keyword)) return false;
     }
 
-    if (search.product !== '전체' && !order.orderInfo.includes(search.product)) return false;
+    if (
+      search.product !== '전체' &&
+      !order.orderInfo.includes(search.product) &&
+      !order.shippingCarrierName.includes(search.product)
+    ) {
+      return false;
+    }
     if (search.paymentStatus !== '전체' && order.paymentStatus !== search.paymentStatus) return false;
     if (search.paymentMethod !== '전체' && order.paymentMethod !== search.paymentMethod) return false;
     if (search.progressStatus !== '전체' && order.progressStatus !== search.progressStatus) return false;
@@ -832,7 +840,7 @@ export default function FeelframeOrderListPage() {
           </section>
         )}
         <div className="admin-table-wrap">
-          <table className="admin-table admin-table--min-w-800">
+          <table className="admin-table admin-table--min-w-800 admin-table--feelframe-order-list">
             <thead>
               <tr>
                 <th>주문번호</th>
@@ -840,7 +848,7 @@ export default function FeelframeOrderListPage() {
                 <th>고객정보</th>
                 <th>가입일/예식일</th>
                 <th>주문일</th>
-                <th>주문정보</th>
+                <th>주문정보/배송정보</th>
                 <th className="col-center">구매수</th>
                 <th className="col-center">결제금액</th>
                 <th className="col-center">결제현황</th>
@@ -888,7 +896,16 @@ export default function FeelframeOrderListPage() {
                     </div>
                   </td>
                   <td>{order.orderedAt}</td>
-                  <td>{order.orderInfo}</td>
+                  <td>
+                    <div className="cell-block">
+                      <span className="cell-line">{order.orderInfo}</span>
+                      <span className="cell-line cell-line--with-action">
+                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">
+                        {order.shippingCarrierName}
+                        </span>
+                      </span>
+                    </div>
+                  </td>
                   <td className="col-center">{order.purchaseCount}</td>
                   <td className="col-center">{order.paymentAmount.toLocaleString()}원</td>
                   <td className="col-center">
@@ -906,10 +923,22 @@ export default function FeelframeOrderListPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <span className={getProgressStatusClassName(order.progressStatus)}>
-                      <span className="progress-status__dot" aria-hidden="true" />
-                      <span className="progress-status__text">{order.progressStatus}</span>
-                    </span>
+                    {(() => {
+                      const progressCell = getFeelframeOrderProgressCellDisplay(order);
+                      return (
+                        <div className="cell-block">
+                          <span className={getProgressStatusClassName(progressCell.statusForStyle)}>
+                            <span className="progress-status__dot" aria-hidden="true" />
+                            <span className="progress-status__text">{progressCell.primaryLabel}</span>
+                          </span>
+                          {progressCell.detailLines.map((line, lineIdx) => (
+                            <span key={`${order.id}-progress-${lineIdx}`} className="cell-line">
+                              {line}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td className="col-center">
                     <div

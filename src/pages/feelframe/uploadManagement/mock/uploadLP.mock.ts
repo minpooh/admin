@@ -11,11 +11,20 @@ export type FeelframeUploadLPMemoEntry = {
   createdAt: string;
 };
 
+/** 관리자 업로드 미리보기 이미지(목록·모달·툴팁) */
+export type FeelframeUploadLPAdminPreviewImage = {
+  id: string;
+  url: string;
+  uploadedAt: string;
+};
+
 export type FeelframeUploadLPRow = {
   id: string;
   orderedAt: string;
   orderNo: string;
   productInfo: string;
+  /** 배송업체명 (상품정보 컬럼 하단에 표시) */
+  shippingCarrierName: string;
   customerName: string;
   customerId: string;
   customerEmail: string;
@@ -25,10 +34,34 @@ export type FeelframeUploadLPRow = {
   progressStatus: FeelframeUploadLPProgress;
   firstImageLabel: string;
   memo: FeelframeUploadLPMemoEntry[];
+  /** 관리자가 업로드한 시안 등 미리보기 이미지 */
+  adminPreviewImages: FeelframeUploadLPAdminPreviewImage[];
   manager: string;
 };
 
-export const MOCK_FEELFRAME_UPLOAD_LP_LIST: FeelframeUploadLPRow[] = [
+type FeelframeUploadLPRowDraft = Omit<FeelframeUploadLPRow, 'shippingCarrierName' | 'adminPreviewImages'>;
+
+const MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS = [
+  '방문수령',
+  'CJ대한통운',
+  '한진택배',
+  '롯데택배',
+  '우체국택배',
+  '경동택배',
+  '대신택배',
+] as const;
+
+function feelframeMockAdminPreviewImages(rowId: string, idx: number): FeelframeUploadLPAdminPreviewImage[] {
+  if (idx % 4 === 0) return [];
+  const n = 1 + (idx % 3);
+  return Array.from({ length: n }, (_, i) => ({
+    id: `${rowId}-ad-prev-${i}`,
+    url: `https://picsum.photos/seed/ffuploadlp-${encodeURIComponent(rowId)}-${i}/480/360`,
+    uploadedAt: `2026-04-${String(Math.max(1, 16 - (i % 5))).padStart(2, '0')} ${String(9 + i).padStart(2, '0')}:18:00`,
+  }));
+}
+
+const MOCK_FEELFRAME_UPLOAD_LP_LIST_RAW: FeelframeUploadLPRowDraft[] = [
   {
     id: 'ulp-1',
     orderedAt: '2026-04-17 11:32:05',
@@ -350,3 +383,9 @@ export const MOCK_FEELFRAME_UPLOAD_LP_LIST: FeelframeUploadLPRow[] = [
     manager: '정유진',
   },
 ];
+
+export const MOCK_FEELFRAME_UPLOAD_LP_LIST: FeelframeUploadLPRow[] = MOCK_FEELFRAME_UPLOAD_LP_LIST_RAW.map((row, idx) => ({
+  ...row,
+  shippingCarrierName: MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS[idx % MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS.length],
+  adminPreviewImages: feelframeMockAdminPreviewImages(row.id, idx),
+}));

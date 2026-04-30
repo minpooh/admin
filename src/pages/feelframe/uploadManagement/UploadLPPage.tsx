@@ -205,6 +205,9 @@ export default function FeelframeUploadLPPage() {
   const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
   const memoTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [memoInput, setMemoInput] = useState('');
+  const [previewTooltipRowId, setPreviewTooltipRowId] = useState<string | null>(null);
+  const [previewTooltipPosition, setPreviewTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const previewTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const headerCheckboxRef = useRef<HTMLInputElement>(null);
 
@@ -270,6 +273,28 @@ export default function FeelframeUploadLPPage() {
     };
   }, [memoTooltipRowId]);
 
+  const updatePreviewTooltipPosition = () => {
+    const anchorElement = previewTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    setPreviewTooltipPosition({
+      top: rect.bottom + 8,
+      right: Math.max(viewportMargin, window.innerWidth - rect.right),
+    });
+  };
+
+  useLayoutEffect(() => {
+    if (!previewTooltipRowId) return;
+    updatePreviewTooltipPosition();
+    window.addEventListener('scroll', updatePreviewTooltipPosition, true);
+    window.addEventListener('resize', updatePreviewTooltipPosition);
+    return () => {
+      window.removeEventListener('scroll', updatePreviewTooltipPosition, true);
+      window.removeEventListener('resize', updatePreviewTooltipPosition);
+    };
+  }, [previewTooltipRowId]);
+
   const showMemoTooltip = (rowId: string, triggerElement: HTMLElement) => {
     memoTooltipAnchorRef.current = triggerElement;
     setMemoTooltipRowId(rowId);
@@ -279,6 +304,17 @@ export default function FeelframeUploadLPPage() {
     setMemoTooltipRowId(null);
     setMemoTooltipPosition(null);
     memoTooltipAnchorRef.current = null;
+  };
+
+  const showPreviewTooltip = (rowId: string, triggerElement: HTMLElement) => {
+    previewTooltipAnchorRef.current = triggerElement;
+    setPreviewTooltipRowId(rowId);
+  };
+
+  const hidePreviewTooltip = () => {
+    setPreviewTooltipRowId(null);
+    setPreviewTooltipPosition(null);
+    previewTooltipAnchorRef.current = null;
   };
 
   const closeMemoModal = () => {
@@ -613,7 +649,16 @@ export default function FeelframeUploadLPPage() {
                   </td>
                   <td>{row.orderNo}</td>
                   <td>{row.manager}</td>
-                  <td>{row.productInfo}</td>
+                  <td>
+                    <div className="cell-block">
+                      <span className="cell-line">{row.productInfo}</span>
+                      <span className="cell-line cell-line--with-action">
+                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">
+                          {row.shippingCarrierName}
+                        </span>
+                      </span>
+                    </div>
+                  </td>
                   <td>{row.orderedAt.slice(0, 10)}</td>
                   <td>
                     <div className="cell-block">
@@ -670,9 +715,32 @@ export default function FeelframeUploadLPPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <button type="button" className="admin-link">
-                      미리보기
-                    </button>
+                    <div
+                      className="admin-memo-trigger"
+                      onMouseEnter={(e) => {
+                        if (row.adminPreviewImages.length === 0) return;
+                        showPreviewTooltip(row.id, e.currentTarget);
+                      }}
+                      onMouseLeave={hidePreviewTooltip}
+                      onFocus={(e) => {
+                        if (row.adminPreviewImages.length === 0) return;
+                        showPreviewTooltip(row.id, e.currentTarget);
+                      }}
+                      onBlur={hidePreviewTooltip}
+                    >
+                      <button
+                        type="button"
+                        className={`row-btn ${row.adminPreviewImages.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                        disabled={row.adminPreviewImages.length === 0}
+                        aria-label={
+                          row.adminPreviewImages.length > 0
+                            ? `${row.orderNo} 미리보기`
+                            : `${row.orderNo} 미리보기 없음`
+                        }
+                      >
+                        미리보기
+                      </button>
+                    </div>
                   </td>
                   <td className="col-center">
                     <button type="button" className="row-btn row-btn--red" onClick={() => handleDelete(row.id)}>
@@ -816,6 +884,31 @@ export default function FeelframeUploadLPPage() {
                 </li>
               ))}
             </ul>
+          </div>,
+          document.body
+        );
+      })()}
+
+      {previewTooltipRowId && previewTooltipPosition && (() => {
+        const row = rows.find((item) => item.id === previewTooltipRowId);
+        if (!row || row.adminPreviewImages.length === 0) return null;
+
+        return createPortal(
+          <div
+            className="admin-memo-floating-tooltip admin-memo-floating-tooltip--preview"
+            role="tooltip"
+            style={{ top: previewTooltipPosition.top, right: previewTooltipPosition.right }}
+          >
+            <div className="admin-preview-tooltip__inner">
+              <p className="admin-preview-tooltip__title">관리자 업로드</p>
+              <div className="admin-preview-tooltip__grid">
+                {row.adminPreviewImages.map((img) => (
+                  <div key={img.id} className="admin-preview-tooltip__cell">
+                    <img src={img.url} alt="" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>,
           document.body
         );

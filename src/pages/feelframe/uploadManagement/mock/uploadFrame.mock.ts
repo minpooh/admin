@@ -1,11 +1,10 @@
 /** 필프레임 · 업로드관리 · 액자 업로드 목록 더미 데이터 */
 export type FeelframeUploadFrameProgress =
-  | '작업전'
-  | '작업중'
-  | '시안전달'
+  | '고객업로드'
+  | '관리자업로드'
   | '수정요청'
   | '시안확정'
-  | '발주완료';
+  | '상품준비중';
 
 export type FeelframeUploadFrameMemoEntry = {
   id: string;
@@ -14,11 +13,20 @@ export type FeelframeUploadFrameMemoEntry = {
   createdAt: string;
 };
 
+/** 관리자 업로드 미리보기 이미지(목록·모달·툴팁) */
+export type FeelframeUploadFrameAdminPreviewImage = {
+  id: string;
+  url: string;
+  uploadedAt: string;
+};
+
 export type FeelframeUploadFrameRow = {
   id: string;
   orderedAt: string;
   orderNo: string;
   productInfo: string;
+  /** 배송업체명 (상품정보 컬럼 하단에 표시) */
+  shippingCarrierName: string;
   customerName: string;
   customerId: string;
   customerEmail: string;
@@ -26,12 +34,68 @@ export type FeelframeUploadFrameRow = {
   correctionRequest: string;
   correctionIntensity: string;
   progressStatus: FeelframeUploadFrameProgress;
+  /** 시안확정 상태일 때 확정일자 */
+  confirmedAt: string;
   firstImageLabel: string;
   memo: FeelframeUploadFrameMemoEntry[];
+  /** 관리자가 업로드한 시안 등 미리보기 이미지 */
+  adminPreviewImages: FeelframeUploadFrameAdminPreviewImage[];
   manager: string;
 };
 
-export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
+type FeelframeUploadFrameRowDraft = Omit<
+  FeelframeUploadFrameRow,
+  'shippingCarrierName' | 'adminPreviewImages' | 'progressStatus' | 'confirmedAt'
+> & {
+  progressStatus: FeelframeUploadFrameLegacyProgress;
+};
+
+const MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS = [
+  '방문수령',
+  'CJ대한통운',
+  '한진택배',
+  '롯데택배',
+  '우체국택배',
+  '경동택배',
+  '대신택배',
+] as const;
+
+type FeelframeUploadFrameLegacyProgress = '작업전' | '작업중' | '시안전달' | '수정요청' | '시안확정' | '발주완료';
+
+function feelframeMapLegacyUploadFrameProgress(legacy: FeelframeUploadFrameLegacyProgress): FeelframeUploadFrameProgress {
+  if (legacy === '작업전') return '고객업로드';
+  if (legacy === '작업중' || legacy === '시안전달') return '관리자업로드';
+  if (legacy === '발주완료') return '상품준비중';
+  return legacy;
+}
+
+function feelframeBuildFrameConfirmedAt(orderedAt: string, progressStatus: FeelframeUploadFrameProgress): string {
+  if (progressStatus !== '시안확정') return '';
+  const base = orderedAt.replace(' ', 'T');
+  const d = new Date(base);
+  if (Number.isNaN(d.getTime())) return '';
+  d.setDate(d.getDate() + 1);
+  d.setHours(11, 20, 0, 0);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
+function feelframeMockAdminPreviewImages(rowId: string, idx: number): FeelframeUploadFrameAdminPreviewImage[] {
+  if (idx % 4 === 0) return [];
+  const n = 1 + (idx % 3);
+  return Array.from({ length: n }, (_, i) => ({
+    id: `${rowId}-ad-prev-${i}`,
+    url: `https://picsum.photos/seed/ffupload-${encodeURIComponent(rowId)}-${i}/480/360`,
+    uploadedAt: `2026-04-${String(Math.max(1, 16 - (i % 5))).padStart(2, '0')} ${String(9 + i).padStart(2, '0')}:18:00`,
+  }));
+}
+
+const MOCK_FEELFRAME_UPLOAD_FRAME_LIST_RAW: FeelframeUploadFrameRowDraft[] = [
   {
     id: 'uf-1',
     orderedAt: '2026-04-16 11:02:18',
@@ -353,3 +417,14 @@ export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = [
     manager: '정유진',
   },
 ];
+
+export const MOCK_FEELFRAME_UPLOAD_FRAME_LIST: FeelframeUploadFrameRow[] = MOCK_FEELFRAME_UPLOAD_FRAME_LIST_RAW.map((row, idx) => ({
+  ...row,
+  progressStatus: feelframeMapLegacyUploadFrameProgress(row.progressStatus as FeelframeUploadFrameLegacyProgress),
+  confirmedAt: feelframeBuildFrameConfirmedAt(
+    row.orderedAt,
+    feelframeMapLegacyUploadFrameProgress(row.progressStatus as FeelframeUploadFrameLegacyProgress)
+  ),
+  shippingCarrierName: MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS[idx % MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS.length],
+  adminPreviewImages: feelframeMockAdminPreviewImages(row.id, idx),
+}));
