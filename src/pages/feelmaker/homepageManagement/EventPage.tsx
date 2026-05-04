@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -448,7 +449,7 @@ export default function EventPage() {
         <div className="admin-list-table-footer">
           <div className="admin-table-pagination">
             <div className="pagination-inner">
-              <button type="button" onClick={() => setCurrentPage(1)} disabled={currentPage <= 1} aria-label="첫 페이지">
+              <button type="button" onClick={() => setCurrentPage((p) => jumpPageBack(p))} disabled={currentPage <= 1} aria-label={`${PAGINATION_JUMP_PAGES}페이지 이전`}>
                 &laquo;
               </button>
               <button
@@ -459,7 +460,7 @@ export default function EventPage() {
               >
                 &lsaquo;
               </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              {getVisiblePageNumbers(totalPages, currentPage).map((page) => (
                 <button
                   key={page}
                   type="button"
@@ -479,9 +480,9 @@ export default function EventPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setCurrentPage(totalPages)}
+                onClick={() => setCurrentPage((p) => jumpPageForward(p, totalPages))}
                 disabled={currentPage >= totalPages}
-                aria-label="마지막 페이지"
+                aria-label={`${PAGINATION_JUMP_PAGES}페이지 다음`}
               >
                 &raquo;
               </button>

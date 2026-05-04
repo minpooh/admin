@@ -9,54 +9,23 @@ import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import {
-  MOCK_FEELFRAME_UPLOAD_PHOTO_LIST,
-  type FeelframeUploadPhotoCorrectionIntensity,
-  type FeelframeUploadPhotoMemoEntry,
-  type FeelframeUploadPhotoProgress,
-  type FeelframeUploadPhotoRow,
-} from './mock/uploadPhoto.mock';
+  MOCK_FEELFRAME_DELIVERY_ORDER_LIST,
+  type FeelframeDeliveryOrderMemoEntry,
+  type FeelframeDeliveryOrderRow,
+  type FeelframeDeliveryOrderStatus,
+} from './mock/deliveryOrder.mock';
 
-const CURRENT_LOGIN_AUTHOR = '관리자';
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
-const PROGRESS_FILTER_OPTIONS = [
-  '전체',
-  '고객업로드',
-  '관리자업로드',
-  '수정요청',
-  '시안확정',
-] as const;
-
 const DETAIL_SEARCH_OPTIONS = [
   { value: '전체', label: '전체' },
   { value: '이름', label: '이름' },
   { value: '이메일', label: '이메일' },
   { value: '전화번호', label: '전화번호' },
   { value: '주문번호', label: '주문번호' },
+  { value: '상품명', label: '상품명' },
 ] as const;
-
-const MANAGER_OPTIONS = [
-  { value: '', label: '담당자 선택' },
-  { value: '박채은', label: '박채은' },
-  { value: '손하준', label: '손하준' },
-  { value: '문희수', label: '문희수' },
-  { value: '허예진', label: '허예진' },
-  { value: '정유진', label: '정유진' },
-];
-
-type DetailSearchType = (typeof DETAIL_SEARCH_OPTIONS)[number]['value'];
-
+const CURRENT_LOGIN_AUTHOR = '관리자';
 const ITEMS_PER_PAGE = 10;
-
-type AppliedSearch = {
-  dateRange: string;
-  startDate: Date | null;
-  endDate: Date | null;
-  detailSearchType: DetailSearchType;
-  keyword: string;
-  progressStatus: string;
-};
-
-type AppliedChipKey = 'date' | 'keyword' | 'progress';
 
 type ConfirmDialogState = {
   title?: string;
@@ -67,6 +36,22 @@ type ConfirmDialogState = {
   onConfirm: () => void;
 };
 
+function getNextDeliveryOrderStatus(status: FeelframeDeliveryOrderStatus): FeelframeDeliveryOrderStatus {
+  return status === '발주전' ? '발주완료' : '발주전';
+}
+
+function getDeliveryOrderStatusButtonClassName(status: FeelframeDeliveryOrderStatus) {
+  if (status === '발주완료') return 'row-btn row-btn--status-secondary';
+  return 'row-btn row-btn--status-warning';
+}
+
+function getDeliveryOrderProgressClassName(status: FeelframeDeliveryOrderStatus) {
+  if (status === '발주완료') return 'progress-status progress-status--secondary';
+  return 'progress-status progress-status--warning';
+}
+
+type AppliedChipKey = 'date' | 'keyword';
+
 function formatYmd(date: Date | null) {
   if (!date) return '';
   const yyyy = date.getFullYear();
@@ -75,15 +60,63 @@ function formatYmd(date: Date | null) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-function formatDateTimeNow() {
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const hh = String(now.getHours()).padStart(2, '0');
-  const min = String(now.getMinutes()).padStart(2, '0');
-  const ss = String(now.getSeconds()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+function parseYmdToDate(value: string | null): Date | null {
+  if (!value) return null;
+  const d = new Date(value.includes('T') ? value : `${value}T12:00:00`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+type AppliedSearch = {
+  startDate: Date | null;
+  endDate: Date | null;
+  detailSearchType: (typeof DETAIL_SEARCH_OPTIONS)[number]['value'];
+  keyword: string;
+};
+
+function isAppliedSearchEmpty(s: AppliedSearch): boolean {
+  return !s.startDate && !s.endDate && !s.keyword.trim();
+}
+
+function applyFilters(rows: FeelframeDeliveryOrderRow[], search: AppliedSearch | null) {
+  if (!search) return rows;
+
+  const keyword = search.keyword.trim().toLowerCase();
+  return rows.filter((row) => {
+    if (search.startDate || search.endDate) {
+      const ordered = new Date(row.orderedAt.replace(' ', 'T'));
+      if (Number.isNaN(ordered.getTime())) return false;
+      if (search.startDate) {
+        const start = new Date(search.startDate);
+        start.setHours(0, 0, 0, 0);
+        if (ordered < start) return false;
+      }
+      if (search.endDate) {
+        const end = new Date(search.endDate);
+        end.setHours(23, 59, 59, 999);
+        if (ordered > end) return false;
+      }
+    }
+
+    if (keyword) {
+      const allMap = {
+        이름: row.customerName,
+        이메일: row.customerEmail,
+        전화번호: row.customerPhone,
+        주문번호: row.orderNo,
+        상품명: row.productInfo,
+      } as const;
+
+      if (search.detailSearchType === '전체') {
+        const haystack = Object.values(allMap).join(' ').toLowerCase();
+        if (!haystack.includes(keyword)) return false;
+      } else {
+        const target = allMap[search.detailSearchType].toLowerCase();
+        if (!target.includes(keyword)) return false;
+      }
+    }
+
+    return true;
+  });
 }
 
 function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
@@ -119,98 +152,34 @@ function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   return { start, end };
 }
 
-function isAppliedSearchEmpty(search: AppliedSearch | null) {
-  if (!search) return true;
-  return (
-    !search.dateRange &&
-    search.startDate == null &&
-    search.endDate == null &&
-    !search.keyword.trim() &&
-    search.progressStatus === '전체'
-  );
+function formatDateTimeNow() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
 
-function applyFilters(rows: FeelframeUploadPhotoRow[], search: AppliedSearch | null) {
-  if (!search) return rows;
-
-  const keyword = search.keyword.trim().toLowerCase();
-  return rows.filter((row) => {
-    if (search.startDate || search.endDate) {
-      const ordered = new Date(row.orderedAt.replace(' ', 'T'));
-      if (Number.isNaN(ordered.getTime())) return false;
-      if (search.startDate) {
-        const start = new Date(search.startDate);
-        start.setHours(0, 0, 0, 0);
-        if (ordered < start) return false;
-      }
-      if (search.endDate) {
-        const end = new Date(search.endDate);
-        end.setHours(23, 59, 59, 999);
-        if (ordered > end) return false;
-      }
-    }
-
-    if (keyword) {
-      const fieldMap: Record<Exclude<DetailSearchType, '전체'>, string> = {
-        이름: row.customerName.toLowerCase(),
-        이메일: row.customerEmail.toLowerCase(),
-        전화번호: row.customerPhone.toLowerCase(),
-        주문번호: row.orderNo.toLowerCase(),
-      };
-      if (search.detailSearchType === '전체') {
-        const haystack = Object.values(fieldMap).join(' ');
-        if (!haystack.includes(keyword)) return false;
-      } else {
-        if (!fieldMap[search.detailSearchType].includes(keyword)) return false;
-      }
-    }
-
-    if (search.progressStatus !== '전체' && row.progressStatus !== search.progressStatus) return false;
-    return true;
-  });
-}
-
-function getProgressClassName(status: FeelframeUploadPhotoProgress) {
-  if (status === '수정요청') return 'progress-status progress-status--danger';
-  if (status === '고객업로드') return 'progress-status progress-status--warning';
-  if (status === '관리자업로드') return 'progress-status progress-status--blue';
-  return 'progress-status progress-status--secondary';
-}
-
-function getCorrectionIntensityLabel(intensity: FeelframeUploadPhotoCorrectionIntensity) {
-  if (intensity === '강함') return '강';
-  if (intensity === '보통') return '중';
-  if (intensity === '약함') return '약';
-  return '디자이너 임의';
-}
-
-function getCorrectionIntensityBadgeClass(label: string) {
-  if (label === '강') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-strong';
-  if (label === '중') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-medium';
-  if (label === '약') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-weak';
-  if (label === '디자이너 임의') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-designer';
-  return '';
-}
-
-export default function FeelframeUploadPhotoPage() {
-  const [rows, setRows] = useState<FeelframeUploadPhotoRow[]>(() => [...MOCK_FEELFRAME_UPLOAD_PHOTO_LIST]);
-  const [dateRange, setDateRange] = useState<string>('');
+export default function FeelframeDeliveryOrderPage() {
+  const [rows, setRows] = useState<FeelframeDeliveryOrderRow[]>(() => [...MOCK_FEELFRAME_DELIVERY_ORDER_LIST]);
+  const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [detailSearchType, setDetailSearchType] = useState<DetailSearchType>('전체');
-  const [progressStatus, setProgressStatus] = useState('전체');
-  const [keyword, setKeyword] = useState<string>('');
+  const [detailSearchType, setDetailSearchType] = useState<(typeof DETAIL_SEARCH_OPTIONS)[number]['value']>('전체');
+  const [keyword, setKeyword] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
-  const [bulkManager, setBulkManager] = useState('');
   const [memoModalRowId, setMemoModalRowId] = useState<string | null>(null);
   const [memoTooltipRowId, setMemoTooltipRowId] = useState<string | null>(null);
   const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
   const memoTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [memoInput, setMemoInput] = useState('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
-  const headerCheckboxRef = useRef<HTMLInputElement>(null);
+  const [expectedDateEditingRowId, setExpectedDateEditingRowId] = useState<string | null>(null);
+  const [expectedDateDraft, setExpectedDateDraft] = useState<Date | null>(null);
 
   const filteredRows = useMemo(() => applyFilters(rows, appliedSearch), [rows, appliedSearch]);
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
@@ -223,34 +192,124 @@ export default function FeelframeUploadPhotoPage() {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
-  const pageIds = paginatedRows.map((r) => r.id);
-  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
-  const somePageSelected = pageIds.some((id) => selectedIds.has(id));
-
   useEffect(() => {
-    const el = headerCheckboxRef.current;
-    if (el) el.indeterminate = somePageSelected && !allPageSelected;
-  }, [somePageSelected, allPageSelected, paginatedRows]);
+    if (!expectedDateEditingRowId) return;
+    const row = rows.find((r) => r.id === expectedDateEditingRowId);
+    if (!row || row.orderStatus !== '발주완료') {
+      setExpectedDateEditingRowId(null);
+      setExpectedDateDraft(null);
+    }
+  }, [rows, expectedDateEditingRowId]);
 
-  const selectedCount = selectedIds.size;
+  const closeConfirmDialog = () => setConfirmDialog(null);
 
-  const toggleRow = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
+  const handleConfirmDialogConfirm = () => {
+    if (!confirmDialog) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  };
+
+  const openOrderStatusChangeConfirm = (rowId: string) => {
+    setConfirmDialog({
+      message: '상태를 변경하시겠습니까?',
+      onConfirm: () => {
+        setRows((prev) =>
+          prev.map((row) => {
+            if (row.id !== rowId) return row;
+            const nextStatus = getNextDeliveryOrderStatus(row.orderStatus);
+            let nextExpected = row.expectedOrderAt;
+            if (nextStatus === '발주전') nextExpected = null;
+            else if (nextStatus === '발주완료' && row.orderStatus === '발주전') nextExpected = null;
+            // eslint-disable-next-line no-console
+            console.log('[DeliveryOrder] API: PATCH orderStatus', {
+              rowId,
+              orderStatus: nextStatus,
+              expectedOrderAt: nextExpected,
+            });
+            return { ...row, orderStatus: nextStatus, expectedOrderAt: nextExpected };
+          })
+        );
+      },
     });
   };
 
-  const togglePage = () => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (allPageSelected) pageIds.forEach((id) => next.delete(id));
-      else pageIds.forEach((id) => next.add(id));
-      return next;
-    });
+  const openExpectedDateEditor = (row: FeelframeDeliveryOrderRow) => {
+    setExpectedDateEditingRowId(row.id);
+    setExpectedDateDraft(parseYmdToDate(row.expectedOrderAt) ?? new Date());
   };
+
+  const cancelExpectedDateEditor = () => {
+    setExpectedDateEditingRowId(null);
+    setExpectedDateDraft(null);
+  };
+
+  const saveExpectedOrderDate = (rowId: string) => {
+    if (!expectedDateDraft) return;
+    const ymd = formatYmd(expectedDateDraft);
+    setRows((prev) =>
+      prev.map((row) => (row.id === rowId ? { ...row, expectedOrderAt: ymd } : row))
+    );
+    // eslint-disable-next-line no-console
+    console.log('[DeliveryOrder] API: PATCH expectedOrderAt', { rowId, expectedOrderAt: ymd });
+    cancelExpectedDateEditor();
+  };
+
+  const handleSearch = () => {
+    const hasFilter = startDate || endDate || keyword.trim();
+    if (!hasFilter) {
+      setAppliedSearch(null);
+      setCurrentPage(1);
+      return;
+    }
+    setAppliedSearch({
+      startDate,
+      endDate,
+      detailSearchType,
+      keyword,
+    });
+    setCurrentPage(1);
+  };
+
+  const clearAppliedFilter = (key: AppliedChipKey) => {
+    if (!appliedSearch) return;
+    const next = { ...appliedSearch };
+    switch (key) {
+      case 'date':
+        setDateRange('');
+        setStartDate(null);
+        setEndDate(null);
+        next.startDate = null;
+        next.endDate = null;
+        break;
+      case 'keyword':
+        setKeyword('');
+        setDetailSearchType('전체');
+        next.keyword = '';
+        next.detailSearchType = '전체';
+        break;
+      default:
+        break;
+    }
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
+    setCurrentPage(1);
+  };
+
+  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = useMemo(() => {
+    if (!appliedSearch) return [];
+    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
+    if (appliedSearch.startDate || appliedSearch.endDate) {
+      const s = formatYmd(appliedSearch.startDate);
+      const e = formatYmd(appliedSearch.endDate);
+      chips.push({ key: 'date', label: `기간: ${s}${s && e ? ' ~ ' : ''}${e}` });
+    }
+    if (appliedSearch.keyword.trim()) {
+      chips.push({
+        key: 'keyword',
+        label: `검색: ${appliedSearch.detailSearchType} ${appliedSearch.keyword}`,
+      });
+    }
+    return chips;
+  }, [appliedSearch]);
 
   const updateMemoTooltipPosition = () => {
     const anchorElement = memoTooltipAnchorRef.current;
@@ -289,6 +348,7 @@ export default function FeelframeUploadPhotoPage() {
     setMemoModalRowId(null);
     setMemoInput('');
   };
+
   const openMemoModal = (rowId: string) => {
     setMemoModalRowId(rowId);
     setMemoInput('');
@@ -298,7 +358,7 @@ export default function FeelframeUploadPhotoPage() {
     const content = memoInput.trim();
     if (!content) return;
 
-    const nextMemo: FeelframeUploadPhotoMemoEntry = {
+    const nextMemo: FeelframeDeliveryOrderMemoEntry = {
       id: `memo-${Date.now()}`,
       author: CURRENT_LOGIN_AUTHOR,
       content,
@@ -316,121 +376,17 @@ export default function FeelframeUploadPhotoPage() {
   const deleteMemo = (rowId: string, memoId: string) => {
     setRows((prev) =>
       prev.map((row) =>
-        row.id === rowId
-          ? { ...row, memo: row.memo.filter((memo) => memo.id !== memoId) }
-          : row
+        row.id === rowId ? { ...row, memo: row.memo.filter((memo) => memo.id !== memoId) } : row
       )
     );
   };
 
-  const handleSearch = () => {
-    const next: AppliedSearch = {
-      dateRange,
-      startDate,
-      endDate,
-      detailSearchType,
-      keyword,
-      progressStatus,
-    };
-    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
-    setCurrentPage(1);
-    setSelectedIds(new Set());
-  };
-
-  const clearAppliedFilter = (key: AppliedChipKey) => {
-    if (!appliedSearch) return;
-    const next = { ...appliedSearch };
-    switch (key) {
-      case 'date':
-        setDateRange('');
-        setStartDate(null);
-        setEndDate(null);
-        next.dateRange = '';
-        next.startDate = null;
-        next.endDate = null;
-        break;
-      case 'keyword':
-        setKeyword('');
-        setDetailSearchType('전체');
-        next.keyword = '';
-        next.detailSearchType = '전체';
-        break;
-      case 'progress':
-        setProgressStatus('전체');
-        next.progressStatus = '전체';
-        break;
-      default:
-        break;
-    }
-    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
-    setCurrentPage(1);
-    setSelectedIds(new Set());
-  };
-
-  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = useMemo(() => {
-    if (!appliedSearch) return [];
-    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
-    if (appliedSearch.startDate || appliedSearch.endDate) {
-      const s = formatYmd(appliedSearch.startDate);
-      const e = formatYmd(appliedSearch.endDate);
-      chips.push({ key: 'date', label: `기간: ${s}${s && e ? ' ~ ' : ''}${e}` });
-    } else if (appliedSearch.dateRange) {
-      chips.push({ key: 'date', label: `기간: ${appliedSearch.dateRange}` });
-    }
-    if (appliedSearch.keyword.trim()) {
-      chips.push({
-        key: 'keyword',
-        label: `검색: ${appliedSearch.detailSearchType} ${appliedSearch.keyword}`,
-      });
-    }
-    if (appliedSearch.progressStatus !== '전체') {
-      chips.push({ key: 'progress', label: `진행현황: ${appliedSearch.progressStatus}` });
-    }
-    return chips;
-  }, [appliedSearch]);
-
-  const handleAssignManager = () => {
-    if (selectedIds.size === 0) return;
-    const manager = bulkManager.trim();
-    if (!manager) {
-      window.alert('담당자를 선택해 주세요.');
-      return;
-    }
-    setRows((prev) => prev.map((row) => (selectedIds.has(row.id) ? { ...row, manager } : row)));
-    setSelectedIds(new Set());
-    setBulkManager('');
-  };
-
-  const closeConfirmDialog = () => setConfirmDialog(null);
-  const handleConfirmDialogConfirm = () => {
-    if (!confirmDialog) return;
-    confirmDialog.onConfirm();
-    setConfirmDialog(null);
-  };
-
-  const handleDelete = (id: string) => {
-    setConfirmDialog({
-      title: '보정 업로드 항목 삭제',
-      message: '삭제 하시겠습니까?',
-      confirmText: '삭제',
-      danger: true,
-      onConfirm: () => {
-        setRows((prev) => prev.filter((row) => row.id !== id));
-        setSelectedIds((prev) => {
-          const next = new Set(prev);
-          next.delete(id);
-          return next;
-        });
-      },
-    });
-  };
-
   return (
     <div className="admin-list-page">
-      <h1 className="page-title">보정 업로드</h1>
+      <h1 className="page-title">발주관리</h1>
 
       <section className="admin-list-box" aria-label="검색 필터">
-        <div className="filter-top-row admin-filter-row--equal-4">
+        <div className="filter-top-row admin-filter-row--equal-3">
           <div className="filter-section">
             <span className="filter-label">기간</span>
             <div className="date-range-wrap">
@@ -474,7 +430,7 @@ export default function FeelframeUploadPhotoPage() {
                   showYearDropdown
                   dropdownMode="scroll"
                 />
-                <span className="date-sep">~</span>
+                <span className="range-sep">~</span>
                 <DatePicker
                   selected={endDate}
                   onChange={(date: Date | null) => {
@@ -484,6 +440,7 @@ export default function FeelframeUploadPhotoPage() {
                   selectsEnd
                   startDate={startDate}
                   endDate={endDate}
+                  minDate={startDate ?? undefined}
                   placeholderText="종료일"
                   dateFormat="yyyy-MM-dd"
                   locale={ko}
@@ -498,35 +455,17 @@ export default function FeelframeUploadPhotoPage() {
           </div>
 
           <div className="filter-section">
-            <div className="filter-label">상세검색</div>
+            <span className="filter-label">상세검색</span>
             <div className="admin-search-field">
               <ListSelect
                 ariaLabel="상세검색 조건"
                 className="listselect--condition-type"
                 value={detailSearchType}
-                onChange={(next) => setDetailSearchType(next as DetailSearchType)}
+                onChange={(next) => setDetailSearchType(next as (typeof DETAIL_SEARCH_OPTIONS)[number]['value'])}
                 options={[...DETAIL_SEARCH_OPTIONS]}
               />
-              <input
-                type="text"
-                placeholder="검색어 입력"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSearch();
-                }}
-              />
+              <input type="text" placeholder="검색어 입력" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
             </div>
-          </div>
-
-          <div className="filter-section">
-            <span className="filter-label">진행현황</span>
-            <ListSelect
-              ariaLabel="진행현황"
-              value={progressStatus}
-              onChange={setProgressStatus}
-              options={PROGRESS_FILTER_OPTIONS.map((o) => ({ value: o, label: o }))}
-            />
           </div>
 
           <div className="filter-section filter-section--search-btn">
@@ -537,7 +476,7 @@ export default function FeelframeUploadPhotoPage() {
         </div>
       </section>
 
-      <section className="admin-list-box admin-list-box--table" aria-label="보정 업로드 목록">
+      <section className="admin-list-box admin-list-box--table" aria-label="발주관리 목록">
         {appliedChips.length > 0 && (
           <section className="admin-applied-filters" aria-label="적용된 검색 조건">
             <div className="admin-applied-filters__left">
@@ -559,109 +498,58 @@ export default function FeelframeUploadPhotoPage() {
             </div>
           </section>
         )}
-
-        {selectedCount > 0 && (
-          <div className="admin-settlement-bulk" aria-live="polite">
-            <div className="admin-settlement-bulk__bar">
-              <p className="admin-settlement-bulk__summary">
-                선택 <strong>{selectedCount}</strong>건
-              </p>
-              <span style={{ flex: '0 0 auto', fontSize: '0.8125rem', color: '#374151', whiteSpace: 'nowrap' }}>담당자지정</span>
-              <div style={{ flex: '0 0 160px', minWidth: 140 }}>
-                <ListSelect ariaLabel="담당자 지정" value={bulkManager} onChange={setBulkManager} options={MANAGER_OPTIONS} />
-              </div>
-              <button type="button" className="filter-btn filter-btn--primary" onClick={handleAssignManager}>
-                지정
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="admin-table-wrap">
-          <table className="admin-table admin-table--feelframe-upload-photo">
+          <table className="admin-table">
             <thead>
               <tr>
-                <th scope="col" className="admin-table-col-checkbox">
-                  <label className="admin-table-checkbox-label">
-                    <input
-                      ref={headerCheckboxRef}
-                      type="checkbox"
-                      className="admin-checkbox"
-                      checked={allPageSelected}
-                      onChange={togglePage}
-                      aria-label="현재 페이지 전체 선택"
-                    />
-                  </label>
-                </th>
+                <th>주문일</th>
                 <th>주문번호</th>
-                <th>담당자</th>
-                <th>상품정보</th>
-                <th>고객정보</th>
-                <th className="col-center">장수</th>
-                <th className="col-center">보정강도</th>
-                <th className="col-center">진행현황</th>
-                <th className="col-center">최초이미지</th>
-                <th className="col-center">업로드</th>
+                <th>주문자정보</th>
+                <th>상품명/옵션</th>
+                <th className="col-center">수량</th>
+                <th className="col-center">배송</th>
+                <th className="col-center">구매금액</th>
                 <th className="col-center">메모</th>
-                <th className="col-center">삭제</th>
+                <th className="col-center">발주현황</th>
+                <th>발주예상일</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedRows.map((row) => (
+              {paginatedRows.length === 0 ? (
+                <tr>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
+                    데이터가 없습니다.
+                  </td>
+                </tr>
+              ) : (
+                paginatedRows.map((row) => (
                   <tr key={row.id}>
-                    <td className="admin-table-col-checkbox">
-                      <label className="admin-table-checkbox-label">
-                        <input
-                          type="checkbox"
-                          className="admin-checkbox"
-                          checked={selectedIds.has(row.id)}
-                          onChange={() => toggleRow(row.id)}
-                          aria-label={`${row.orderNo} 행 선택`}
-                        />
-                      </label>
-                    </td>
+                    <td>{row.orderedAt}</td>
                     <td>{row.orderNo}</td>
-                    <td>{row.manager}</td>
-                    <td>{row.productInfo}</td>
                     <td>
                       <div className="cell-block">
                         <span className="cell-line">{row.customerName}</span>
-                        <span className="cell-line">{row.customerEmail}</span>
                         <span className="cell-line">{row.customerPhone}</span>
                       </div>
                     </td>
-                    <td className="col-center">{row.photoCount}</td>
+                    <td>{row.productInfo}</td>
+                    <td className="col-center">{row.quantity}</td>
                     <td className="col-center">
-                      {(() => {
-                        const intensityLabel = getCorrectionIntensityLabel(row.correctionIntensity);
-                        return <span className={getCorrectionIntensityBadgeClass(intensityLabel)}>{intensityLabel}</span>;
-                      })()}
+                      <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">{row.shipping}</span>
                     </td>
-                    <td className="col-center">
-                      <span className={getProgressClassName(row.progressStatus)}>
-                        <span className="progress-status__dot" aria-hidden="true" />
-                        <span className="progress-status__text">{row.progressStatus}</span>
-                      </span>
-                      {row.progressStatus === '시안확정' && row.confirmedAt && (
-                        <div>{row.confirmedAt}</div>
-                      )}
-                    </td>
-                    <td className="col-center">
-                      <button type="button" className="row-btn row-btn--gray" aria-label={`${row.orderNo} 최초이미지 다운로드`}>
-                        다운로드
-                      </button>
-                    </td>
-                    <td className="col-center">
-                      <button type="button" className="row-btn row-btn--secondary">
-                        업로드
-                      </button>
-                    </td>
+                    <td className="col-center">{row.paymentAmount.toLocaleString()}원</td>
                     <td className="col-center">
                       <div
                         className="admin-memo-trigger"
-                        onMouseEnter={(e) => { if (row.memo.length === 0) return; showMemoTooltip(row.id, e.currentTarget); }}
+                        onMouseEnter={(e) => {
+                          if (row.memo.length === 0) return;
+                          showMemoTooltip(row.id, e.currentTarget);
+                        }}
                         onMouseLeave={hideMemoTooltip}
-                        onFocus={(e) => { if (row.memo.length === 0) return; showMemoTooltip(row.id, e.currentTarget); }}
+                        onFocus={(e) => {
+                          if (row.memo.length === 0) return;
+                          showMemoTooltip(row.id, e.currentTarget);
+                        }}
                         onBlur={hideMemoTooltip}
                       >
                         <button
@@ -674,18 +562,70 @@ export default function FeelframeUploadPhotoPage() {
                       </div>
                     </td>
                     <td className="col-center">
-                      <button type="button" className="row-btn row-btn--red" onClick={() => handleDelete(row.id)}>
-                        삭제
-                      </button>
+                      <div className="cell-block">
+                        <button
+                          type="button"
+                          className={getDeliveryOrderStatusButtonClassName(row.orderStatus)}
+                          onClick={() => openOrderStatusChangeConfirm(row.id)}
+                        >
+                          <span className={getDeliveryOrderProgressClassName(row.orderStatus)}>
+                            <span className="progress-status__dot" aria-hidden="true" />
+                            <span className="progress-status__text">{row.orderStatus}</span>
+                          </span>
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      {row.orderStatus === '발주전' && <span className="cell-line">—</span>}
+                      {row.orderStatus === '발주완료' &&
+                        (expectedDateEditingRowId === row.id ? (
+                          <div className="cell-block cell-block--inline-field">
+                            <div className="date-range-wrap">
+                              <div className="date-range-pickers">
+                                <DatePicker
+                                  selected={expectedDateDraft}
+                                  onChange={(date: Date | null) => setExpectedDateDraft(date)}
+                                  placeholderText="날짜 선택"
+                                  dateFormat="yyyy-MM-dd"
+                                  locale={ko}
+                                  className="date-picker-input date-picker-input--table"
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  dropdownMode="scroll"
+                                />
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="row-btn row-btn--default"
+                              onClick={cancelExpectedDateEditor}
+                            >
+                              취소
+                            </button>
+                            <button
+                              type="button"
+                              className="row-btn row-btn--primary"
+                              onClick={() => saveExpectedOrderDate(row.id)}
+                              disabled={!expectedDateDraft}
+                            >
+                              확인
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="cell-block cell-block--inline-field">
+                            {row.expectedOrderAt ? <span className="cell-line">{row.expectedOrderAt}</span> : null}
+                            <button
+                              type="button"
+                              className={`row-btn ${row.expectedOrderAt ? 'row-btn--blue' : 'row-btn--default'}`}
+                              onClick={() => openExpectedDateEditor(row)}
+                            >
+                              {row.expectedOrderAt ? '날짜 변경' : '날짜 입력'}
+                            </button>
+                          </div>
+                        ))}
                     </td>
                   </tr>
-                ))}
-              {paginatedRows.length === 0 && (
-                <tr>
-                  <td colSpan={12} style={{ textAlign: 'center', padding: '20px' }}>
-                    검색 결과가 없습니다.
-                  </td>
-                </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -706,12 +646,7 @@ export default function FeelframeUploadPhotoPage() {
                 &lsaquo;
               </button>
               {getVisiblePageNumbers(totalPages, currentPage).map((page) => (
-                <button
-                  key={page}
-                  type="button"
-                  className={currentPage === page ? 'active' : ''}
-                  onClick={() => setCurrentPage(page)}
-                >
+                <button key={page} type="button" className={currentPage === page ? 'active' : ''} onClick={() => setCurrentPage(page)}>
                   {page}
                 </button>
               ))}

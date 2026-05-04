@@ -146,4 +146,12 @@ registerPage('feelframe/uploadManagement/uploadFrame', FeelframeUploadFramePage)
 registerPage('feelframe/uploadManagement/uploadPhoto', FeelframeUploadPhotoPage);
 registerPage('feelframe/uploadManagement/uploadLP', FeelframeUploadLPPage);
 registerPage('feelframe/uploadManagement/uploadReupload', FeelframeUploadReuploadPage);
+
+// 배송관리
+import FeelframeDeliveryOrderPage from './feelframe/deliveryManagement/DeliveryOrderPage';
+import FeelframeDeliveryListPage from './feelframe/deliveryManagement/DeliveryListPage';
+import FeelframeDeliveryLPListPage from './feelframe/deliveryManagement/DeliveryLPListPage';
+registerPage('feelframe/deliveryManagement/deliveryOrder', FeelframeDeliveryOrderPage);
+registerPage('feelframe/deliveryManagement/deliveryList', FeelframeDeliveryListPage);
+registerPage('feelframe/deliveryManagement/deliveryLPList', FeelframeDeliveryLPListPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

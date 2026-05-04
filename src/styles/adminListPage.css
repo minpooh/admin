@@ -30,6 +30,20 @@
   min-width: 0;
 }
 
+/*
+ * 목록: 검색 필터 박스를 테이블 박스보다 앞에 그리기
+ * (형제 노드끼리는 나중에 그려진 테이블이 위를 덮어 ListSelect 드롭다운이 가려짐)
+ */
+.admin-list-page .admin-list-box:not(.admin-list-box--table) {
+  position: relative;
+  z-index: 2;
+}
+
+.admin-list-page .admin-list-box.admin-list-box--table {
+  position: relative;
+  z-index: 1;
+}
+
 /* 검색 결과 문구 */
 .admin-list-result {
   font-size: 0.9375rem;
@@ -234,6 +248,32 @@
   gap: 0.5rem;
 }
 
+/* 테이블 셀: DatePicker·input 등과 row-btn을 한 줄(줄바꿈 시 래핑)에 나란히 */
+.cell-block.cell-block--inline-field {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cell-block.cell-block--inline-field > .date-range-wrap {
+  min-width: 0;
+  width: auto;
+}
+
+.cell-block.cell-block--inline-field > .row-btn {
+  flex-shrink: 0;
+}
+
+/* 테이블 셀 등: 목록 행에 맞춘 DatePicker (검색 필터 `.date-range-wrap` 기본 38px와 구분) */
+.date-range-wrap .date-picker-input.date-picker-input--table,
+.admin-table .date-picker-input.date-picker-input--table {
+  height: 30px;
+  min-height: 30px;
+  padding: 0.2rem 0.75rem;
+  box-sizing: border-box;
+}
+
 /**
  * 파일명(텍스트) + 다운로드 아이콘 버튼을 가로로 여러 개 나열
  * (OrderEditStorePage 샘플번호 열: cell-line--with-action + row-icon-btn--inline-sm 과 동일 톤)
@@ -288,10 +328,18 @@
 .row-btn--default:hover,
 .row-btn--pink:hover,
 .row-btn--yellow:hover,
-.row-btn--gray:hover,
-.row-btn--black:hover {
+.row-btn--gray:hover{
   background: var(--gray-200);
   color: var(--gray-700);
+}
+
+.row-btn--black {
+  background: var(--gray-900);
+  color: #fff;
+}
+.row-btn--black:hover {
+  background: var(--gray-800);
+  color: #fff;
 }
 .row-btn--red {
   background: var(--danger-color-50);
@@ -316,6 +364,16 @@
 .row-btn--blue-dark:hover {
   background: var(--blue-color-600);
   color: #fff;
+}
+
+.row-btn--primary {
+  background: var(--primary-color-50);
+  color: var(--primary-color-500);
+}
+
+.row-btn--primary:hover {
+  background: var(--primary-color-100);
+  color: var(--primary-color-500);
 }
 
 .row-btn--secondary {
@@ -477,7 +535,8 @@
 
 .row-btn--status-secondary .progress-status__text,
 .row-btn--status-warning .progress-status__text,
-.row-btn--status-danger .progress-status__text {
+.row-btn--status-danger .progress-status__text,
+.row-btn--status-blue .progress-status__text {
   color: inherit;
 }
 
@@ -587,6 +646,10 @@
 /* 컬럼 수가 적은 목록용 테이블 */
 .admin-table--min-w-800 {
   min-width: 800px;
+}
+
+.admin-table--min-w-1024 {
+  min-width: 1024px;
 }
 
 /* 엔터프라이즈 주문: NO·주문일시·업체·금액·입금자+결제·쿠폰 */
@@ -1486,3 +1549,50 @@ button.admin-link {
 .admin-table.admin-table--feelframe-order-list td:nth-child(12) { min-width: 50px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(13),
 .admin-table.admin-table--feelframe-order-list td:nth-child(13) { min-width: 50px; }
+
+/* 필프레임 LP 배송관리 목록 */
+.admin-table.admin-table--feelframe-lp-delivery {
+  min-width: 1320px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(1),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(1) {
+  min-width: 96px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(2),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(2) {
+  min-width: 148px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(3),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(3) {
+  min-width: 148px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(4),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(4) {
+  min-width: 132px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(5),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(5) {
+  min-width: 200px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(6),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(6) {
+  min-width: 52px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(7),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(7) {
+  min-width: 168px;
+}
+
+.admin-table.admin-table--feelframe-lp-delivery th:nth-child(8),
+.admin-table.admin-table--feelframe-lp-delivery td:nth-child(8) {
+  min-width: 100px;
+}
