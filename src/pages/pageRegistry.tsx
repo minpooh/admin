@@ -82,12 +82,11 @@ registerPage('feelmaker/customerManagement/customerList', CustomerListPage);
 registerPage('feelmaker/customerManagement/couponList', CouponListPage);
 registerPage('feelmaker/customerManagement/groupList', GroupListPage);
 
-// 상품관리
+// 상품관리 (필메이커)
 import ProductListPage from './feelmaker/productManagement/ProductListPage';
 import RenderingPcPage from './feelmaker/productManagement/RenderingPcPage';
 registerPage('feelmaker/productManagement/productList', ProductListPage);
 registerPage('feelmaker/productManagement/renderingPc', RenderingPcPage);
-registerPage('feelframe/productManagement/renderingPc', RenderingPcPage);
 
 // 홈페이지관리
 import BannerPage from './feelmaker/homepageManagement/BannerPage';
@@ -154,4 +153,12 @@ import FeelframeDeliveryLPListPage from './feelframe/deliveryManagement/Delivery
 registerPage('feelframe/deliveryManagement/deliveryOrder', FeelframeDeliveryOrderPage);
 registerPage('feelframe/deliveryManagement/deliveryList', FeelframeDeliveryListPage);
 registerPage('feelframe/deliveryManagement/deliveryLPList', FeelframeDeliveryLPListPage);
+
+// 상품관리 (필프레임)
+import FeelframeProductListPage from './feelframe/productManagement/ProductListPage';
+import FeelframePersonalPaymentPage from './feelframe/productManagement/PersonalPaymentPage';
+import FeelframeOptionManagementPage from './feelframe/productManagement/OptionManagementPage';
+registerPage('feelframe/productManagement/productList', FeelframeProductListPage);
+registerPage('feelframe/productManagement/personalPayment', FeelframePersonalPaymentPage);
+registerPage('feelframe/productManagement/optionManagement', FeelframeOptionManagementPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

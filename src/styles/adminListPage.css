@@ -74,6 +74,21 @@
   user-select: none;
 }
 
+/* 추천상품 설정: 후보 5건 이상일 때 목록 영역 세로 스크롤 (헤더 포함 높이 상한) */
+.admin-table-wrap.admin-table-wrap--recommend-candidate-scroll {
+  max-height: 268px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.admin-table-wrap.admin-table-wrap--recommend-candidate-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--gray-50);
+  box-shadow: 0 1px 0 #eeeeee;
+}
+
 .admin-table {
   width: 100%;
   min-width: 1400px;
@@ -945,6 +960,89 @@
 .admin-table.admin-table--feelframe-upload-lp th:nth-child(13) { min-width: 50px; }
 .admin-table.admin-table--feelframe-upload-lp th:nth-child(14) { min-width: 50px; }
 
+/* 필프레임 상품 리스트: 열별 최소 너비(뱃지·버튼·가격·옵션 등) */
+.admin-table.admin-table--feelframe-product-list {
+  min-width: 1320px;
+  table-layout: auto;
+}
+
+.admin-table.admin-table--feelframe-product-list .admin-table-col-title {
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(1),
+.admin-table.admin-table--feelframe-product-list td:nth-child(1) {
+  min-width: 56px;
+  max-width: 64px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(2),
+.admin-table.admin-table--feelframe-product-list td:nth-child(2) {
+  min-width: 56px;
+  max-width: 64px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(3),
+.admin-table.admin-table--feelframe-product-list td:nth-child(3) {
+  min-width: 76px;
+  max-width: 88px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(4),
+.admin-table.admin-table--feelframe-product-list td:nth-child(4) {
+  min-width: 72px;
+  max-width: 96px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(5),
+.admin-table.admin-table--feelframe-product-list td:nth-child(5) {
+  min-width: 72px;
+  max-width: 88px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(6),
+.admin-table.admin-table--feelframe-product-list td:nth-child(6) {
+  min-width: 200px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(7),
+.admin-table.admin-table--feelframe-product-list td:nth-child(7),
+.admin-table.admin-table--feelframe-product-list th:nth-child(8),
+.admin-table.admin-table--feelframe-product-list td:nth-child(8) {
+  min-width: 92px;
+  max-width: 104px;
+  white-space: nowrap;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(9),
+.admin-table.admin-table--feelframe-product-list td:nth-child(9) {
+  min-width: 140px;
+  max-width: 200px;
+  white-space: normal;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(10),
+.admin-table.admin-table--feelframe-product-list td:nth-child(10) {
+  min-width: 76px;
+  max-width: 92px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(11),
+.admin-table.admin-table--feelframe-product-list td:nth-child(11) {
+  min-width: 76px;
+  max-width: 88px;
+}
+
+.admin-table.admin-table--feelframe-product-list th:nth-child(12),
+.admin-table.admin-table--feelframe-product-list td:nth-child(12),
+.admin-table.admin-table--feelframe-product-list th:nth-child(13),
+.admin-table.admin-table--feelframe-product-list td:nth-child(13) {
+  width: 64px;
+  min-width: 64px;
+  max-width: 72px;
+}
+
 /* 크리에이터 정산: 체크·ID·계좌·주문·상태·일자·메모 */
 .admin-table.admin-table--creator-settlement-invoice {
   min-width: 1280px;
@@ -1595,4 +1693,45 @@ button.admin-link {
 .admin-table.admin-table--feelframe-lp-delivery th:nth-child(8),
 .admin-table.admin-table--feelframe-lp-delivery td:nth-child(8) {
   min-width: 100px;
+}
+
+/* 필프레임 추천상품 관리: 상품 정보 썸네일 + 메타 */
+.product-recommend-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.product-recommend-info__thumb-wrap {
+  flex: 0 0 112px;
+  width: 112px;
+}
+
+.product-recommend-info__thumb {
+  display: block;
+  width: 112px;
+  height: 112px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+.product-recommend-info__meta {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.admin-detail-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .product-recommend-info {
+    flex-direction: column;
+  }
 }

@@ -1,5 +1,5 @@
 import { Suspense, lazy, useMemo, useRef, useState } from 'react';
-import { ChevronDown, Image as ImageIcon } from 'lucide-react';
+import { ChevronDown, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import '../../../styles/adminPage.css';
@@ -525,11 +525,28 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                           }}
                         >
                           {thumbnailImagePreview ? (
-                            <img
-                              className="admin-accordion-upload-box__img"
-                              src={thumbnailImagePreview}
-                              alt="썸네일 미리보기"
-                            />
+                            <>
+                              <img
+                                className="admin-accordion-upload-box__img"
+                                src={thumbnailImagePreview}
+                                alt="썸네일 미리보기"
+                              />
+                              <button
+                                type="button"
+                                className="admin-accordion-upload-box__remove-btn"
+                                aria-label="썸네일 이미지 삭제"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setThumbnailImagePreview('');
+                                  if (thumbImageInputRef.current) {
+                                    thumbImageInputRef.current.value = '';
+                                  }
+                                }}
+                              >
+                                <Trash2 size={16} aria-hidden="true" />
+                              </button>
+                            </>
                           ) : (
                             <div className="admin-accordion-upload-box__content">
                               <ImageIcon size={26} aria-hidden="true" />
@@ -597,11 +614,28 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
                           }}
                         >
                           {thumbnailGifPreview ? (
-                            <img
-                              className="admin-accordion-upload-box__img"
-                              src={thumbnailGifPreview}
-                              alt="GIF 썸네일 미리보기"
-                            />
+                            <>
+                              <img
+                                className="admin-accordion-upload-box__img"
+                                src={thumbnailGifPreview}
+                                alt="GIF 썸네일 미리보기"
+                              />
+                              <button
+                                type="button"
+                                className="admin-accordion-upload-box__remove-btn"
+                                aria-label="썸네일 GIF 삭제"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setThumbnailGifPreview('');
+                                  if (thumbGifInputRef.current) {
+                                    thumbGifInputRef.current.value = '';
+                                  }
+                                }}
+                              >
+                                <Trash2 size={16} aria-hidden="true" />
+                              </button>
+                            </>
                           ) : (
                             <div className="admin-accordion-upload-box__content">
                               <ImageIcon size={26} aria-hidden="true" />
@@ -924,7 +958,7 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
           <RichTextEditor initialBody="" onCancel={() => window.history.back()} onSave={() => onSave()} showActions={false} />
         </Suspense>
       </section>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem', marginBottom: '1.5rem' }}>
+      <div className="admin-detail-actions">
         <button type="button" className="filter-btn filter-btn--outline" onClick={() => window.history.back()}>
           취소
         </button>

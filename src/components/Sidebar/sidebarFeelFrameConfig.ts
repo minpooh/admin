@@ -12,7 +12,6 @@ import {
   HiCheckCircle,
   HiArchiveBox,
   HiCube,
-  HiComputerDesktop,
   HiRectangleGroup,
   HiArrowsPointingOut,
   HiCake,
@@ -30,6 +29,8 @@ import {
   HiShoppingBag,
   HiHome,
   HiBriefcase,
+  HiCreditCard,
+  HiAdjustmentsHorizontal,
 } from 'react-icons/hi2';
 
 export const ORDER_MANAGEMENT = [
@@ -52,8 +53,9 @@ export const DELIVERY_MANAGEMENT = [
 ];
 
 export const PRODUCT_MANAGEMENT = [
-  { id: 'productList', icon: HiCube, label: '상품 리스트' },
-  { id: 'renderingPc', icon: HiComputerDesktop, label: '랜더링 PC 관리' },
+  { id: 'productList', icon: HiCube, label: '상품리스트' },
+  { id: 'personalPayment', icon: HiCreditCard, label: '개인결제관리' },
+  { id: 'optionManagement', icon: HiAdjustmentsHorizontal, label: '옵션관리' },
 ];
 
 export const SALES_MANAGEMENT = [
@@ -122,7 +124,7 @@ export const FEELFRAME_SECTION_CONFIG: FeelFrameSectionConfigItem[] = [
   { id: 'orderManagement', title: '주문관리', icon: HiShoppingBag, items: ORDER_MANAGEMENT, expandable: true, subItemKeyPrefix: 'page' },
   { id: 'uploadManagement', title: '업로드관리', icon: HiPhoto, items: UPLOAD_MANAGEMENT, expandable: true, subItemKeyPrefix: 'report' },
   { id: 'deliveryManagement', title: '배송관리', icon: HiTruck, items: DELIVERY_MANAGEMENT, expandable: true },
-  { id: 'productManagement', title: '상품관리', icon: HiArchiveBox, items: PRODUCT_MANAGEMENT, expandable: false },
+  { id: 'productManagement', title: '상품관리', icon: HiArchiveBox, items: PRODUCT_MANAGEMENT, expandable: true },
   { id: 'salesManagement', title: '할인판매관리', icon: HiPercentBadge, items: SALES_MANAGEMENT, expandable: true },
   { id: 'customerManagement', title: '회원관리', icon: HiUser, items: CUSTOMER_MANAGEMENT, expandable: true },
   { id: 'homepageManagement', title: '홈페이지관리', icon: HiHome, items: HOMEPAGE_MANAGEMENT, expandable: true },

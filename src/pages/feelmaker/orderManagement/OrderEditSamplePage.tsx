@@ -89,10 +89,10 @@ function isInPresetDateRange(orderDate: string, dateRange: string): boolean {
 }
 
 function getStrengthBadgeClass(strength: SampleEditItem['correctionStrength']): string {
-  if (strength === '강') return 'badge-square--strength-strong';
-  if (strength === '중') return 'badge-square--strength-medium';
-  if (strength === '약') return 'badge-square--strength-weak';
-  return 'badge-square--strength-designer';
+  if (strength === '강') return 'badge-square--danger';
+  if (strength === '중') return 'badge-square--warning';
+  if (strength === '약') return 'badge-square--secondary';
+  return 'badge-square--gray';
 }
 
 function getProgressVariantClass(progress: string): string {

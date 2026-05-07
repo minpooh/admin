@@ -161,10 +161,10 @@ function getPaymentRowVariant(paymentStatus: string): { rowBtnClass: string; dot
 }
 
 function getCorrectionStrengthBadgeClass(strength: StoreEditOrderItem['correctionStrength']): string {
-  if (strength === '강') return 'badge-square--strength-strong';
-  if (strength === '중') return 'badge-square--strength-medium';
-  if (strength === '약') return 'badge-square--strength-weak';
-  return 'badge-square--strength-designer';
+  if (strength === '강') return 'badge-square--danger';
+  if (strength === '중') return 'badge-square--warning';
+  if (strength === '약') return 'badge-square--secondary';
+  return 'badge-square--gray';
 }
 
 function applyFilters(orders: StoreEditOrderItem[], applied: AppliedSearch | null): StoreEditOrderItem[] {

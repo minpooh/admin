@@ -185,10 +185,10 @@ function formatDateTimeNow() {
 }
 
 function getCorrectionIntensityBadgeClass(label: string) {
-  if (label === '강') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-strong';
-  if (label === '중') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-medium';
-  if (label === '약') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-weak';
-  if (label === '디자이너 임의') return 'badge-square badge-square--inline badge-square--no-transition badge-square--strength-designer';
+  if (label === '강') return 'badge-square badge-square--inline badge-square--no-transition badge-square--danger';
+  if (label === '중') return 'badge-square badge-square--inline badge-square--no-transition badge-square--warning';
+  if (label === '약') return 'badge-square badge-square--inline badge-square--no-transition badge-square--secondary';
+  if (label === '디자이너 임의') return 'badge-square badge-square--inline badge-square--no-transition badge-square--gray';
   return '';
 }
 
