@@ -2,6 +2,7 @@ import { ChevronDown, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { Suspense, lazy, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
+import SwitchField from '../../../components/SwitchField';
 import '../../../styles/adminPage.css';
 import '../../../styles/adminArrordion.css';
 import type { FeelframeProductListRow } from './mock/productList.mock';
@@ -12,7 +13,6 @@ type Props = {
   onSave: (nextRow: FeelframeProductListRow) => void;
 };
 
-type ApplicableState = '미해당' | '해당';
 type BottomThumbnailSlot = {
   id: string;
   preview: string;
@@ -37,84 +37,23 @@ function isSupportedThumbImage(file: File): boolean {
   return file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp';
 }
 
-function ApplicableSwitchField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: ApplicableState;
-  onChange: (next: ApplicableState) => void;
-}) {
-  const checked = value === '해당';
-  return (
-    <div className="admin-accordion-check-group admin-accordion-check-group--no-top-margin">
-      <span className="admin-accordion-field__label">{label}</span>
-      <button
-        type="button"
-        className={`admin-toggle-switch ${checked ? 'is-on' : ''}`}
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(checked ? '미해당' : '해당')}
-      >
-        <span className="admin-toggle-switch__track" aria-hidden>
-          <span className="admin-toggle-switch__thumb" />
-        </span>
-        <span className="admin-toggle-switch__text">{checked ? '해당' : '미해당'}</span>
-      </button>
-    </div>
-  );
-}
-
-function BooleanSwitchField({
-  label,
-  checked,
-  onChange,
-  checkedText,
-  uncheckedText,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (next: boolean) => void;
-  checkedText: string;
-  uncheckedText: string;
-}) {
-  return (
-    <div className="admin-accordion-check-group admin-accordion-check-group--no-top-margin">
-      <span className="admin-accordion-field__label">{label}</span>
-      <button
-        type="button"
-        className={`admin-toggle-switch ${checked ? 'is-on' : ''}`}
-        role="switch"
-        aria-checked={checked}
-        onClick={() => onChange(!checked)}
-      >
-        <span className="admin-toggle-switch__track" aria-hidden>
-          <span className="admin-toggle-switch__thumb" />
-        </span>
-        <span className="admin-toggle-switch__text">{checked ? checkedText : uncheckedText}</span>
-      </button>
-    </div>
-  );
-}
-
 export default function FeelframeProductEditPage({ row, listPath, onSave }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [manufacturer, setManufacturer] = useState('해당없음');
   const [manufacturerUnitPrice, setManufacturerUnitPrice] = useState('액자 12R 19,000원');
-  const [mainNewProduct, setMainNewProduct] = useState<ApplicableState>('미해당');
+  const [mainNewProduct, setMainNewProduct] = useState(false);
   const [badgeLabels, setBadgeLabels] = useState<string[]>([]);
-  const [secretSale, setSecretSale] = useState<ApplicableState>('미해당');
+  const [secretSale, setSecretSale] = useState(false);
   const [secretCode, setSecretCode] = useState('');
   const [secretDiscountRate, setSecretDiscountRate] = useState('');
-  const [promotionSale, setPromotionSale] = useState<ApplicableState>('미해당');
+  const [promotionSale, setPromotionSale] = useState(false);
   const [promotionDiscountRate, setPromotionDiscountRate] = useState('');
   const [promotionTitle, setPromotionTitle] = useState('');
   const [influencerDiscountRate, setInfluencerDiscountRate] = useState('');
-  const [instantPurchase, setInstantPurchase] = useState<ApplicableState>('미해당');
+  const [instantPurchase, setInstantPurchase] = useState(false);
   const [displayState, setDisplayState] = useState<'미진열' | '진열'>(row.displayYn === 'T' ? '진열' : '미진열');
   const [soldOutState, setSoldOutState] = useState<'판매중' | '품절'>(row.soldOutYn === 'T' ? '품절' : '판매중');
-  const [mdPick, setMdPick] = useState<ApplicableState>('미해당');
+  const [mdPick, setMdPick] = useState(false);
   const [surfaceType, setSurfaceType] = useState<'무광' | '유광' | '유/무광' | '해당없음'>('해당없음');
   const [categoryMain, setCategoryMain] = useState('해당없음');
   const [categorySub, setCategorySub] = useState('');
@@ -203,11 +142,11 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
       soldOutYn,
       manufacturer,
       manufacturerUnitPrice,
-      mainNewProductYn: mainNewProduct === '해당' ? 'T' : 'F',
-      secretSaleYn: secretSale === '해당' ? 'T' : 'F',
-      promotionSaleYn: promotionSale === '해당' ? 'T' : 'F',
-      instantPurchaseYn: instantPurchase === '해당' ? 'T' : 'F',
-      mdPickYn: mdPick === '해당' ? 'T' : 'F',
+      mainNewProductYn: mainNewProduct ? 'T' : 'F',
+      secretSaleYn: secretSale ? 'T' : 'F',
+      promotionSaleYn: promotionSale ? 'T' : 'F',
+      instantPurchaseYn: instantPurchase ? 'T' : 'F',
+      mdPickYn: mdPick ? 'T' : 'F',
       secretCode,
       secretDiscountRate,
       promotionDiscountRate,
@@ -391,7 +330,13 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
                             </label>
                           </div>
                         </div>
-                        <ApplicableSwitchField label="시크릿세일" value={secretSale} onChange={setSecretSale} />
+                        <SwitchField
+                          label="시크릿세일"
+                          checked={secretSale}
+                          onChange={setSecretSale}
+                          checkedText="해당"
+                          uncheckedText="미해당"
+                        />
                       </div>
 
                       <div className="admin-accordion-form-grid">
@@ -429,9 +374,27 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
                       </div>
 
                       <div className="admin-accordion-check-row">
-                        <ApplicableSwitchField label="프로모션 세일" value={promotionSale} onChange={setPromotionSale} />
-                        <ApplicableSwitchField label="즉시구매" value={instantPurchase} onChange={setInstantPurchase} />
-                        <ApplicableSwitchField label="MD PICK" value={mdPick} onChange={setMdPick} />
+                        <SwitchField
+                          label="프로모션 세일"
+                          checked={promotionSale}
+                          onChange={setPromotionSale}
+                          checkedText="해당"
+                          uncheckedText="미해당"
+                        />
+                        <SwitchField
+                          label="즉시구매"
+                          checked={instantPurchase}
+                          onChange={setInstantPurchase}
+                          checkedText="해당"
+                          uncheckedText="미해당"
+                        />
+                        <SwitchField
+                          label="MD PICK"
+                          checked={mdPick}
+                          onChange={setMdPick}
+                          checkedText="해당"
+                          uncheckedText="미해당"
+                        />
                       </div>
 
                       <div className="admin-accordion-form-grid">
@@ -474,21 +437,27 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
                       </div>
 
                       <div className="admin-accordion-check-row">
-                        <BooleanSwitchField
+                        <SwitchField
                           label="진열여부"
                           checked={displayState === '진열'}
                           onChange={(next) => setDisplayState(next ? '진열' : '미진열')}
                           checkedText="진열"
                           uncheckedText="미진열"
                         />
-                        <BooleanSwitchField
+                        <SwitchField
                           label="품절여부"
                           checked={soldOutState === '품절'}
                           onChange={(next) => setSoldOutState(next ? '품절' : '판매중')}
                           checkedText="품절"
                           uncheckedText="판매중"
                         />
-                        <ApplicableSwitchField label="메인신상품" value={mainNewProduct} onChange={setMainNewProduct} />
+                        <SwitchField
+                          label="메인신상품"
+                          checked={mainNewProduct}
+                          onChange={setMainNewProduct}
+                          checkedText="해당"
+                          uncheckedText="미해당"
+                        />
                       </div>
                     </>
                   ) : idx === 3 ? (
@@ -799,28 +768,28 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
                     </div>
                   ) : idx === 5 ? (
                     <div className="admin-accordion-check-row">
-                      <BooleanSwitchField
+                      <SwitchField
                         label="배송여부"
                         checked={deliveryEnabled}
                         onChange={setDeliveryEnabled}
                         checkedText="배송"
                         uncheckedText="미배송"
                       />
-                      <BooleanSwitchField
+                      <SwitchField
                         label="추천상품"
                         checked={recommendedEnabled}
                         onChange={setRecommendedEnabled}
                         checkedText="사용"
                         uncheckedText="미사용"
                       />
-                      <BooleanSwitchField
+                      <SwitchField
                         label="sns리뷰"
                         checked={snsReviewEnabled}
                         onChange={setSnsReviewEnabled}
                         checkedText="사용"
                         uncheckedText="미사용"
                       />
-                      <BooleanSwitchField
+                      <SwitchField
                         label="쿠폰사용여부"
                         checked={couponEnabled}
                         onChange={setCouponEnabled}
