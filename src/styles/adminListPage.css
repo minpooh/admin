@@ -372,6 +372,15 @@
   background: var(--blue-color-100);
   color: var(--blue-color-500);
 }
+
+.text-color-blue {
+  color: var(--blue-color-500);
+}
+
+.text-danger {
+  color: var(--danger-color-500);
+}
+
 .row-btn--blue-dark {
   background: var(--blue-color-500);
   color: #fff;

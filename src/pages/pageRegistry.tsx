@@ -161,4 +161,12 @@ import FeelframeOptionManagementPage from './feelframe/productManagement/OptionM
 registerPage('feelframe/productManagement/productList', FeelframeProductListPage);
 registerPage('feelframe/productManagement/personalPayment', FeelframePersonalPaymentPage);
 registerPage('feelframe/productManagement/optionManagement', FeelframeOptionManagementPage);
+
+// 할인판매관리
+import FeelframeGroupListPage from './feelframe/salesManagement/GroupListPage';
+import FeelframeCouponListPage from './feelframe/salesManagement/CouponListPage';
+import FeelframeInfluencerListPage from './feelframe/salesManagement/InfluencerListPage';
+registerPage('feelframe/salesManagement/groupList', FeelframeGroupListPage);
+registerPage('feelframe/salesManagement/couponList', FeelframeCouponListPage);
+registerPage('feelframe/salesManagement/influencerList', FeelframeInfluencerListPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

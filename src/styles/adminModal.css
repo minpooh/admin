@@ -7,6 +7,9 @@
 .option-modal__status-grid {
   --admin-modal-control-max: 220px;
   margin-top: 14px;
+  max-height: min(58vh, 520px);
+  overflow-y: auto;
+  overflow-x: hidden;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 12px;
@@ -46,14 +49,20 @@
   width: 100%;
   max-width: var(--admin-modal-control-max, 220px);
   min-width: 0;
+  height: 38px;
+  min-height: 38px;
   box-sizing: border-box;
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;
   line-height: 1.25;
   color: #111827;
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--gray-200, #e5e7eb);
   border-radius: 8px;
+}
+
+textarea.admin-modal-field-control {
+  height: auto;
 }
 
 select.admin-modal-field-control {
@@ -149,6 +158,8 @@ select.admin-modal-field-control {
 .admin-modal-datepicker .admin-modal-field-control {
   width: 100%;
   min-width: 0;
+  height: 38px;
+  min-height: 38px;
 }
 
 /* 그리드 행: 우측 컨트롤(input/select/datepicker)이 동일한 flex·최대 너비로 정렬 */
@@ -166,6 +177,16 @@ select.admin-modal-field-control {
   max-width: var(--admin-modal-control-max, 220px);
 }
 
+.listselect.listselect--modal .listselect__trigger {
+  height: 38px;
+  min-height: 38px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 8px;
+  background: #fff;
+}
+
 .listselect.listselect--modal .listselect__menu {
   z-index: 20;
 }
@@ -174,6 +195,43 @@ select.admin-modal-field-control {
 .option-modal__status-row > .listselect.listselect--modal {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.option-modal__inline-controls {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.option-modal__inline-controls .admin-modal-field-control,
+.option-modal__inline-controls .admin-modal-datepicker {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.option-modal__inline-controls--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: var(--admin-modal-control-max, 220px);
+  margin-left: auto;
+}
+
+.option-modal__inline-controls--stacked .admin-modal-field-control,
+.option-modal__inline-controls--stacked .admin-modal-datepicker {
+  width: 100%;
+}
+
+.admin-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #374151;
+  white-space: nowrap;
 }
 
 /* 옵션 모달 본문: 참여자 요약(총·사용·미사용) */
