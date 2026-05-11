@@ -28,13 +28,19 @@
   grid-template-columns: repeat(3, minmax(0, 1fr)) 92px;
 }
 
+/* 단일 키워드(1필드 + 검색버튼) 레이아웃 */
+.filter-top-row.admin-filter-row--single-keyword {
+  grid-template-columns: minmax(0, 1fr) 92px;
+}
+
 /* 하위 호환: 기존 클래스도 동일 동작 */
 .filter-top-row.admin-filter-row--wide {
   grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr) minmax(0, 1fr) 92px;
 }
 
 .filter-top-row.admin-filter-row--no-detail .filter-section--search-btn .filter-btn,
-.filter-top-row.admin-filter-row--equal-4 .filter-section--search-btn .filter-btn {
+.filter-top-row.admin-filter-row--equal-4 .filter-section--search-btn .filter-btn,
+.filter-top-row.admin-filter-row--single-keyword .filter-section--search-btn .filter-btn {
   width: 100%;
 }
 
@@ -57,6 +63,13 @@
   .filter-top-row.admin-filter-row--wide .filter-section--search-btn,
   .filter-top-row.admin-filter-row--equal-4 .filter-section--search-btn {
     grid-column: 1 / -1;
+  }
+}
+
+/* 모바일에서 단일 키워드 레이아웃은 한 줄로 유지(필드 + 버튼) */
+@media (max-width: 900px) {
+  .filter-top-row.admin-filter-row--single-keyword {
+    grid-template-columns: minmax(0, 1fr) 92px;
   }
 }
 
