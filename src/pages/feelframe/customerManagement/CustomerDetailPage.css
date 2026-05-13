@@ -1,0 +1,40 @@
+.customer-detail-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.customer-detail-section-head .admin-detail-section-title {
+  margin-bottom: 0;
+}
+
+.customer-detail-section-head__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.customer-detail-btn--danger {
+  background: var(--danger-color-50);
+  color: var(--danger-color-400);
+}
+
+.customer-detail-btn--danger:hover {
+  background: var(--danger-color-100);
+  color: var(--danger-color-500);
+}
+
+.customer-detail-meta-with-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.customer-detail-orders-title {
+  padding: 1rem 1.25rem 0;
+  margin-bottom: 0.75rem;
+}

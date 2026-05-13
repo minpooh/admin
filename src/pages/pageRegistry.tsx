@@ -169,4 +169,8 @@ import FeelframeInfluencerListPage from './feelframe/salesManagement/InfluencerL
 registerPage('feelframe/salesManagement/groupList', FeelframeGroupListPage);
 registerPage('feelframe/salesManagement/couponList', FeelframeCouponListPage);
 registerPage('feelframe/salesManagement/influencerList', FeelframeInfluencerListPage);
+
+// 회원관리
+import FeelframeCustomerListPage from './feelframe/customerManagement/CustomerListPage';
+registerPage('feelframe/customerManagement/customerList', FeelframeCustomerListPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

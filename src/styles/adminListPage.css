@@ -380,7 +380,7 @@
 }
 
 .text-color-blue {
-  color: var(--blue-color-500);
+  color: var(--blue-color-500) !important;
 }
 
 .text-danger {
@@ -680,6 +680,11 @@
 
 .admin-table--min-w-1024 {
   min-width: 1024px;
+}
+
+/* 화면 전체로 들어가지 않는(예: 반쪽 박스 안의) 테이블: 최소너비 해제 후 100% 폭에 맞춤 */
+.admin-table--fluid {
+  min-width: 0;
 }
 
 /* 엔터프라이즈 주문: NO·주문일시·업체·금액·입금자+결제·쿠폰 */
