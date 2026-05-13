@@ -95,6 +95,12 @@ type CouponProduct = {
   productName: string;
 };
 
+type ScopeProductRow = CouponProduct & {
+  type: string;
+  productPrice: number;
+  salePrice: number;
+};
+
 type PointCouponRow = {
   id: string;
   groupNo: string;
@@ -217,6 +223,99 @@ const POINT_COUPONS: PointCouponRow[] = [
 ];
 
 const ITEMS_PER_PAGE = 10;
+
+const ALL_SCOPE_PRODUCTS: ScopeProductRow[] = [
+  {
+    productNo: 'FF-PD-10001',
+    type: '필프레임',
+    productType: '액자',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '메탈 프레임 12R',
+    productPrice: 89000,
+    salePrice: 79000,
+  },
+  {
+    productNo: 'FF-PD-10002',
+    type: '필프레임',
+    productType: '액자',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '우드 프레임 클래식',
+    productPrice: 76000,
+    salePrice: 69000,
+  },
+  {
+    productNo: 'FF-PD-10003',
+    type: '필프레임',
+    productType: '인화',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '대형 인화 패키지',
+    productPrice: 59000,
+    salePrice: 52000,
+  },
+  {
+    productNo: 'FF-PD-10004',
+    type: '필프레임',
+    productType: '액자',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '미니 포토액자 세트',
+    productPrice: 42000,
+    salePrice: 36000,
+  },
+  {
+    productNo: 'FF-PD-10005',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+  {
+    productNo: 'FF-PD-10006',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+  {
+    productNo: 'FF-PD-10007',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+  {
+    productNo: 'FF-PD-10008',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+  {
+    productNo: 'FF-PD-10009',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+  {
+    productNo: 'FF-PD-10010',
+    type: '필프레임',
+    productType: '굿즈',
+    imageUrl: PRODUCT_THUMBNAIL_FALLBACK,
+    productName: '포토카드 패키지',
+    productPrice: 29000,
+    salePrice: 24000,
+  },
+];
 
 const LIST_PATH = pagePath({
   navId: 'feelframe',
@@ -344,6 +443,8 @@ export default function CouponListPage() {
   const [appliedSearch, setAppliedSearch] = useState<CouponSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [productModalCouponId, setProductModalCouponId] = useState<string | null>(null);
+  const [scopeModalCouponId, setScopeModalCouponId] = useState<string | null>(null);
+  const [scopeSelectedProductNos, setScopeSelectedProductNos] = useState<Set<string>>(() => new Set());
   const [deleteTarget, setDeleteTarget] = useState<{ tab: CouponTabId; id: string; name: string } | null>(null);
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
 
@@ -358,6 +459,10 @@ export default function CouponListPage() {
   const productModalCoupon = useMemo(
     () => generalRows.find((row) => row.id === productModalCouponId) ?? null,
     [generalRows, productModalCouponId]
+  );
+  const scopeModalCoupon = useMemo(
+    () => generalRows.find((row) => row.id === scopeModalCouponId) ?? null,
+    [generalRows, scopeModalCouponId]
   );
   const activeRows = activeTab === 'general' ? activeGeneralRows : activePointRows;
   const totalPages = Math.max(1, Math.ceil(activeRows.length / ITEMS_PER_PAGE));
@@ -509,6 +614,56 @@ export default function CouponListPage() {
   };
 
   const closeEditModal = () => setEditTarget(null);
+
+  const openScopeModal = (row: GeneralCouponRow) => {
+    setScopeModalCouponId(row.id);
+    setScopeSelectedProductNos(
+      new Set(
+        row.scope === '전체상품'
+          ? ALL_SCOPE_PRODUCTS.map((product) => product.productNo)
+          : row.products.map((product) => product.productNo)
+      )
+    );
+  };
+
+  const closeScopeModal = () => {
+    setScopeModalCouponId(null);
+    setScopeSelectedProductNos(new Set());
+  };
+
+  const toggleScopeProduct = (productNo: string) => {
+    setScopeSelectedProductNos((prev) => {
+      const next = new Set(prev);
+      if (next.has(productNo)) next.delete(productNo);
+      else next.add(productNo);
+      return next;
+    });
+  };
+
+  const toggleAllScopeProducts = () => {
+    setScopeSelectedProductNos((prev) =>
+      prev.size === ALL_SCOPE_PRODUCTS.length ? new Set() : new Set(ALL_SCOPE_PRODUCTS.map((product) => product.productNo))
+    );
+  };
+
+  const saveScopeModal = () => {
+    if (!scopeModalCoupon) return;
+    const selectedProducts = ALL_SCOPE_PRODUCTS.filter((product) => scopeSelectedProductNos.has(product.productNo)).map(
+      ({ productNo, productType, imageUrl, productName }) => ({ productNo, productType, imageUrl, productName })
+    );
+    setGeneralRows((prev) =>
+      prev.map((row) =>
+        row.id === scopeModalCoupon.id
+          ? {
+              ...row,
+              scope: selectedProducts.length === ALL_SCOPE_PRODUCTS.length ? '전체상품' : '특정상품',
+              products: selectedProducts,
+            }
+          : row
+      )
+    );
+    closeScopeModal();
+  };
 
   const updateGeneralDraft = <K extends keyof GeneralCouponDraft>(key: K, value: GeneralCouponDraft[K]) => {
     setEditTarget((prev) =>
@@ -787,14 +942,21 @@ export default function CouponListPage() {
                           <span className="cell-line admin-list-muted">{row.expiresAt}</span>
                         </div>
                       </td>
-                      <td className="col-center">{row.scope}</td>
+                      <td className="col-center">
+                        <div className="cell-block" style={{ alignItems: 'center' }}>
+                          <span className="cell-line">{row.scope}</span>
+                          <button type="button" className="row-btn row-btn--default" onClick={() => openScopeModal(row)}>
+                            범위변경
+                          </button>
+                        </div>
+                      </td>
                       <td className="col-center">
                         <button type="button" className="row-btn row-btn--default" onClick={() => setProductModalCouponId(row.id)}>
                           적용상품
                         </button>
                       </td>
                       <td className="col-center">
-                        <button type="button" className="row-btn row-btn--default" onClick={() => openGeneralEditModal(row)}>
+                        <button type="button" className="row-btn row-btn--primary" onClick={() => openGeneralEditModal(row)}>
                           수정
                         </button>
                       </td>
@@ -854,7 +1016,7 @@ export default function CouponListPage() {
                         </div>
                       </td>
                       <td className="col-center">
-                        <button type="button" className="row-btn row-btn--default" onClick={() => openPointEditModal(row)}>
+                        <button type="button" className="row-btn row-btn--primary" onClick={() => openPointEditModal(row)}>
                           수정
                         </button>
                       </td>
@@ -988,6 +1150,80 @@ export default function CouponListPage() {
         <Modal.Footer>
           <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={() => setProductModalCouponId(null)}>
             닫기
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        open={Boolean(scopeModalCoupon)}
+        onClose={closeScopeModal}
+        ariaLabel="적용상품 설정"
+        variant="option"
+        panelClassName="option-modal__panel--wide"
+      >
+        <Modal.Header>
+          <Modal.Title>적용상품 설정</Modal.Title>
+          <Modal.Close />
+        </Modal.Header>
+        <Modal.Body>
+          <div className="admin-modal-table-wrap">
+            <table className="admin-modal-table">
+              <thead>
+                <tr>
+                  <th className="col-center">
+                    <label className="admin-checkbox-label" style={{ justifyContent: 'center' }}>
+                      <input
+                        type="checkbox"
+                        className="admin-checkbox"
+                        checked={scopeSelectedProductNos.size === ALL_SCOPE_PRODUCTS.length}
+                        onChange={toggleAllScopeProducts}
+                      />
+                    </label>
+                  </th>
+                  <th>타입</th>
+                  <th>상품타입</th>
+                  <th>상품이미지</th>
+                  <th>상품명</th>
+                  <th>상품가</th>
+                  <th>판매가</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ALL_SCOPE_PRODUCTS.map((product) => (
+                  <tr key={product.productNo}>
+                    <td className="col-center">
+                      <input
+                        type="checkbox"
+                        className="admin-checkbox"
+                        checked={scopeSelectedProductNos.has(product.productNo)}
+                        onChange={() => toggleScopeProduct(product.productNo)}
+                        aria-label={`${product.productName} 선택`}
+                      />
+                    </td>
+                    <td>{product.type}</td>
+                    <td>{product.productType}</td>
+                    <td>
+                      <img
+                        src={product.imageUrl}
+                        alt={`${product.productName} 이미지`}
+                        style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover' }}
+                      />
+                    </td>
+                    <td>{product.productName}</td>
+                    <td>{product.productPrice.toLocaleString()}원</td>
+                    <td>{product.salePrice.toLocaleString()}원</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={closeScopeModal}>
+            닫기
+          </button>
+          <button type="button" className="option-modal__btn option-modal__btn--primary" onClick={saveScopeModal}>
+            저장
           </button>
         </Modal.Footer>
       </Modal>

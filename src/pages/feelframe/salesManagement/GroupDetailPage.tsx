@@ -340,7 +340,7 @@ export default function GroupDetailPage({ row, listPath }: Props) {
         <h1 className="page-title">{row ? row.groupName : '공동구매 그룹을 찾을 수 없습니다.'}</h1>
       </div>
 
-      <section className="admin-list-box" aria-label="공동구매 참여 고객 검색 필터">
+      <section className="admin-list-box admin-list-box--filter" aria-label="공동구매 참여 고객 검색 필터">
         <div className="filter-top-row">
           <div className="filter-section">
             <span className="filter-label">등록여부</span>

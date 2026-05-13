@@ -44,6 +44,12 @@
   z-index: 1;
 }
 
+.admin-list-page .admin-list-box.admin-list-box--filter {
+  position: relative;
+  z-index: 5;
+  overflow: visible;
+}
+
 /* 검색 결과 문구 */
 .admin-list-result {
   font-size: 0.9375rem;
