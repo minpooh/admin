@@ -1,0 +1,541 @@
+import { useMemo, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import Modal from '../../../components/Modal';
+import ListSelect from '../../../components/ListSelect';
+import '../../../styles/adminPage.css';
+import './PopupPage.css';
+
+type PopupRow = {
+  id: string;
+  exposed: boolean; // true: 노출, false: 미노출
+  screen: '메인' | '리스트';
+  category: '전체' | '아크릴액자' | '우드액자' | '원판액자';
+  period: string;
+  landingPageAddress: string;
+  imageUrl: string;
+  createdAt: string;
+  createdBy: string;
+};
+
+const INITIAL_POPUPS: PopupRow[] = [
+  {
+    id: 'popup-1',
+    exposed: true,
+    screen: '메인',
+    category: '전체',
+    period: '2026-04-01 ~ 2026-04-30',
+    landingPageAddress: '/landing/main/all',
+    imageUrl: 'https://feelmaker.co.kr//img/popup/pop_coupon.png',
+    createdAt: '2026-04-02',
+    createdBy: '관리자',
+  },
+  {
+    id: 'popup-2',
+    exposed: false,
+    screen: '메인',
+    category: '아크릴액자',
+    period: '2026-04-05 ~ 2026-05-05',
+    landingPageAddress: '/landing/main/growth',
+    imageUrl: 'https://dummyimage.com/1200x600/0ea5e9/ffffff&text=Popup+Main+Growth',
+    createdAt: '2026-04-02',
+    createdBy: '관리자A',
+  },
+  {
+    id: 'popup-3',
+    exposed: true,
+    screen: '리스트',
+    category: '우드액자',
+    period: '2026-04-10 ~ 2026-04-24',
+    landingPageAddress: '/landing/list/video-letter',
+    imageUrl: 'https://dummyimage.com/1200x600/10b981/ffffff&text=Popup+List+Video+Letter',
+    createdAt: '2026-04-03',
+    createdBy: '관리자',
+  },
+  {
+    id: 'popup-4',
+    exposed: true,
+    screen: '리스트',
+    category: '원판액자',
+    period: '2026-04-15 ~ 2026-05-15',
+    landingPageAddress: '/landing/list/pre-video',
+    imageUrl: 'https://dummyimage.com/1200x600/f97316/ffffff&text=Popup+List+Pre-Video',
+    createdAt: '2026-04-04',
+    createdBy: '운영자',
+  },
+];
+
+function parseYmd(s: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.trim());
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]) - 1;
+  const d = Number(m[3]);
+  return new Date(y, mo, d, 12, 0, 0, 0);
+}
+
+function parsePopupPeriod(period: string): { start: Date | null; end: Date | null } {
+  const trimmed = period.trim();
+  const parts = trimmed.split(/\s*~\s*/);
+  if (parts.length >= 2) {
+    return {
+      start: parseYmd(parts[0] ?? ''),
+      end: parseYmd(parts[1] ?? ''),
+    };
+  }
+  const one = parseYmd(trimmed);
+  return { start: one, end: one };
+}
+
+function formatYmd(d: Date | null) {
+  if (!d) return '';
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function formatPeriodRange(start: Date | null, end: Date | null): string {
+  if (start && end) return `${formatYmd(start)} ~ ${formatYmd(end)}`;
+  if (start) return `${formatYmd(start)} ~ ${formatYmd(start)}`;
+  if (end) return `${formatYmd(end)} ~ ${formatYmd(end)}`;
+  return '';
+}
+
+function todayAtNoon(): Date {
+  const today = new Date();
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0, 0);
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+export default function PopupPage() {
+  const [rows, setRows] = useState<PopupRow[]>(INITIAL_POPUPS);
+  const [selectedPopupId, setSelectedPopupId] = useState<string>(() => INITIAL_POPUPS[0]?.id ?? '');
+
+  const selectedPopup = useMemo(() => {
+    if (!rows.length) return null;
+    return rows.find((r) => r.id === selectedPopupId) ?? rows[0];
+  }, [rows, selectedPopupId]);
+
+  const activePopupId = selectedPopup?.id ?? '';
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editRowId, setEditRowId] = useState<string | null>(null);
+  const [draftExposed, setDraftExposed] = useState(true);
+  const [draftScreen, setDraftScreen] = useState<PopupRow['screen']>('메인');
+  const [draftCategory, setDraftCategory] = useState<PopupRow['category']>('전체');
+  const [draftLanding, setDraftLanding] = useState('');
+  const [draftImageUrl, setDraftImageUrl] = useState('');
+  const [draftPeriodStart, setDraftPeriodStart] = useState<Date | null>(null);
+  const [draftPeriodEnd, setDraftPeriodEnd] = useState<Date | null>(null);
+  const [isImageDragging, setIsImageDragging] = useState(false);
+  const popupImageInputRef = useRef<HTMLInputElement | null>(null);
+  const closeEdit = () => {
+    setEditOpen(false);
+    setEditRowId(null);
+  };
+
+  const openEdit = (rowId: string) => {
+    const row = rows.find((r) => r.id === rowId);
+    if (!row) return;
+    setEditRowId(rowId);
+    setDraftExposed(row.exposed);
+    setDraftScreen(row.screen);
+    setDraftCategory(row.category);
+    setDraftLanding(row.landingPageAddress);
+    setDraftImageUrl(row.imageUrl);
+    const { start, end } = parsePopupPeriod(row.period);
+    setDraftPeriodStart(start);
+    setDraftPeriodEnd(end);
+    setIsImageDragging(false);
+    if (popupImageInputRef.current) popupImageInputRef.current.value = '';
+    setEditOpen(true);
+  };
+
+  const openAdd = () => {
+    setEditRowId(null);
+    setDraftExposed(true);
+    setDraftScreen('메인');
+    setDraftCategory('전체');
+    setDraftLanding('');
+    setDraftImageUrl('');
+    const today = todayAtNoon();
+    setDraftPeriodStart(today);
+    setDraftPeriodEnd(today);
+    setIsImageDragging(false);
+    if (popupImageInputRef.current) popupImageInputRef.current.value = '';
+    setEditOpen(true);
+  };
+
+  const saveEdit = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const period = formatPeriodRange(draftPeriodStart, draftPeriodEnd) || `${today} ~ ${today}`;
+    if (editRowId) {
+      setRows((prev) =>
+        prev.map((r) =>
+          r.id !== editRowId
+            ? r
+            : {
+                ...r,
+                exposed: draftExposed,
+                screen: draftScreen,
+                category: draftCategory,
+                period,
+                landingPageAddress: draftLanding.trim(),
+                imageUrl: draftImageUrl.trim(),
+              },
+        ),
+      );
+    } else {
+      const newRow: PopupRow = {
+        id: `popup-${crypto.randomUUID()}`,
+        exposed: draftExposed,
+        screen: draftScreen,
+        category: draftCategory,
+        period,
+        landingPageAddress: draftLanding.trim(),
+        imageUrl: draftImageUrl.trim(),
+        createdAt: today,
+        createdBy: '관리자',
+      };
+      setRows((prev) => [newRow, ...prev]);
+      setSelectedPopupId(newRow.id);
+    }
+    closeEdit();
+  };
+
+  const isEditMode = editRowId !== null;
+  const modalTitle = isEditMode ? '팝업 수정' : '팝업 추가';
+
+  const handleDeleteRow = (rowId: string) => {
+    if (!window.confirm('이 팝업을 삭제하시겠습니까?')) return;
+    setRows((prev) => prev.filter((r) => r.id !== rowId));
+  };
+
+  const triggerImagePick = () => {
+    popupImageInputRef.current?.click();
+  };
+
+  return (
+    <div className="admin-list-page">
+      <div className="popup-page-header">
+        <h1 className="page-title">팝업관리</h1>
+        <button type="button" className="admin-list-add-btn" onClick={openAdd} aria-label="팝업 추가">
+          <Plus size={18} aria-hidden="true" />
+          팝업 추가
+        </button>
+      </div>
+
+      <div className="popup-page-layout">
+        <section className="popup-preview-section" aria-label="팝업 미리보기">
+          <div className="popup-preview-column">
+            {selectedPopup ? (
+              <div className="popup-preview-box">
+                <img className="popup-preview-box__img" src={selectedPopup.imageUrl} alt="선택된 팝업 미리보기" />
+              </div>
+            ) : (
+              <div className="popup-preview-empty">선택된 팝업이 없습니다.</div>
+            )}
+          </div>
+        </section>
+
+        <section className="admin-list-box admin-list-box--table popup-list-box" aria-label="팝업 목록">
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>노출</th>
+                  <th>노출화면</th>
+                  <th>노출카테고리</th>
+                  <th>기간</th>
+                  <th>랜딩페이지</th>
+                  <th>등록일</th>
+                  <th>등록자</th>
+                  <th className="col-center">수정</th>
+                  <th className="col-center">삭제</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr
+                    key={r.id}
+                    className={r.id === activePopupId ? 'popup-row is-selected' : 'popup-row'}
+                    onClick={() => setSelectedPopupId(r.id)}
+                  >
+                    <td>{r.exposed ? '노출' : '미노출'}</td>
+                    <td>{r.screen}</td>
+                    <td>{r.category}</td>
+                    <td>{r.period}</td>
+                    <td>
+                      <span className="admin-list-muted">{r.landingPageAddress}</span>
+                    </td>
+                    <td>{r.createdAt}</td>
+                    <td>{r.createdBy}</td>
+                    <td className="col-center">
+                      <button
+                        type="button"
+                        className="row-icon-btn row-icon-btn--tone-primary"
+                        aria-label="수정"
+                        title="수정"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEdit(r.id);
+                        }}
+                      >
+                        <Pencil size={18} aria-hidden="true" />
+                      </button>
+                    </td>
+                    <td className="col-center">
+                      <button
+                        type="button"
+                        className="row-icon-btn row-icon-btn--danger"
+                        aria-label="삭제"
+                        title="삭제"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteRow(r.id);
+                        }}
+                      >
+                        <Trash2 size={18} aria-hidden="true" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {!rows.length && (
+                  <tr>
+                    <td colSpan={9} className="admin-list-muted" style={{ textAlign: 'center' }}>
+                      등록된 팝업이 없습니다.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <Modal
+        open={editOpen}
+        onClose={closeEdit}
+        ariaLabel={modalTitle}
+        variant="option"
+        panelClassName="popup-edit-modal__panel"
+      >
+        <Modal.Header>
+          <Modal.Title>{modalTitle}</Modal.Title>
+          <Modal.Close />
+        </Modal.Header>
+        <Modal.Body>
+          <div className="popup-edit-form">
+            <div className="popup-edit-row">
+              <div className="popup-edit-col popup-edit-col--thumb">
+                <label className="popup-edit-label" htmlFor="popup-image-file">
+                  이미지
+                </label>
+                <input
+                  ref={popupImageInputRef}
+                  id="popup-image-file"
+                  type="file"
+                  accept="image/*"
+                  className="popup-edit-input popup-edit-file"
+                  style={{ display: 'none' }}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const url = await readFileAsDataUrl(file);
+                    setDraftImageUrl(url);
+                  }}
+                />
+                <div
+                  className={['popup-upload-box', isImageDragging ? 'is-dragging' : '', draftImageUrl ? 'has-image' : '']
+                    .join(' ')
+                    .trim()}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="팝업 이미지 업로드"
+                  onClick={triggerImagePick}
+                  onKeyDown={(e) => {
+                    if (e.key === ' ') e.preventDefault();
+                    if (e.key === 'Enter' || e.key === ' ') triggerImagePick();
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    setIsImageDragging(true);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsImageDragging(true);
+                  }}
+                  onDragLeave={(e) => {
+                    if (e.currentTarget === e.target) setIsImageDragging(false);
+                  }}
+                  onDrop={async (e) => {
+                    e.preventDefault();
+                    setIsImageDragging(false);
+                    const file = e.dataTransfer.files?.[0];
+                    if (!file) return;
+                    const url = await readFileAsDataUrl(file);
+                    setDraftImageUrl(url);
+                  }}
+                >
+                  {draftImageUrl ? (
+                    <img className="popup-upload-box__img" src={draftImageUrl} alt="팝업 이미지 미리보기" />
+                  ) : (
+                    <div className="popup-upload-box__content">
+                      <ImageIcon size={26} aria-hidden="true" />
+                      <div className="popup-upload-box__text">클릭 또는 드래그로 업로드</div>
+                      <div className="popup-upload-box__hint">JPG/PNG 추천</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="popup-edit-col popup-edit-col--meta">
+                <div className="popup-edit-field">
+                  <label className="popup-edit-label" htmlFor="popup-exposed">
+                    노출여부
+                  </label>
+                  <ListSelect
+                    ariaLabel="노출여부"
+                    className="listselect--modal"
+                    value={draftExposed ? 'exposed' : 'hidden'}
+                    onChange={(next) => setDraftExposed(next === 'exposed')}
+                    options={[
+                      { value: 'exposed', label: '노출' },
+                      { value: 'hidden', label: '미노출' },
+                    ]}
+                  />
+                </div>
+
+                <div className="popup-edit-field">
+                  <label className="popup-edit-label" htmlFor="popup-screen">
+                    노출화면
+                  </label>
+                  <ListSelect
+                    ariaLabel="노출화면"
+                    className="listselect--modal"
+                    value={draftScreen === '메인' ? 'main' : 'list'}
+                    onChange={(next) => setDraftScreen(next === 'main' ? '메인' : '리스트')}
+                    options={[
+                      { value: 'main', label: '메인' },
+                      { value: 'list', label: '리스트' },
+                    ]}
+                  />
+                </div>
+
+                <div className="popup-edit-field">
+                  <label className="popup-edit-label" htmlFor="popup-category">
+                    노출카테고리
+                  </label>
+                  <ListSelect
+                    ariaLabel="노출카테고리"
+                    className="listselect--modal"
+                    value={
+                      draftCategory === '전체'
+                        ? 'all'
+                        : draftCategory === '아크릴액자'
+                          ? 'acrylic'
+                          : draftCategory === '우드액자'
+                            ? 'wood'
+                            : 'round'
+                    }
+                    onChange={(next) => {
+                      if (next === 'all') setDraftCategory('전체');
+                      else if (next === 'acrylic') setDraftCategory('아크릴액자');
+                      else if (next === 'wood') setDraftCategory('우드액자');
+                      else if (next === 'round') setDraftCategory('원판액자');
+                    }}
+                    options={[
+                      { value: 'all', label: '전체' },
+                      { value: 'acrylic', label: '아크릴액자' },
+                      { value: 'wood', label: '우드액자' },
+                      { value: 'round', label: '원판액자' },
+                    ]}
+                  />
+                </div>
+
+                <div className="popup-edit-field">
+                  <span className="popup-edit-label" id="popup-period-label">
+                    기간
+                  </span>
+                  <div className="date-range-wrap popup-edit-period" aria-labelledby="popup-period-label">
+                    <div className="date-range-pickers">
+                      <DatePicker
+                        selected={draftPeriodStart}
+                        onChange={(date: Date | null) => setDraftPeriodStart(date)}
+                        selectsStart
+                        startDate={draftPeriodStart}
+                        endDate={draftPeriodEnd}
+                        maxDate={draftPeriodEnd ?? undefined}
+                        placeholderText="시작일"
+                        dateFormat="yyyy-MM-dd"
+                        locale={ko}
+                        className="date-picker-input"
+                        isClearable={!!draftPeriodStart}
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="scroll"
+                        aria-label="팝업 노출 시작일"
+                      />
+                      <span className="date-sep">~</span>
+                      <DatePicker
+                        selected={draftPeriodEnd}
+                        onChange={(date: Date | null) => setDraftPeriodEnd(date)}
+                        selectsEnd
+                        startDate={draftPeriodStart}
+                        endDate={draftPeriodEnd}
+                        minDate={draftPeriodStart ?? undefined}
+                        placeholderText="종료일"
+                        dateFormat="yyyy-MM-dd"
+                        locale={ko}
+                        className="date-picker-input"
+                        isClearable={!!draftPeriodEnd}
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="scroll"
+                        aria-label="팝업 노출 종료일"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="popup-edit-field popup-edit-field--last">
+                  <label className="popup-edit-label" htmlFor="popup-landing">
+                    랜딩페이지
+                  </label>
+                  <input
+                    id="popup-landing"
+                    className="popup-edit-input"
+                    type="text"
+                    value={draftLanding}
+                    onChange={(e) => setDraftLanding(e.target.value)}
+                    placeholder="/landing/..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={closeEdit}>
+            취소
+          </button>
+          <button type="button" className="option-modal__btn option-modal__btn--primary" onClick={saveEdit}>
+            저장
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+}
+

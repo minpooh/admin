@@ -173,4 +173,14 @@ registerPage('feelframe/salesManagement/influencerList', FeelframeInfluencerList
 // 회원관리
 import FeelframeCustomerListPage from './feelframe/customerManagement/CustomerListPage';
 registerPage('feelframe/customerManagement/customerList', FeelframeCustomerListPage);
+
+// 홈페이지관리
+import FeelframeBannerPage from './feelframe/homepageManagement/BannerPage';
+import FeelframePopupPage from './feelframe/homepageManagement/PopupPage';
+import FeelframeEventPage from './feelframe/homepageManagement/EventPage';
+import FeelframeNoticePage from './feelframe/homepageManagement/NoticePage';
+registerPage('feelframe/homepageManagement/bannerList', FeelframeBannerPage);
+registerPage('feelframe/homepageManagement/popupList', FeelframePopupPage);
+registerPage('feelframe/homepageManagement/eventList', FeelframeEventPage);
+registerPage('feelframe/homepageManagement/noticeList', FeelframeNoticePage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

@@ -428,6 +428,23 @@ export default function GroupListPage() {
     });
   };
 
+  const handleToggleDisplayStatus = (row: FeelframeGroupRow) => {
+    setConfirmDialog({
+      message: '변경하시겠습니까?',
+      confirmText: '확인',
+      cancelText: '취소',
+      onConfirm: () => {
+        setRows((prev) =>
+          prev.map((item) =>
+            item.id === row.id
+              ? { ...item, displayStatus: item.displayStatus === '노출' ? '미노출' : '노출' }
+              : item,
+          ),
+        );
+      },
+    });
+  };
+
   const openAddGroupModal = () => {
     setAddGroupForm({
       displayStatus: '노출',
@@ -792,9 +809,13 @@ export default function GroupListPage() {
                 paginatedRows.map((row) => (
                   <tr key={row.id}>
                     <td className="col-center">
-                      <span className={`badge-square badge-square--inline ${row.displayStatus === '노출' ? 'badge-square--open' : 'badge-square--private'}`}>
+                      <button
+                        type="button"
+                        className={`row-btn ${row.displayStatus === '노출' ? 'row-btn--primary' : 'row-btn--gray'}`}
+                        onClick={() => handleToggleDisplayStatus(row)}
+                      >
                         {row.displayStatus}
-                      </span>
+                      </button>
                     </td>
                     <td>{row.participationCode}</td>
                     <td className="admin-table-col-title">

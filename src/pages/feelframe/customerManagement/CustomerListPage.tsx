@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import ListSelect from '../../../components/ListSelect';
+import '../../../styles/adminPage.css';
 import { pagePath } from '../../../routes';
 import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
 import {
@@ -50,6 +51,38 @@ const PET_OPTIONS = [
 ];
 
 const ITEMS_PER_PAGE = 10;
+
+type CustomerAppliedSearch = {
+  joinDateRange: string;
+  joinStartDate: Date | null;
+  joinEndDate: Date | null;
+  weddingDateRange: string;
+  weddingStartDate: Date | null;
+  weddingEndDate: Date | null;
+  searchScope: string;
+  keyword: string;
+  marketingConsent: string;
+  hasPet: string;
+};
+
+type AppliedChipKey = 'joinDate' | 'weddingDate' | 'keyword' | 'marketing' | 'hasPet';
+
+function formatYmd(d: Date | null): string {
+  if (!d) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function isAppliedSearchEmpty(s: CustomerAppliedSearch): boolean {
+  const noJoin = !s.joinDateRange && !s.joinStartDate && !s.joinEndDate;
+  const noWed = !s.weddingDateRange && !s.weddingStartDate && !s.weddingEndDate;
+  const noKw = !s.keyword.trim();
+  const noMkt = !s.marketingConsent;
+  const noPet = !s.hasPet;
+  return noJoin && noWed && noKw && noMkt && noPet;
+}
 
 function applyDatePreset(next: string, setStart: (d: Date | null) => void, setEnd: (d: Date | null) => void) {
   const today = new Date();
@@ -112,16 +145,7 @@ export default function CustomerListPage() {
   const [hasPet, setHasPet] = useState('');
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const [appliedSearch, setAppliedSearch] = useState<{
-    joinStartDate: Date | null;
-    joinEndDate: Date | null;
-    weddingStartDate: Date | null;
-    weddingEndDate: Date | null;
-    searchScope: string;
-    keyword: string;
-    marketingConsent: string;
-    hasPet: string;
-  } | null>(null);
+  const [appliedSearch, setAppliedSearch] = useState<CustomerAppliedSearch | null>(null);
 
   const [rows] = useState<FeelframeCustomerRow[]>(() => [...MOCK_FEELFRAME_CUSTOMER_LIST]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,19 +194,112 @@ export default function CustomerListPage() {
     return filteredRows.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredRows, displayPage]);
 
+  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = useMemo(() => {
+    if (!appliedSearch) return [];
+    const a = appliedSearch;
+    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
+
+    if (a.joinStartDate || a.joinEndDate) {
+      const s = formatYmd(a.joinStartDate);
+      const e = formatYmd(a.joinEndDate);
+      chips.push({ key: 'joinDate', label: `가입일: ${s}${s && e ? ' ~ ' : ''}${e}` });
+    } else if (a.joinDateRange) {
+      chips.push({ key: 'joinDate', label: `가입일: ${a.joinDateRange}` });
+    }
+
+    if (a.weddingStartDate || a.weddingEndDate) {
+      const s = formatYmd(a.weddingStartDate);
+      const e = formatYmd(a.weddingEndDate);
+      chips.push({ key: 'weddingDate', label: `예식일: ${s}${s && e ? ' ~ ' : ''}${e}` });
+    } else if (a.weddingDateRange) {
+      chips.push({ key: 'weddingDate', label: `예식일: ${a.weddingDateRange}` });
+    }
+
+    if (a.keyword.trim()) {
+      const scopeLabel =
+        DETAIL_SEARCH_SCOPE_OPTIONS.find((o) => o.value === a.searchScope)?.label ?? '전체';
+      chips.push({ key: 'keyword', label: `상세검색: ${scopeLabel} ${a.keyword.trim()}` });
+    }
+
+    if (a.marketingConsent) {
+      const label =
+        a.marketingConsent === 'agree' ? '동의' : a.marketingConsent === 'disagree' ? '미동의' : a.marketingConsent;
+      chips.push({ key: 'marketing', label: `마케팅동의: ${label}` });
+    }
+
+    if (a.hasPet) {
+      const label = a.hasPet === 'yes' ? '있음' : a.hasPet === 'no' ? '없음' : a.hasPet;
+      chips.push({ key: 'hasPet', label: `반려동물: ${label}` });
+    }
+
+    return chips;
+  }, [appliedSearch]);
+
   const handleSearch = () => {
-    setAppliedSearch({
+    const next: CustomerAppliedSearch = {
+      joinDateRange,
       joinStartDate,
       joinEndDate,
+      weddingDateRange,
       weddingStartDate,
       weddingEndDate,
       searchScope,
       keyword,
       marketingConsent,
       hasPet,
-    });
+    };
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
     setCurrentPage(1);
   };
+
+  const clearAppliedFilter = (key: AppliedChipKey) => {
+    if (!appliedSearch) return;
+    const next: CustomerAppliedSearch = { ...appliedSearch };
+    switch (key) {
+      case 'joinDate':
+        next.joinDateRange = '';
+        next.joinStartDate = null;
+        next.joinEndDate = null;
+        setJoinDateRange('');
+        setJoinStartDate(null);
+        setJoinEndDate(null);
+        break;
+      case 'weddingDate':
+        next.weddingDateRange = '';
+        next.weddingStartDate = null;
+        next.weddingEndDate = null;
+        setWeddingDateRange('');
+        setWeddingStartDate(null);
+        setWeddingEndDate(null);
+        break;
+      case 'keyword':
+        next.keyword = '';
+        next.searchScope = 'all';
+        setKeyword('');
+        setSearchScope('all');
+        break;
+      case 'marketing':
+        next.marketingConsent = '';
+        setMarketingConsent('');
+        break;
+      case 'hasPet':
+        next.hasPet = '';
+        setHasPet('');
+        break;
+      default:
+        break;
+    }
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
+  }, [currentPage, totalPages]);
 
   if (subId) {
     const target = rows.find((row) => row.id === subId);
@@ -402,6 +519,28 @@ export default function CustomerListPage() {
       </section>
 
       <section className="admin-list-box admin-list-box--table" aria-label="회원 리스트">
+        {appliedChips.length > 0 && (
+          <section className="admin-applied-filters" aria-label="적용된 검색 조건">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
+                {appliedChips.map((chip) => (
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
+                    <button
+                      type="button"
+                      className="admin-filter-chip__x"
+                      aria-label={`${chip.label} 해제`}
+                      onClick={() => clearAppliedFilter(chip.key)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
