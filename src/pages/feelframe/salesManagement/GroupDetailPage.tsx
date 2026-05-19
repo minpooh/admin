@@ -484,7 +484,7 @@ export default function GroupDetailPage({ row, listPath }: Props) {
                           <div className="date-range-wrap">
                             <input
                               type="text"
-                              className="date-picker-input date-picker-input--table"
+                              className="input--table"
                               value={participant.couponCode}
                               onChange={(e) => updateCouponCode(participant.id, e.target.value)}
                               placeholder="쿠폰번호 입력"

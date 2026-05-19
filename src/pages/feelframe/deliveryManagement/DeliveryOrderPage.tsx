@@ -588,7 +588,7 @@ export default function FeelframeDeliveryOrderPage() {
                                   placeholderText="날짜 선택"
                                   dateFormat="yyyy-MM-dd"
                                   locale={ko}
-                                  className="date-picker-input date-picker-input--table"
+                                  className="date-picker-input input--table"
                                   showMonthDropdown
                                   showYearDropdown
                                   dropdownMode="scroll"

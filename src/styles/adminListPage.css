@@ -286,13 +286,53 @@
   flex-shrink: 0;
 }
 
-/* 테이블 셀 등: 목록 행에 맞춘 DatePicker (검색 필터 `.date-range-wrap` 기본 38px와 구분) */
-.date-range-wrap .date-picker-input.date-picker-input--table,
-.admin-table .date-picker-input.date-picker-input--table {
+/* 테이블 셀: input·DatePicker 공통 (검색 필터 `.date-range-wrap` 기본 38px와 구분) */
+.date-range-wrap .date-picker-input.input--table,
+.admin-table .date-picker-input.input--table,
+.admin-table input.input--table {
+  width: 100%;
+  min-width: 0;
   height: 30px;
   min-height: 30px;
   padding: 0.2rem 0.75rem;
   box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #111827;
+  background: #fff;
+}
+
+.date-range-wrap .date-picker-input.input--table:focus,
+.admin-table .date-picker-input.input--table:focus,
+.admin-table input.input--table:focus {
+  outline: none;
+  border-color: var(--primary-color-400);
+  box-shadow: 0 0 0 3px var(--primary-color-100);
+}
+
+.admin-table .admin-table-textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 72px;
+  min-height: 72px;
+  max-height: 72px;
+  padding: 0.45rem 0.65rem;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: #111827;
+  background: #fff;
+  resize: none;
+}
+
+.admin-table .admin-table-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color-400);
+  box-shadow: 0 0 0 3px var(--primary-color-100);
 }
 
 /**

@@ -1,0 +1,51 @@
+
+.admin-list-page--chatbot .admin-table--new-chatbot {
+  min-width: 1400px;
+}
+
+.frame-recommend-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.frame-recommend-content.is-switching {
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.frame-recommend-add-form {
+  padding: 1rem 1.1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.frame-recommend-add-form__field .listselect {
+  width: 100%;
+  max-width: 420px;
+}
+
+.frame-recommend-add-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.frame-recommend-add-btn {
+  align-self: flex-start;
+}
+
+.admin-list-page--chatbot .admin-table--frame-recommend {
+  min-width: 640px;
+}
+
+.chatbot-new-list-footer {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
