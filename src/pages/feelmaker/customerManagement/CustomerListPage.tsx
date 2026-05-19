@@ -396,7 +396,7 @@ export default function CustomerListPage() {
     <div className="admin-list-page admin-list-page--customer-list">
       <h1 className="page-title">회원 목록</h1>
 
-      <section className="customer-stat-cards-wrap admin-stat-section" aria-label="요약 카드">
+      <section className="admin-stat-cards-wrap admin-stat-section" aria-label="요약 카드">
         <div className="admin-stat-cards admin-stat-cards--4">
           <div className="admin-stat-card">
             <div className="admin-stat-card__icon admin-stat-card__icon--gray" aria-hidden>

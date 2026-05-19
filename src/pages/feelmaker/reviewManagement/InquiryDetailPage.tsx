@@ -1,7 +1,7 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pencil } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import './InquiryPage.css';
+import '../../../styles/adminPage.css';
 import { pagePath } from '../../../routes';
 import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
 import Alert from '../../../components/Alert';

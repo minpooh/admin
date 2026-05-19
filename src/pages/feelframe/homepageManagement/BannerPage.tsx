@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, ChevronUp, Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/Modal';
 import '../../../styles/adminPage.css';
 import ListSelect from '../../../components/ListSelect';
@@ -364,25 +364,13 @@ export default function BannerPage() {
                   <td>{r.createdAt}</td>
                   <td>{r.createdBy}</td>
                   <td className="col-center">
-                    <button
-                      type="button"
-                      className="row-icon-btn row-icon-btn--tone-primary"
-                      aria-label="수정"
-                      title="수정"
-                      onClick={() => openEdit(r.id)}
-                    >
-                      <Pencil size={18} aria-hidden="true" />
+                    <button type="button" className="row-btn row-btn--primary" onClick={() => openEdit(r.id)}>
+                      수정
                     </button>
                   </td>
                   <td className="col-center">
-                    <button
-                      type="button"
-                      className="row-icon-btn row-icon-btn--danger"
-                      aria-label="삭제"
-                      title="삭제"
-                      onClick={() => handleDeleteRow(r.id)}
-                    >
-                      <Trash2 size={18} aria-hidden="true" />
+                    <button type="button" className="row-btn row-btn--red" onClick={() => handleDeleteRow(r.id)}>
+                      삭제
                     </button>
                   </td>
                 </tr>

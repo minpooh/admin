@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './Alert.css';
 
 type AlertProps = {
@@ -17,12 +18,13 @@ export default function Alert({ open, message, onClose, duration = 2200 }: Alert
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="app-alert" role="alert" aria-live="assertive">
       <span className="app-alert__message">{message}</span>
       <button type="button" className="app-alert__close" onClick={onClose} aria-label="알림 닫기">
         ×
       </button>
-    </div>
+    </div>,
+    document.body,
   );
 }

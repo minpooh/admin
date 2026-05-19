@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Pencil, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Plus, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/Modal';
 import ListSelect from '../../../components/ListSelect';
 import '../../../styles/adminPage.css';
@@ -284,29 +284,25 @@ export default function PopupPage() {
                     <td className="col-center">
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--tone-primary"
-                        aria-label="수정"
-                        title="수정"
+                        className="row-btn row-btn--primary"
                         onClick={(e) => {
                           e.stopPropagation();
                           openEdit(r.id);
                         }}
                       >
-                        <Pencil size={18} aria-hidden="true" />
+                        수정
                       </button>
                     </td>
                     <td className="col-center">
                       <button
                         type="button"
-                        className="row-icon-btn row-icon-btn--danger"
-                        aria-label="삭제"
-                        title="삭제"
+                        className="row-btn row-btn--red"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteRow(r.id);
                         }}
                       >
-                        <Trash2 size={18} aria-hidden="true" />
+                        삭제
                       </button>
                     </td>
                   </tr>

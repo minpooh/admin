@@ -183,4 +183,14 @@ registerPage('feelframe/homepageManagement/bannerList', FeelframeBannerPage);
 registerPage('feelframe/homepageManagement/popupList', FeelframePopupPage);
 registerPage('feelframe/homepageManagement/eventList', FeelframeEventPage);
 registerPage('feelframe/homepageManagement/noticeList', FeelframeNoticePage);
+
+// 문의관리
+import FeelframeQuestionPage from './feelframe/questionManagement/QuestionPage';
+import FeelframeCompanyQuestionPage from './feelframe/questionManagement/CompanyQuestionPage';
+import FeelframeFaqPage from './feelframe/questionManagement/FaqPage';
+import FeelframeChatbotPage from './feelframe/questionManagement/ChatbotPage';
+registerPage('feelframe/questionManagement/question', FeelframeQuestionPage);
+registerPage('feelframe/questionManagement/companyQuestion', FeelframeCompanyQuestionPage);
+registerPage('feelframe/questionManagement/faq', FeelframeFaqPage);
+registerPage('feelframe/questionManagement/chatbot', FeelframeChatbotPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

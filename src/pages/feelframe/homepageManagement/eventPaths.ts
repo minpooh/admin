@@ -18,3 +18,10 @@ export const eventDetailPath = (id: string) =>
 export const EVENT_NEW_SUB_ID = 'new';
 
 export const eventNewPath = () => eventDetailPath(EVENT_NEW_SUB_ID);
+
+const FEELFRAME_SITE_ORIGIN = 'https://feelframe.co.kr';
+
+/** 고객 사이트 이벤트 상세 URL (목록 복사용) */
+export function eventPublicUrl(id: string): string {
+  return `${FEELFRAME_SITE_ORIGIN}/event/${encodeURIComponent(id)}`;
+}

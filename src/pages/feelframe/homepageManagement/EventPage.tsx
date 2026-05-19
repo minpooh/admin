@@ -3,13 +3,14 @@ import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_P
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import EventDetailPage from './EventDetailPage';
-import { EVENT_NEW_SUB_ID, eventDetailPath, eventListPath, eventNewPath } from './eventPaths';
+import { EVENT_NEW_SUB_ID, eventDetailPath, eventListPath, eventNewPath, eventPublicUrl } from './eventPaths';
 import type { EventRow } from './mock/event.mock';
 import { EVENT_ROWS_MOCK } from './mock/event.mock';
 
@@ -450,6 +451,7 @@ export default function EventPage() {
           <table className="admin-table">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th className="col-center">노출</th>
                 <th className="col-center">진행여부</th>
                 <th>제목</th>
@@ -462,6 +464,9 @@ export default function EventPage() {
             <tbody>
               {paginatedRows.map((row) => (
                 <tr key={row.id}>
+                  <td className="col-center">
+                    <ListRowCopyButton text={eventPublicUrl(row.id)} ariaLabel="이벤트 링크 복사" />
+                  </td>
                   <td className="col-center">
                     <button
                       type="button"
@@ -489,21 +494,15 @@ export default function EventPage() {
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>
                   <td className="col-center">
-                    <button
-                      type="button"
-                      className="row-icon-btn row-icon-btn--danger"
-                      aria-label={`${row.title} 삭제`}
-                      title="삭제"
-                      onClick={() => handleDeleteRow(row.id)}
-                    >
-                      <Trash2 size={18} aria-hidden="true" />
+                    <button type="button" className="row-btn row-btn--red" onClick={() => handleDeleteRow(row.id)}>
+                      삭제
                     </button>
                   </td>
                 </tr>
               ))}
               {!paginatedRows.length && (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '20px' }}>
                     데이터가 없습니다.
                   </td>
                 </tr>

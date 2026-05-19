@@ -376,3 +376,242 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 문의·리뷰 상세: 답변/댓글 스레드 (InquiryDetailPage, QuestionDetailPage 등 공통) */
+.inquiry-thread-section .admin-detail-section-title {
+  margin-bottom: 0.35rem;
+}
+
+.inquiry-thread-hint {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.inquiry-thread-empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.inquiry-thread-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.inquiry-thread-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  background: #fafafa;
+}
+
+.inquiry-thread-item--admin {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.inquiry-thread-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.inquiry-thread-item__author {
+  font-weight: 600;
+  color: #111827;
+}
+
+.inquiry-thread-item__badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #047857;
+  background: #d1fae5;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.inquiry-thread-item__date {
+  margin-left: auto;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.inquiry-thread-item__head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.inquiry-thread-item__head-actions .inquiry-thread-item__date {
+  margin-left: 0;
+}
+
+.inquiry-thread-item__edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #fff;
+  color: #047857;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.inquiry-thread-item__edit-btn:hover {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+
+.inquiry-thread-item__body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.inquiry-thread-item__body--rich {
+  white-space: normal;
+}
+
+.inquiry-thread-item__body--rich img {
+  max-width: 50%;
+  margin: 0 auto;
+  height: auto;
+  display: block;
+}
+
+.inquiry-thread-item__body--rich p {
+  margin: 0 0 0.5rem;
+}
+
+.inquiry-thread-item__body--rich p:last-child {
+  margin-bottom: 0;
+}
+
+.inquiry-thread-item__body--rich ul,
+.inquiry-thread-item__body--rich ol {
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.inquiry-thread-item__body--rich h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #111827;
+}
+
+.inquiry-reply-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.inquiry-reply-section__title {
+  margin-bottom: 0;
+}
+
+.inquiry-reply-section__open-btn {
+  flex-shrink: 0;
+}
+
+.inquiry-attachments-box {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f9fafb;
+}
+
+.inquiry-attachments-box__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.inquiry-attachments-box__title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.inquiry-attachments-box__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.inquiry-attachments-box__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inquiry-attachments-box__empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.inquiry-file-attachment {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+  vertical-align: middle;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+button.inquiry-file-attachment {
+  appearance: none;
+}
+
+.inquiry-file-attachment:hover {
+  background: #f3f4f6;
+  border-color: #cbd5e1;
+}
+
+.inquiry-file-attachment__name {
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}

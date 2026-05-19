@@ -2,7 +2,7 @@ import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react
 import { Link, useParams } from 'react-router-dom';
 import { ArrowRight, Pencil } from 'lucide-react';
 import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
-import './InquiryPage.css';
+import '../../../styles/adminPage.css';
 import './ReviewPage.css';
 import { pagePath } from '../../../routes';
 import Alert from '../../../components/Alert';

@@ -6,6 +6,7 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BarChart3, Clock3, MessageSquareText, Trash2 } from 'lucide-react';
 import ListSelect from '../../../components/ListSelect';
+import '../../../styles/adminPage.css';
 import Confirm from '../../../components/Confirm';
 import { pagePath } from '../../../routes';
 import './InquiryPage.css';
@@ -14,7 +15,17 @@ import InquiryDetailPage from './InquiryDetailPage';
 import type { InquiryRow } from './mock/inquiry.mock';
 import { MOCK_INQUIRIES } from './mock/inquiry.mock';
 
-/** 검색 결과 제목·카테고리에서 빈도 상위 키워드 (목업 분석) */
+const SEARCH_SCOPE_OPTIONS = [
+  { value: 'all', label: '전체' },
+  { value: 'name', label: '이름' },
+  { value: 'phone', label: '전화번호' },
+  { value: 'title', label: '제목' },
+];
+
+type AnswerFilterValue = '' | '미답변' | '답변완료';
+
+const TOOLTIP_TRANSITION_MS = 180;
+
 function keywordStatsFromRows(rows: InquiryRow[]) {
   const map = new Map<string, number>();
   for (const row of rows) {
@@ -47,15 +58,6 @@ function extractSnippet(text: string, keyword: string, radius = 45) {
   const suffix = end < text.length ? '...' : '';
   return `${prefix}${text.slice(start, end)}${suffix}`;
 }
-
-const SEARCH_SCOPE_OPTIONS = [
-  { value: 'all', label: '전체' },
-  { value: 'name', label: '이름' },
-  { value: 'phone', label: '전화번호' },
-  { value: 'title', label: '제목' },
-];
-
-type AnswerFilterValue = '' | '미답변' | '답변완료';
 
 const inquiryDetailPath = (id: string) =>
   pagePath({ navId: 'feelmaker', sectionId: 'reviewManagement', itemId: 'inquiry', subId: id });
@@ -262,24 +264,18 @@ export default function InquiryPage() {
   );
 
   const keywordStats = useMemo(() => keywordStatsFromRows(filteredRows), [filteredRows]);
-  const deleteTargetInquiry = useMemo(
-    () => (deleteTargetInquiryId ? inquiryRows.find((row) => row.id === deleteTargetInquiryId) ?? null : null),
-    [deleteTargetInquiryId, inquiryRows]
-  );
+
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
   const keywordPanelRef = useRef<HTMLDivElement | null>(null);
-  const [keywordArrowX, setKeywordArrowX] = useState<number>(0);
+  const [keywordArrowX, setKeywordArrowX] = useState(0);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const tooltipCloseTimerRef = useRef<number | null>(null);
-  const TOOLTIP_TRANSITION_MS = 180;
 
-  // 키워드 목록이 바뀌면(필터/검색 결과 변경) 선택 상태도 동기화
   useEffect(() => {
     setSelectedKeyword((prev) => {
       if (!prev) return prev;
       if (keywordStats.some((k) => k.word === prev)) return prev;
 
-      // 목록에서 사라진 키워드는 툴팁 닫기 애니메이션 후 해제
       setTooltipOpen(false);
       if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
       tooltipCloseTimerRef.current = window.setTimeout(() => setSelectedKeyword(null), TOOLTIP_TRANSITION_MS);
@@ -293,7 +289,6 @@ export default function InquiryPage() {
     };
   }, []);
 
-  // 툴팁이 열려있을 때, 패널(버튼/툴팁) 밖을 클릭하면 닫기
   useEffect(() => {
     if (!tooltipOpen) return;
 
@@ -310,9 +305,7 @@ export default function InquiryPage() {
     };
 
     document.addEventListener('mousedown', onDocMouseDown);
-    return () => {
-      document.removeEventListener('mousedown', onDocMouseDown);
-    };
+    return () => document.removeEventListener('mousedown', onDocMouseDown);
   }, [tooltipOpen]);
 
   useEffect(() => {
@@ -321,7 +314,7 @@ export default function InquiryPage() {
     if (!panel) return;
 
     const escaped = selectedKeyword.replace(/"/g, '\\"');
-    const btn = panel.querySelector(`.inquiry-keyword-button[data-keyword="${escaped}"]`) as HTMLElement | null;
+    const btn = panel.querySelector(`.admin-stat-keyword-button[data-keyword="${escaped}"]`) as HTMLElement | null;
     if (!btn) return;
 
     const panelRect = panel.getBoundingClientRect();
@@ -356,13 +349,18 @@ export default function InquiryPage() {
       });
   }, [filteredRows, selectedKeyword]);
 
+  const deleteTargetInquiry = useMemo(
+    () => (deleteTargetInquiryId ? inquiryRows.find((row) => row.id === deleteTargetInquiryId) ?? null : null),
+    [deleteTargetInquiryId, inquiryRows]
+  );
+
   if (subId) return <InquiryDetailPage />;
 
   return (
     <div className="admin-list-page admin-list-page--inquiry">
       <h1 className="page-title">1:1 문의</h1>
 
-      <section className="inquiry-stat-cards-wrap admin-stat-section">
+      <section className="admin-stat-cards-wrap admin-stat-section" aria-label="문의 요약">
         <div className="admin-stat-cards admin-stat-cards--1-1-2">
           <div className="admin-stat-card">
             <div className="admin-stat-card__icon admin-stat-card__icon--primary" aria-hidden>
@@ -389,59 +387,63 @@ export default function InquiryPage() {
               <p className="admin-stat-empty">표시할 키워드가 없습니다.</p>
             ) : (
               <>
-                <div className="inquiry-keyword-panel" ref={keywordPanelRef}>
-                  <div className="inquiry-keyword-buttons" role="list">
+                <div className="admin-stat-keyword-panel" ref={keywordPanelRef}>
+                  <div className="admin-stat-keyword-buttons" role="list">
                     {keywordStats.map(({ word, count }) => (
                       <button
                         key={word}
                         type="button"
                         data-keyword={word}
                         className={[
-                          'inquiry-keyword-button',
-                          selectedKeyword === word ? 'inquiry-keyword-button--active' : '',
+                          'admin-stat-keyword-button',
+                          selectedKeyword === word ? 'admin-stat-keyword-button--active' : '',
                         ].join(' ')}
-                          onClick={(e) => {
-                            const panel = keywordPanelRef.current;
-                            const currentTarget = e.currentTarget as HTMLElement;
-                            if (panel) {
-                              const panelRect = panel.getBoundingClientRect();
-                              const btnRect = currentTarget.getBoundingClientRect();
-                              setKeywordArrowX(btnRect.left - panelRect.left + btnRect.width / 2);
-                            }
+                        onClick={(e) => {
+                          const panel = keywordPanelRef.current;
+                          const currentTarget = e.currentTarget as HTMLElement;
+                          if (panel) {
+                            const panelRect = panel.getBoundingClientRect();
+                            const btnRect = currentTarget.getBoundingClientRect();
+                            setKeywordArrowX(btnRect.left - panelRect.left + btnRect.width / 2);
+                          }
                           if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
                           setTooltipOpen(false);
                           setSelectedKeyword(word);
-                          // 다음 프레임에 open 상태를 켜서 transition이 보이게 함
                           requestAnimationFrame(() => setTooltipOpen(true));
-                          }}
+                        }}
                         aria-pressed={selectedKeyword === word}
                       >
                         {word}
-                        <span className="inquiry-keyword-button__count">{count}</span>
+                        <span className="admin-stat-keyword-button__count">{count}</span>
                       </button>
                     ))}
                   </div>
 
                   {selectedKeyword ? (
                     <div
-                      className={['inquiry-keyword-tooltip', tooltipOpen ? 'inquiry-keyword-tooltip--open' : ''].join(' ')}
+                      className={['admin-stat-keyword-tooltip', tooltipOpen ? 'admin-stat-keyword-tooltip--open' : ''].join(
+                        ' ',
+                      )}
                       role="status"
                       aria-live="polite"
                       style={
                         {
-                          ['--inquiry-keyword-arrow-x' as string]: `${keywordArrowX}px`,
+                          ['--admin-stat-keyword-arrow-x' as string]: `${keywordArrowX}px`,
                         } as CSSProperties
                       }
                     >
-                      <div className="inquiry-keyword-tooltip__head">
-                        <span className="inquiry-keyword-tooltip__label">"{selectedKeyword}" 포함 내용</span>
+                      <div className="admin-stat-keyword-tooltip__head">
+                        <span className="admin-stat-keyword-tooltip__label">"{selectedKeyword}" 포함 내용</span>
                         <button
                           type="button"
-                          className="inquiry-keyword-tooltip__close"
+                          className="admin-stat-keyword-tooltip__close"
                           onClick={() => {
                             if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
                             setTooltipOpen(false);
-                            tooltipCloseTimerRef.current = window.setTimeout(() => setSelectedKeyword(null), TOOLTIP_TRANSITION_MS);
+                            tooltipCloseTimerRef.current = window.setTimeout(
+                              () => setSelectedKeyword(null),
+                              TOOLTIP_TRANSITION_MS,
+                            );
                           }}
                           aria-label="툴팁 닫기"
                         >
@@ -450,20 +452,20 @@ export default function InquiryPage() {
                       </div>
 
                       {selectedKeywordDetails.length === 0 ? (
-                        <p className="inquiry-keyword-tooltip__empty">해당 키워드를 포함한 내용이 없습니다.</p>
+                        <p className="admin-stat-keyword-tooltip__empty">해당 키워드를 포함한 내용이 없습니다.</p>
                       ) : (
-                        <ul className="inquiry-keyword-tooltip__list">
+                        <ul className="admin-stat-keyword-tooltip__list">
                           {selectedKeywordDetails.map((item) => (
-                            <li key={item.id} className="inquiry-keyword-tooltip__item">
-                              <div className="inquiry-keyword-tooltip__item-title">{item.title}</div>
-                              <div className="inquiry-keyword-tooltip__item-snippet">{item.snippet}</div>
+                            <li key={item.id}>
+                              <div className="admin-stat-keyword-tooltip__item-title">{item.title}</div>
+                              <div className="admin-stat-keyword-tooltip__item-snippet">{item.snippet}</div>
                             </li>
                           ))}
                         </ul>
                       )}
                     </div>
                   ) : (
-                    <p className="inquiry-keyword-helper">키워드를 클릭하면 해당 내용이 표시됩니다.</p>
+                    <p className="admin-stat-keyword-helper">키워드를 클릭하면 해당 내용이 표시됩니다.</p>
                   )}
                 </div>
               </>

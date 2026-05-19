@@ -3,7 +3,7 @@ import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_P
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import '../../../styles/adminPage.css';
@@ -420,14 +420,8 @@ export default function NoticePage() {
                   <td>{row.createdAt}</td>
                   <td>{row.createdBy}</td>
                   <td className="col-center">
-                    <button
-                      type="button"
-                      className="row-icon-btn row-icon-btn--danger"
-                      aria-label={`${row.title} 삭제`}
-                      title="삭제"
-                      onClick={() => handleDeleteRow(row.id)}
-                    >
-                      <Trash2 size={18} aria-hidden="true" />
+                    <button type="button" className="row-btn row-btn--red" onClick={() => handleDeleteRow(row.id)}>
+                      삭제
                     </button>
                   </td>
                 </tr>
