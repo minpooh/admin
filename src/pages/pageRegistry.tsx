@@ -193,4 +193,10 @@ registerPage('feelframe/questionManagement/question', FeelframeQuestionPage);
 registerPage('feelframe/questionManagement/companyQuestion', FeelframeCompanyQuestionPage);
 registerPage('feelframe/questionManagement/faq', FeelframeFaqPage);
 registerPage('feelframe/questionManagement/chatbot', FeelframeChatbotPage);
+
+// 리뷰관리
+import FeelframeReviewPage from './feelframe/reviewManagement/ReviewPage';
+import FeelframeSocialReviewPage from './feelframe/reviewManagement/SocialReviewPage';
+registerPage('feelframe/reviewManagement/review', FeelframeReviewPage);
+registerPage('feelframe/reviewManagement/socialReview', FeelframeSocialReviewPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------

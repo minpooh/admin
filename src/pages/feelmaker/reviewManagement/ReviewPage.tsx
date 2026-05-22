@@ -266,22 +266,25 @@ export default function ReviewPage() {
     <div className="admin-list-page admin-list-page--review">
       <h1 className="page-title">리뷰 관리</h1>
 
-      <section className="review-stat-cards-wrap admin-stat-section">
-        <div className="review-stat-grid">
-          <div className="review-card">
-            <div className="review-card__left">
-              <p className="review-card__rating-value">
-                {averageRating.toFixed(2)} <span className="review-card__star">★</span>
+      <section className="admin-stat-cards-wrap admin-stat-section" aria-label="리뷰 요약">
+        <div className="admin-stat-cards admin-stat-cards--review-summary">
+          <div className="admin-stat-card admin-stat-card--rating">
+            <div className="admin-stat-card__summary">
+              <p className="admin-stat-value admin-stat-value--rating">
+                {averageRating.toFixed(2)} <span className="admin-stat-value__suffix">★</span>
               </p>
-              <p className="review-card__sub">총 {filteredRows.length}개 리뷰</p>
-              <p className="review-card__hint">현재 검색/필터 기준</p>
+              <p className="admin-stat-card__desc">총 {filteredRows.length}개 리뷰</p>
+              <p className="admin-stat-hint">현재 검색/필터 기준</p>
             </div>
-            <div className="review-card__distribution">
+            <div className="admin-stat-card__distribution">
               {ratingDistribution.map((item) => (
-                <div key={item.score} className="review-dist-row">
+                <div key={item.score} className="admin-stat-card__dist-row">
                   <span>{item.score}점</span>
-                  <div className="review-dist-track">
-                    <span className="review-dist-fill" style={{ width: `${(item.count / maxRatingCount) * 100}%` }} />
+                  <div className="admin-stat-card__dist-track">
+                    <span
+                      className="admin-stat-card__dist-fill"
+                      style={{ width: `${(item.count / maxRatingCount) * 100}%` }}
+                    />
                   </div>
                   <span>{item.count}</span>
                 </div>
@@ -289,17 +292,20 @@ export default function ReviewPage() {
             </div>
           </div>
 
-          <div className="review-card review-card--stats">
-            <div className="review-card__stats-main">
-              <div className="review-card__stats-text">
-                <h3>리뷰 통계</h3>
-                <p className="review-card__metric">
-                  신규 리뷰 {weeklyNewReviews}건 <span className="review-badge">+{Math.round(positiveRate / 10)}%</span>
+          <div className="admin-stat-card admin-stat-card--chart">
+            <div className="admin-stat-card__body">
+              <div className="admin-stat-card__content">
+                <p className="admin-stat-label admin-stat-label--title">리뷰 통계</p>
+                <p className="admin-stat-card__metric">
+                  신규 리뷰 {weeklyNewReviews}건{' '}
+                  <span className="admin-stat-card__badge">+{Math.round(positiveRate / 10)}%</span>
                 </p>
-                <p className="review-card__metric review-card__metric--positive">긍정 리뷰 {Math.round(positiveRate)}%</p>
-                <p className="review-card__sub">주간 리포트</p>
+                <p className="admin-stat-card__metric admin-stat-card__metric--positive">
+                  긍정 리뷰 {Math.round(positiveRate)}%
+                </p>
+                <p className="admin-stat-hint">주간 리포트</p>
               </div>
-              <div className="review-week-chart" aria-label="주간 리뷰 통계 차트">
+              <div className="admin-stat-card__chart" aria-label="주간 리뷰 통계 차트">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={reviewWeekChartData} barCategoryGap={2} barGap={0}>
                     <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9ca3af' }} dy={6} />
@@ -309,10 +315,10 @@ export default function ReviewPage() {
                         if (!active || !payload || payload.length === 0) return null;
                         const value = payload[0]?.value ?? 0;
                         return (
-                          <div className="review-week-tooltip">
-                            <p className="review-week-tooltip__day">{label}</p>
-                            <p className="review-week-tooltip__value">
-                              <span className="review-week-tooltip__dot" />
+                          <div className="admin-stat-card__chart-tooltip">
+                            <p className="admin-stat-card__chart-tooltip-day">{label}</p>
+                            <p className="admin-stat-card__chart-tooltip-value">
+                              <span className="admin-stat-card__chart-tooltip-dot" />
                               series-1: <strong>{value}</strong>
                             </p>
                           </div>
@@ -321,7 +327,11 @@ export default function ReviewPage() {
                     />
                     <Bar dataKey="count" radius={[8, 8, 8, 8]} barSize={9}>
                       {reviewWeekChartData.map((item, idx) => (
-                        <Cell key={item.day} fill={idx === activeWeekIndex ? '#22c55e' : '#d1fae5'} className="review-week-chart__bar" />
+                        <Cell
+                          key={item.day}
+                          fill={idx === activeWeekIndex ? '#22c55e' : '#d1fae5'}
+                          className="admin-stat-card__chart-bar"
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -330,7 +340,7 @@ export default function ReviewPage() {
             </div>
           </div>
 
-          <div className="admin-stat-card review-unanswered-card">
+          <div className="admin-stat-card">
             <div className="admin-stat-card__icon admin-stat-card__icon--warning" aria-hidden>
               <Clock3 size={20} strokeWidth={2} />
             </div>
@@ -511,10 +521,12 @@ export default function ReviewPage() {
                 <tr key={row.id}>
                   <td>{row.createdAt}</td>
                   <td className="review-col-rating">
-                    <span className="review-rating-stars" aria-label={`${row.rating}점`}>
-                      {renderStars(row.rating)}
+                    <span className="review-col-rating__inner">
+                      <span className="review-rating-stars" aria-label={`${row.rating}점`}>
+                        {renderStars(row.rating)}
+                      </span>
+                      <span className="review-rating-value">{row.rating}.0</span>
                     </span>
-                    <span className="review-rating-value">{row.rating}.0</span>
                   </td>
                   <td className="admin-table-col-title">
                     <Link to={reviewDetailPath(row.id)} className="admin-link admin-table-title-link">

@@ -31,6 +31,7 @@ import {
   HiBriefcase,
   HiCreditCard,
   HiAdjustmentsHorizontal,
+  HiGlobeAlt,
 } from 'react-icons/hi2';
 
 export const ORDER_MANAGEMENT = [
@@ -84,6 +85,7 @@ export const QUESTION_MANAGEMENT = [
 
 export const REVIEW_MANAGEMENT = [
   { id: 'review', icon: HiStar, label: '리뷰 관리' },
+  { id: 'socialReview', icon: HiGlobeAlt, label: '소셜리뷰관리' },
 ];
 
 export type FeelFrameSectionId =

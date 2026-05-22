@@ -362,3 +362,229 @@
   line-height: 1.45;
   white-space: pre-wrap;
 }
+
+/* 리뷰 관리 · 요약 통계 카드 (평균 별점 / 주간 차트) */
+.admin-stat-cards--review-summary {
+  grid-template-columns: minmax(420px, 1.45fr) minmax(320px, 1fr) minmax(220px, 0.7fr);
+  gap: 0.85rem;
+}
+
+.admin-stat-cards--review-summary > .admin-stat-card--rating,
+.admin-stat-cards--review-summary > .admin-stat-card--chart {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  min-height: 170px;
+  box-shadow: none;
+}
+
+.admin-stat-card--rating {
+  flex-direction: row;
+  gap: 1.25rem;
+  padding-right: 1.1rem;
+}
+
+.admin-stat-card__summary {
+  min-width: 155px;
+}
+
+.admin-stat-value--rating {
+  font-size: 2rem;
+  line-height: 1.1;
+  color: var(--purple-color-500);
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.admin-stat-value__suffix {
+  font-size: 1.55rem;
+}
+
+.admin-stat-card__desc {
+  margin: 0.45rem 0 0;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.admin-stat-card--rating .admin-stat-hint {
+  margin-top: 0.35rem;
+}
+
+.admin-stat-card__distribution {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-stat-card__dist-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 1.5rem;
+  gap: 0.625rem;
+  align-items: center;
+  min-height: 1.125rem;
+  line-height: 1;
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+.admin-stat-card__dist-row > span:first-child {
+  text-align: right;
+}
+
+.admin-stat-card__dist-row > span:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-stat-card__dist-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--purple-color-100);
+}
+
+.admin-stat-card__dist-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--purple-color-500);
+  box-shadow: 0px 2px 4px 0px var(--purple-color-200);
+}
+
+.admin-stat-card--chart {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.65rem;
+  padding-right: 1.1rem;
+}
+
+.admin-stat-card__body {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 0.55rem;
+}
+
+.admin-stat-card__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-stat-label--title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--gray-700);
+}
+
+.admin-stat-card__metric {
+  margin: 0.44rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--gray-500);
+}
+
+.admin-stat-card__metric--positive {
+  margin-top: 0.68rem;
+  color: var(--secondary-color-500);
+  font-weight: 600;
+}
+
+.admin-stat-card__badge {
+  margin-left: 0.45rem;
+  padding: 0.08rem 0.42rem;
+  border-radius: 8px;
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
+  font-size: 0.75rem;
+  line-height: 1.1;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.admin-stat-card--chart .admin-stat-hint {
+  margin-top: 0.42rem;
+}
+
+.admin-stat-card__chart {
+  width: 44%;
+  min-width: 190px;
+  height: 136px;
+  margin-top: auto;
+  margin-bottom: 0.06rem;
+}
+
+.admin-stat-card__chart .recharts-wrapper {
+  outline: none;
+}
+
+.admin-stat-card__chart .recharts-wrapper:focus,
+.admin-stat-card__chart .recharts-surface:focus,
+.admin-stat-card__chart .recharts-layer:focus,
+.admin-stat-card__chart .recharts-rectangle:focus,
+.admin-stat-card__chart [tabindex]:focus {
+  outline: none !important;
+}
+
+.admin-stat-card__chart .recharts-cartesian-axis-tick-value {
+  font-size: 12px;
+  fill: var(--gray-500);
+  font-weight: 500;
+}
+
+.admin-stat-card__chart-tooltip {
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  box-shadow: 0 8px 16px rgba(17, 24, 39, 0.12);
+  min-width: 98px;
+}
+
+.admin-stat-card__chart-tooltip-day {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.admin-stat-card__chart-tooltip-value {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+
+.admin-stat-card__chart-tooltip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--secondary-color-500);
+  display: inline-block;
+}
+
+@media (max-width: 1280px) {
+  .admin-stat-cards--review-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-stat-cards--review-summary > .admin-stat-card--rating,
+  .admin-stat-cards--review-summary > .admin-stat-card--chart {
+    min-height: 0;
+  }
+
+  .admin-stat-card__body {
+    flex-direction: column;
+  }
+
+  .admin-stat-card__chart {
+    width: 100%;
+    min-width: 0;
+  }
+}

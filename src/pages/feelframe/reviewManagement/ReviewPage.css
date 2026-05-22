@@ -1,0 +1,102 @@
+/* 필프레임 · 리뷰관리 · 리뷰 관리 */
+
+.review-rating-filter-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.06rem;
+  color: var(--warning-color-500);
+  font-size: 0.875rem;
+}
+
+.review-rating-filter-stars svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.listselect--rating-filter .listselect__value {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.125rem;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(1),
+.admin-list-page--feelframe-review .admin-table td:nth-child(1) {
+  min-width: 56px;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(2),
+.admin-list-page--feelframe-review .admin-table td:nth-child(2) {
+  min-width: 120px;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(3),
+.admin-list-page--feelframe-review .admin-table td:nth-child(3) {
+  min-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(4),
+.admin-list-page--feelframe-review .admin-table td:nth-child(4) {
+  min-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(5),
+.admin-list-page--feelframe-review .admin-table td:nth-child(5) {
+  min-width: 120px;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(6),
+.admin-list-page--feelframe-review .admin-table td:nth-child(6) {
+  min-width: 120px;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(7),
+.admin-list-page--feelframe-review .admin-table td:nth-child(7) {
+  min-width: 88px;
+}
+
+.admin-list-page--feelframe-review .admin-table th:nth-child(8),
+.admin-list-page--feelframe-review .admin-table td:nth-child(8) {
+  min-width: 72px;
+}
+
+.review-col-rating {
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.review-col-rating__inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  line-height: 1;
+  min-height: 0.875rem;
+}
+
+.review-rating-stars {
+  color: var(--warning-color-500);
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.06rem;
+  line-height: 0;
+}
+
+.review-rating-stars svg {
+  display: block;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.review-rating-value {
+  flex-shrink: 0;
+  color: var(--gray-600);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
