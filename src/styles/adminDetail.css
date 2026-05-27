@@ -82,7 +82,7 @@
 
 .admin-detail-meta__row {
   display: grid;
-  grid-template-columns: 88px 1fr;
+  grid-template-columns: 9rem minmax(0, 1fr);
   gap: 0.75rem;
   align-items: start;
   font-size: 0.875rem;
@@ -92,6 +92,8 @@
   color: #6b7280;
   margin: 0;
   font-weight: 500;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .admin-detail-meta__row dd {

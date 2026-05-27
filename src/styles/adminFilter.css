@@ -109,6 +109,29 @@
   align-items: start;
 }
 
+.filter-top-row--actions-end {
+  margin-top: 0.75rem;
+}
+
+.filter-top-row--actions-end .filter-top-actions {
+  margin-left: auto;
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 960px) {
+  .filter-top-row--actions-end {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-top-row--actions-end .filter-top-actions {
+    margin-left: 0;
+  }
+
+  .filter-top-row--actions-end .filter-top-actions .filter-btn {
+    width: 100%;
+  }
+}
+
 
 .filter-top-actions .detail-search-toggle {
   width: 100%;

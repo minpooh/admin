@@ -1,1 +1,42 @@
-/* 필프레임 · 리뷰관리 · 소셜리뷰관리 */
+/* 필프레임 · 리뷰관리 · 소셜리뷰관리 (페이지 전용) */
+
+.social-review-sns-stats {
+  margin-top: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.social-review-add-row {
+  align-items: flex-end;
+  margin-top: 0.75rem;
+}
+
+.social-review-add-row .filter-top-actions {
+  margin-left: auto;
+}
+
+@media (max-width: 960px) {
+  .social-review-add-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .social-review-add-row .filter-top-actions {
+    margin-left: 0;
+  }
+
+  .social-review-add-row .filter-top-actions .filter-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .social-review-sns-stats .admin-stat-cards--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .social-review-sns-stats .admin-stat-cards--4 {
+    grid-template-columns: 1fr;
+  }
+}

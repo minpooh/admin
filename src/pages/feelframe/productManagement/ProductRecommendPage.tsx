@@ -57,11 +57,11 @@ export default function FeelframeProductRecommendPage({ row, candidates, listPat
       </div>
 
       <section className="admin-list-box">
-        <div className="product-recommend-info">
-          <div className="product-recommend-info__thumb-wrap" aria-hidden="true">
-            <img className="product-recommend-info__thumb" src={PRODUCT_THUMBNAIL_FALLBACK} alt={`${row.name} 썸네일`} />
+        <div className="admin-product-summary">
+          <div className="admin-product-summary__thumb-wrap" aria-hidden="true">
+            <img className="admin-product-thumb" src={PRODUCT_THUMBNAIL_FALLBACK} alt={`${row.name} 썸네일`} />
           </div>
-          <div className="product-recommend-info__meta">
+          <div className="admin-product-summary__meta">
             <dl className="admin-detail-meta">
               <div className="admin-detail-meta__row">
                 <dt>상품명</dt>
@@ -100,7 +100,7 @@ export default function FeelframeProductRecommendPage({ row, candidates, listPat
 
         <div
           className={`admin-table-wrap${
-            filteredCandidates.length >= 5 ? ' admin-table-wrap--recommend-candidate-scroll' : ''
+            filteredCandidates.length >= 5 ? ' admin-table-wrap--candidate-scroll' : ''
           }`}
         >
           <table className="admin-table admin-table--min-w-800">
@@ -144,8 +144,7 @@ export default function FeelframeProductRecommendPage({ row, candidates, listPat
                           <img
                             src={PRODUCT_THUMBNAIL_FALLBACK}
                             alt={`${candidate.name} 썸네일`}
-                            className="product-recommend-info__thumb"
-                            style={{ width: 44, height: 44, borderRadius: 8 }}
+                            className="admin-product-thumb admin-product-thumb--inline"
                           />
                           <span className="cell-line">{candidate.name}</span>
                         </div>
@@ -200,8 +199,7 @@ export default function FeelframeProductRecommendPage({ row, candidates, listPat
                         <img
                           src={PRODUCT_THUMBNAIL_FALLBACK}
                           alt={`${selected.name} 썸네일`}
-                          className="product-recommend-info__thumb"
-                          style={{ width: 44, height: 44, borderRadius: 8 }}
+                          className="admin-product-thumb admin-product-thumb--inline"
                         />
                         <span className="cell-line">{selected.name}</span>
                       </div>
