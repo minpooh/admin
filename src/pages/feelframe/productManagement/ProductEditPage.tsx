@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import SwitchField from '../../../components/SwitchField';
 import '../../../styles/adminPage.css';
-import '../../../styles/adminArrordion.css';
 import type { FeelframeProductListRow } from './mock/productList.mock';
 
 type Props = {
   row: FeelframeProductListRow;
   listPath: string;
   onSave: (nextRow: FeelframeProductListRow) => void;
+  mode?: 'create' | 'edit';
 };
 
 type BottomThumbnailSlot = {
@@ -37,8 +37,8 @@ function isSupportedThumbImage(file: File): boolean {
   return file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp';
 }
 
-export default function FeelframeProductEditPage({ row, listPath, onSave }: Props) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+export default function FeelframeProductEditPage({ row, listPath, onSave, mode = 'edit' }: Props) {
+  const [openIndexes, setOpenIndexes] = useState<number[]>([0, 1, 2, 3, 4, 5]);
   const [manufacturer, setManufacturer] = useState('해당없음');
   const [manufacturerUnitPrice, setManufacturerUnitPrice] = useState('액자 12R 19,000원');
   const [mainNewProduct, setMainNewProduct] = useState(false);
@@ -185,11 +185,11 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
         <Link to={listPath} className="admin-detail-back">
           ← 목록
         </Link>
-        <h1 className="page-title">상품 상세 · 수정</h1>
+        <h1 className="page-title">{mode === 'create' ? '상품 추가' : '상품 상세 · 수정'}</h1>
       </div>
 
       {accordionTitles.map((title, idx) => {
-        const isOpen = openIndex === idx;
+        const isOpen = openIndexes.includes(idx);
         return (
           <section
             key={title}
@@ -198,7 +198,11 @@ export default function FeelframeProductEditPage({ row, listPath, onSave }: Prop
             <button
               type="button"
               className="admin-accordion__trigger"
-              onClick={() => setOpenIndex((prev) => (prev === idx ? null : idx))}
+              onClick={() =>
+                setOpenIndexes((prev) =>
+                  prev.includes(idx) ? prev.filter((openIdx) => openIdx !== idx) : [...prev, idx]
+                )
+              }
               aria-expanded={isOpen}
             >
               <span>{title}</span>

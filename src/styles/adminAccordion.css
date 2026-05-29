@@ -8,7 +8,10 @@
   /* ListSelect 드롭다운이 박스 밖으로 보이도록 잘림 방지 */
   overflow: visible;
 }
-
+.admin-list-box.admin-accordion {
+  padding: 0;
+  margin-bottom: 1rem;
+}
 .admin-list-page .admin-list-box.admin-accordion.is-open {
   position: relative;
   z-index: 20;

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import SwitchField from '../../../components/SwitchField';
 import '../../../styles/adminPage.css';
-import '../../../styles/adminArrordion.css';
 import {
   formatPersonalPaymentCategory,
   type FeelframePersonalPaymentRow,
@@ -14,6 +13,7 @@ import { personalPaymentListPath } from './personalPaymentPaths';
 type Props = {
   row: FeelframePersonalPaymentRow;
   onSave: (nextRow: FeelframePersonalPaymentRow) => void;
+  mode?: 'create' | 'edit';
 };
 
 const ACCORDION_TITLES = ['제조사 설정', '카테고리 설정', '상품 정보', '상세설정'] as const;
@@ -30,8 +30,8 @@ const SUB_CATEGORY_MAP: Record<string, string[]> = {
   해당없음: ['해당없음'],
 };
 
-export default function PersonalPaymentDetailPage({ row, onSave }: Props) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+export default function PersonalPaymentDetailPage({ row, onSave, mode = 'edit' }: Props) {
+  const [openIndexes, setOpenIndexes] = useState<number[]>([0, 1, 2, 3]);
   const [manufacturer, setManufacturer] = useState(row.manufacturer);
   const [manufacturerUnitPrice, setManufacturerUnitPrice] = useState(row.manufacturerUnitPrice);
   const [photoUploadEnabled, setPhotoUploadEnabled] = useState(row.photoUploadEnabled);
@@ -190,11 +190,11 @@ export default function PersonalPaymentDetailPage({ row, onSave }: Props) {
         <Link to={personalPaymentListPath} className="admin-detail-back">
           ← 목록
         </Link>
-        <h1 className="page-title">개인결제 상세 · 수정</h1>
+        <h1 className="page-title">{mode === 'create' ? '개인결제 추가' : '개인결제 상세 · 수정'}</h1>
       </div>
 
       {ACCORDION_TITLES.map((title, idx) => {
-        const isOpen = openIndex === idx;
+        const isOpen = openIndexes.includes(idx);
         return (
           <section
             key={title}
@@ -203,7 +203,11 @@ export default function PersonalPaymentDetailPage({ row, onSave }: Props) {
             <button
               type="button"
               className="admin-accordion__trigger"
-              onClick={() => setOpenIndex((prev) => (prev === idx ? null : idx))}
+              onClick={() =>
+                setOpenIndexes((prev) =>
+                  prev.includes(idx) ? prev.filter((openIdx) => openIdx !== idx) : [...prev, idx]
+                )
+              }
               aria-expanded={isOpen}
             >
               <span>{title}</span>
@@ -221,9 +225,9 @@ export default function PersonalPaymentDetailPage({ row, onSave }: Props) {
       })}
 
       <div className="admin-detail-actions">
-        <Link to={personalPaymentListPath} className="filter-btn filter-btn--outline">
+        <button type="button" className="filter-btn filter-btn--outline" onClick={() => window.history.back()}>
           취소
-        </Link>
+        </button>
         <button type="button" className="filter-btn filter-btn--primary" onClick={handleSave}>
           저장
         </button>

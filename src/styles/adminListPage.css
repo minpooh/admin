@@ -657,6 +657,22 @@
   font-weight: 600;
 }
 
+.progress-status--blue .progress-status__text {
+  color: var(--blue-color-500);
+}
+
+.progress-status--danger .progress-status__text {
+  color: var(--danger-color-500);
+}
+
+.progress-status--secondary .progress-status__text {
+  color: var(--secondary-color-500);
+}
+
+.progress-status--warning .progress-status__text {
+  color: var(--warning-color-500);
+}
+
 /* 테이블 셀: 이름·아이디·연락처 3줄 (크롤링 등 공통) */
 .admin-cell-triple {
   display: flex;

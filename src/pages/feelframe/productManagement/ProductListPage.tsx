@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/Confirm';
@@ -66,6 +67,17 @@ function productEditPath(id: string) {
     sectionId: 'productManagement',
     itemId: 'productList',
     subId: id,
+  });
+}
+
+const PRODUCT_CREATE_SUB_ID = 'new';
+
+function productCreatePath() {
+  return pagePath({
+    navId: 'feelframe',
+    sectionId: 'productManagement',
+    itemId: 'productList',
+    subId: PRODUCT_CREATE_SUB_ID,
   });
 }
 
@@ -188,6 +200,27 @@ function duplicateProductRow(row: FeelframeProductListRow): FeelframeProductList
   };
 }
 
+function createEmptyProductRow(): FeelframeProductListRow {
+  const uniqueId = `ff-prod-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  return {
+    id: uniqueId,
+    badges: [],
+    displayYn: 'F',
+    soldOutYn: 'F',
+    supplier: '',
+    productType: '액자',
+    category: '해당없음',
+    name: '',
+    listPrice: 0,
+    salePrice: 0,
+    optionSummary: '',
+    deliveryLabel: '미배송',
+    recommendedProductIds: [],
+    viewCount: 0,
+    saleCount: 0,
+  };
+}
+
 export default function FeelframeProductListPage() {
   const navigate = useNavigate();
   const { subId } = useParams<{ subId?: string }>();
@@ -284,6 +317,21 @@ export default function FeelframeProductListPage() {
   );
 
   if (subId) {
+    if (subId === PRODUCT_CREATE_SUB_ID) {
+      const newRow = createEmptyProductRow();
+      return (
+        <FeelframeProductEditPage
+          row={newRow}
+          listPath={LIST_PATH}
+          mode="create"
+          onSave={(nextRow) => {
+            setRows((prev) => [nextRow, ...prev]);
+            navigate(LIST_PATH);
+          }}
+        />
+      );
+    }
+
     const recommendProductId = parseRecommendProductId(subId);
     const row = rows.find((r) => r.id === (recommendProductId ?? subId));
     if (!row) {
@@ -321,6 +369,7 @@ export default function FeelframeProductListPage() {
       <FeelframeProductEditPage
         row={row}
         listPath={LIST_PATH}
+        mode="edit"
         onSave={(nextRow) => {
           setRows((prev) => prev.map((r) => (r.id === nextRow.id ? nextRow : r)));
           navigate(LIST_PATH);
@@ -331,7 +380,15 @@ export default function FeelframeProductListPage() {
 
   return (
     <div className="admin-list-page">
-      <h1 className="page-title">상품관리</h1>
+      <div className="admin-list-page-header">
+        <h1 className="page-title">상품관리</h1>
+        <div className="admin-list-page-header__actions">
+          <button type="button" className="admin-list-add-btn" onClick={() => navigate(productCreatePath())}>
+            <Plus size={18} aria-hidden="true" />
+            상품추가
+          </button>
+        </div>
+      </div>
 
       <section className="admin-list-box" aria-label="상품 검색 필터">
         <div className="filter-top-row admin-filter-row--equal-4">

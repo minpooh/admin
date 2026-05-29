@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import ListRowCopyButton from '../../../components/ListRowCopyButton';
@@ -21,6 +22,26 @@ import {
   personalPaymentListPath,
   personalPaymentPublicUrl,
 } from './personalPaymentPaths';
+
+const PERSONAL_PAYMENT_CREATE_SUB_ID = 'new';
+
+function createEmptyPersonalPaymentRow(): FeelframePersonalPaymentRow {
+  const uniqueId = `ff-pp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  return {
+    id: uniqueId,
+    supplier: '',
+    category: '해당없음',
+    name: '',
+    paymentAmount: 0,
+    deliveryLabel: '미배송',
+    manufacturer: '해당없음',
+    manufacturerUnitPrice: '액자 12R 19,000원',
+    photoUploadEnabled: false,
+    categoryMain: '해당없음',
+    categorySub: '',
+    deliveryEnabled: false,
+  };
+}
 
 const PRODUCT_DETAIL_SEARCH_OPTIONS = [
   { value: '전체', label: '전체' },
@@ -140,6 +161,21 @@ export default function FeelframePersonalPaymentPage() {
   );
 
   if (subId) {
+    if (subId === PERSONAL_PAYMENT_CREATE_SUB_ID) {
+      const newRow = createEmptyPersonalPaymentRow();
+      return (
+        <PersonalPaymentDetailPage
+          key={newRow.id}
+          row={newRow}
+          mode="create"
+          onSave={(nextRow) => {
+            setRows((prev) => [nextRow, ...prev]);
+            navigate(personalPaymentListPath);
+          }}
+        />
+      );
+    }
+
     const detailRow = rows.find((row) => row.id === subId);
     if (!detailRow) {
       return (
@@ -161,6 +197,7 @@ export default function FeelframePersonalPaymentPage() {
       <PersonalPaymentDetailPage
         key={detailRow.id}
         row={detailRow}
+        mode="edit"
         onSave={(nextRow) => {
           setRows((prev) => prev.map((row) => (row.id === nextRow.id ? nextRow : row)));
           navigate(personalPaymentListPath);
@@ -171,7 +208,19 @@ export default function FeelframePersonalPaymentPage() {
 
   return (
     <div className="admin-list-page">
-      <h1 className="page-title">개인결제관리</h1>
+      <div className="admin-list-page-header">
+        <h1 className="page-title">개인결제관리</h1>
+        <div className="admin-list-page-header__actions">
+          <button
+            type="button"
+            className="admin-list-add-btn"
+            onClick={() => navigate(personalPaymentDetailPath(PERSONAL_PAYMENT_CREATE_SUB_ID))}
+          >
+            <Plus size={18} aria-hidden="true" />
+            개인결제창추가
+          </button>
+        </div>
+      </div>
 
       <section className="admin-list-box" aria-label="개인결제 검색 필터">
         <div className="filter-top-row admin-filter-row--single-keyword">

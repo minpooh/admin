@@ -3,7 +3,6 @@ import { ChevronDown, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import '../../../styles/adminPage.css';
-import '../../../styles/adminArrordion.css';
 
 const RichTextEditor = lazy(async () => {
   const mod = await import('../../../components/RichTextEditor');
@@ -38,7 +37,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 }
 
 export default function ProductDetailPage({ listPath, isCreate = false, onSave }: ProductDetailPageProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndexes, setOpenIndexes] = useState<number[]>(() => Array.from({ length: 10 }, (_, idx) => idx));
   const [categoryType, setCategoryType] = useState('');
   const [categoryDetailType, setCategoryDetailType] = useState('');
   const [categoryLangType, setCategoryLangType] = useState('');
@@ -142,13 +141,17 @@ export default function ProductDetailPage({ listPath, isCreate = false, onSave }
       </div>
 
       {accordionItems.map((item, idx) => {
-        const isOpen = openIndex === idx;
+        const isOpen = openIndexes.includes(idx);
         return (
           <section key={item.id} className="admin-list-box admin-accordion">
             <button
               type="button"
               className="admin-accordion__trigger"
-              onClick={() => setOpenIndex((prev) => (prev === idx ? null : idx))}
+              onClick={() =>
+                setOpenIndexes((prev) =>
+                  prev.includes(idx) ? prev.filter((openIdx) => openIdx !== idx) : [...prev, idx]
+                )
+              }
               aria-expanded={isOpen}
             >
               <span>{item.title}</span>
