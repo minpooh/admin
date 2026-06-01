@@ -5,6 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Plus, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/Modal';
 import ListSelect from '../../../components/ListSelect';
+import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import './PopupPage.css';
 
@@ -66,6 +67,13 @@ const INITIAL_POPUPS: PopupRow[] = [
     createdBy: '운영자',
   },
 ];
+
+type ConfirmDialogState = {
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+};
 
 function parseYmd(s: string): Date | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.trim());
@@ -222,6 +230,27 @@ export default function PopupPage() {
     setRows((prev) => prev.filter((r) => r.id !== rowId));
   };
 
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+
+  const closeConfirmDialog = () => setConfirmDialog(null);
+
+  const handleConfirmDialogConfirm = () => {
+    if (!confirmDialog) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  };
+
+  const handleToggleExposed = (row: PopupRow) => {
+    setConfirmDialog({
+      message: '변경하시겠습니까?',
+      confirmText: '확인',
+      cancelText: '취소',
+      onConfirm: () => {
+        setRows((prev) => prev.map((item) => (item.id === row.id ? { ...item, exposed: !item.exposed } : item)));
+      },
+    });
+  };
+
   const triggerImagePick = () => {
     popupImageInputRef.current?.click();
   };
@@ -254,8 +283,8 @@ export default function PopupPage() {
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>노출</th>
-                  <th>노출화면</th>
+                  <th className="col-center">노출</th>
+                  <th className="col-center">노출화면</th>
                   <th>노출카테고리</th>
                   <th>기간</th>
                   <th>랜딩페이지</th>
@@ -272,8 +301,19 @@ export default function PopupPage() {
                     className={r.id === activePopupId ? 'popup-row is-selected' : 'popup-row'}
                     onClick={() => setSelectedPopupId(r.id)}
                   >
-                    <td>{r.exposed ? '노출' : '미노출'}</td>
-                    <td>{r.screen}</td>
+                    <td className="col-center">
+                      <button
+                        type="button"
+                        className={`row-btn ${r.exposed ? 'row-btn--primary' : 'row-btn--gray'}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleExposed(r);
+                        }}
+                      >
+                        {r.exposed ? '노출' : '미노출'}
+                      </button>
+                    </td>
+                    <td className="col-center">{r.screen}</td>
                     <td>{r.category}</td>
                     <td>{r.period}</td>
                     <td>
@@ -531,6 +571,15 @@ export default function PopupPage() {
           </button>
         </Modal.Footer>
       </Modal>
+
+      <Confirm
+        open={Boolean(confirmDialog)}
+        message={confirmDialog?.message ?? ''}
+        confirmText={confirmDialog?.confirmText}
+        cancelText={confirmDialog?.cancelText}
+        onClose={closeConfirmDialog}
+        onConfirm={handleConfirmDialogConfirm}
+      />
     </div>
   );
 }

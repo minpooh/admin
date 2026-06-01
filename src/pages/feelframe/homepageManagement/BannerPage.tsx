@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, ChevronUp, Plus, Image as ImageIcon } from 'lucide-react';
 import Modal from '../../../components/Modal';
+import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import ListSelect from '../../../components/ListSelect';
 import './BannerPage.css';
@@ -64,6 +65,13 @@ const INITIAL_ROWS: BannerRow[] = [
     createdBy: '관리자',
   },
 ];
+
+type ConfirmDialogState = {
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+};
 
 /** 배열 순서를 유지한 채 order만 1…n으로 맞춤 (행 스왑·삭제 등) */
 function renumberRowsInPlace(input: BannerRow[]): BannerRow[] {
@@ -141,6 +149,27 @@ export default function BannerPage() {
     setRows((prev) => {
       const filtered = prev.filter((r) => r.id !== rowId);
       return renumberRowsInPlace(filtered);
+    });
+  };
+
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+
+  const closeConfirmDialog = () => setConfirmDialog(null);
+
+  const handleConfirmDialogConfirm = () => {
+    if (!confirmDialog) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  };
+
+  const handleToggleExposed = (row: BannerRow) => {
+    setConfirmDialog({
+      message: '변경하시겠습니까?',
+      confirmText: '확인',
+      cancelText: '취소',
+      onConfirm: () => {
+        setRows((prev) => prev.map((item) => (item.id === row.id ? { ...item, exposed: !item.exposed } : item)));
+      },
     });
   };
 
@@ -313,7 +342,7 @@ export default function BannerPage() {
             <thead>
               <tr>
                 <th>배너 순서</th>
-                <th>노출</th>
+                <th className="col-center">노출</th>
                 <th>썸네일</th>
                 <th>등록일</th>
                 <th>등록자</th>
@@ -357,7 +386,15 @@ export default function BannerPage() {
                       </div>
                     </div>
                   </td>
-                  <td>{r.exposed ? '노출' : '미노출'}</td>
+                  <td className="col-center">
+                    <button
+                      type="button"
+                      className={`row-btn ${r.exposed ? 'row-btn--primary' : 'row-btn--gray'}`}
+                      onClick={() => handleToggleExposed(r)}
+                    >
+                      {r.exposed ? '노출' : '미노출'}
+                    </button>
+                  </td>
                   <td>
                     <img className="banner-row__thumb" src={r.thumbnailUrl} alt="배너 썸네일" />
                   </td>
@@ -500,6 +537,15 @@ export default function BannerPage() {
           </button>
         </Modal.Footer>
       </Modal>
+
+      <Confirm
+        open={Boolean(confirmDialog)}
+        message={confirmDialog?.message ?? ''}
+        confirmText={confirmDialog?.confirmText}
+        cancelText={confirmDialog?.cancelText}
+        onClose={closeConfirmDialog}
+        onConfirm={handleConfirmDialogConfirm}
+      />
     </div>
   );
 }

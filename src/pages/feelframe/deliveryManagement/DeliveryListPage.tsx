@@ -361,6 +361,8 @@ export default function FeelframeDeliveryListPage() {
   const [productionModalRowId, setProductionModalRowId] = useState<string | null>(null);
   const [deliveryChangeRowId, setDeliveryChangeRowId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [selectedCourierIds, setSelectedCourierIds] = useState<Set<string>>(() => new Set());
+  const courierHeaderCheckboxRef = useRef<HTMLInputElement>(null);
 
   const activeTab = useMemo<(typeof DELIVERY_LIST_TABS)[number]['id']>(() => {
     const t = searchParams.get('tab');
@@ -411,6 +413,7 @@ export default function FeelframeDeliveryListPage() {
     };
     setAppliedCourierSearch(isAppliedCourierEmpty(next) ? null : next);
     setCourierCurrentPage(1);
+    setSelectedCourierIds(new Set());
   };
 
   const handlePickupSearch = () => {
@@ -458,6 +461,47 @@ export default function FeelframeDeliveryListPage() {
   useEffect(() => {
     if (pickupCurrentPage > pickupTotalPages) setPickupCurrentPage(pickupTotalPages);
   }, [pickupCurrentPage, pickupTotalPages]);
+
+  const courierPageIds = paginatedCourierRows.map((row) => row.id);
+  const allCourierPageSelected =
+    courierPageIds.length > 0 && courierPageIds.every((id) => selectedCourierIds.has(id));
+  const someCourierPageSelected = courierPageIds.some((id) => selectedCourierIds.has(id));
+  const selectedCourierCount = selectedCourierIds.size;
+
+  useEffect(() => {
+    const el = courierHeaderCheckboxRef.current;
+    if (el) el.indeterminate = someCourierPageSelected && !allCourierPageSelected;
+  }, [someCourierPageSelected, allCourierPageSelected, paginatedCourierRows]);
+
+  const toggleCourierRow = (id: string) => {
+    setSelectedCourierIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleCourierPage = () => {
+    setSelectedCourierIds((prev) => {
+      const next = new Set(prev);
+      if (allCourierPageSelected) courierPageIds.forEach((id) => next.delete(id));
+      else courierPageIds.forEach((id) => next.add(id));
+      return next;
+    });
+  };
+
+  const handleBulkShippingStandby = () => {
+    if (selectedCourierIds.size === 0) return;
+    setRows((prev) =>
+      prev.map((row) =>
+        selectedCourierIds.has(row.id) && row.channel === 'courier' && row.shippingStatus
+          ? { ...row, shippingStatus: '배송중' }
+          : row
+      )
+    );
+    setSelectedCourierIds(new Set());
+  };
 
   const courierAppliedChips = useMemo(() => {
     if (!appliedCourierSearch) return [] as Array<{ key: CourierChipKey; label: string }>;
@@ -527,6 +571,7 @@ export default function FeelframeDeliveryListPage() {
     }
     setAppliedCourierSearch(isAppliedCourierEmpty(next) ? null : next);
     setCourierCurrentPage(1);
+    setSelectedCourierIds(new Set());
   };
 
   const clearPickupAppliedFilter = (key: PickupChipKey) => {
@@ -997,11 +1042,34 @@ export default function FeelframeDeliveryListPage() {
                 </div>
               </section>
             )}
+            {selectedCourierCount > 0 && (
+              <div className="admin-settlement-bulk" aria-live="polite">
+                <div className="admin-settlement-bulk__bar">
+                  <p className="admin-settlement-bulk__summary">
+                    선택 <strong>{selectedCourierCount}</strong>건
+                  </p>
+                  <button type="button" className="filter-btn filter-btn--primary" onClick={handleBulkShippingStandby}>
+                    배송대기처리
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="admin-table-wrap">
               <table className="admin-table admin-table--min-w-800 admin-table--feelframe-delivery-list-courier">
                 <thead>
                   <tr>
-                    <th scope="col" className="admin-table-col-checkbox" aria-label="선택" />
+                    <th scope="col" className="admin-table-col-checkbox">
+                      <label className="admin-table-checkbox-label">
+                        <input
+                          ref={courierHeaderCheckboxRef}
+                          type="checkbox"
+                          className="admin-checkbox"
+                          checked={allCourierPageSelected}
+                          onChange={toggleCourierPage}
+                          aria-label="현재 페이지 전체 선택"
+                        />
+                      </label>
+                    </th>
                     <th scope="col" className="col-center">
                       메모
                     </th>
@@ -1019,7 +1087,13 @@ export default function FeelframeDeliveryListPage() {
                     <tr key={row.id}>
                       <td className="admin-table-col-checkbox">
                         <label className="admin-table-checkbox-label">
-                          <input type="checkbox" className="admin-checkbox" aria-label={`행 선택 ${row.orderNo}`} />
+                          <input
+                            type="checkbox"
+                            className="admin-checkbox"
+                            checked={selectedCourierIds.has(row.id)}
+                            onChange={() => toggleCourierRow(row.id)}
+                            aria-label={`행 선택 ${row.orderNo}`}
+                          />
                         </label>
                       </td>
                       <td className="col-center">
@@ -1291,7 +1365,6 @@ export default function FeelframeDeliveryListPage() {
               <table className="admin-table admin-table--min-w-1024 admin-table--feelframe-delivery-list-pickup">
                 <thead>
                   <tr>
-                    <th className="admin-table-col-checkbox" aria-label="선택" />
                     <th className="col-center">
                       메모
                     </th>
@@ -1309,11 +1382,6 @@ export default function FeelframeDeliveryListPage() {
                 <tbody>
                   {paginatedPickupRows.map((row) => (
                     <tr key={row.id}>
-                      <td className="admin-table-col-checkbox">
-                        <label className="admin-table-checkbox-label">
-                          <input type="checkbox" className="admin-checkbox" aria-label={`행 선택 ${row.orderNo}`} />
-                        </label>
-                      </td>
                       <td className="col-center">
                         <div
                           className="admin-memo-trigger"
@@ -1426,7 +1494,7 @@ export default function FeelframeDeliveryListPage() {
                   ))}
                   {paginatedPickupRows.length === 0 && (
                     <tr>
-                      <td colSpan={9} style={{ textAlign: 'center', padding: '20px' }}>
+                      <td colSpan={8} style={{ textAlign: 'center', padding: '20px' }}>
                         검색 결과가 없습니다.
                       </td>
                     </tr>

@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Plus, Trash2 } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
+import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import EventDetailPage from './EventDetailPage';
 import { EVENT_NEW_SUB_ID, eventDetailPath, eventListPath, eventNewPath } from './eventPaths';
@@ -28,6 +29,13 @@ type AppliedSearch = {
 };
 
 type AppliedChipKey = 'date' | 'keyword';
+
+type ConfirmDialogState = {
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+};
 
 const ITEMS_PER_PAGE = 10;
 
@@ -67,6 +75,7 @@ export default function EventPage() {
   const [keyword, setKeyword] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
 
   const filteredRows = useMemo(() => {
     if (!appliedSearch) return rows;
@@ -189,6 +198,25 @@ export default function EventPage() {
   const handleDeleteRow = (id: string) => {
     if (!window.confirm('이 이벤트를 삭제하시겠습니까?')) return;
     setRows((prev) => prev.filter((row) => row.id !== id));
+  };
+
+  const closeConfirmDialog = () => setConfirmDialog(null);
+
+  const handleConfirmDialogConfirm = () => {
+    if (!confirmDialog) return;
+    confirmDialog.onConfirm();
+    setConfirmDialog(null);
+  };
+
+  const handleToggleExposed = (row: EventRow) => {
+    setConfirmDialog({
+      message: '변경하시겠습니까?',
+      confirmText: '확인',
+      cancelText: '취소',
+      onConfirm: () => {
+        setRows((prev) => prev.map((item) => (item.id === row.id ? { ...item, exposed: !item.exposed } : item)));
+      },
+    });
   };
 
   const handleAddEvent = () => {
@@ -413,7 +441,15 @@ export default function EventPage() {
             <tbody>
               {paginatedRows.map((row) => (
                 <tr key={row.id}>
-                  <td>{row.exposed ? '노출' : '미노출'}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className={`row-btn ${row.exposed ? 'row-btn--primary' : 'row-btn--gray'}`}
+                      onClick={() => handleToggleExposed(row)}
+                    >
+                      {row.exposed ? '노출' : '미노출'}
+                    </button>
+                  </td>
                   <td className="admin-table-col-title">
                     <Link to={eventDetailPath(row.id)} className="admin-link admin-table-title-link">
                       {row.title}
@@ -497,6 +533,15 @@ export default function EventPage() {
           이벤트 추가
         </button>
       </div>
+
+      <Confirm
+        open={Boolean(confirmDialog)}
+        message={confirmDialog?.message ?? ''}
+        confirmText={confirmDialog?.confirmText}
+        cancelText={confirmDialog?.cancelText}
+        onClose={closeConfirmDialog}
+        onConfirm={handleConfirmDialogConfirm}
+      />
     </div>
   );
 }
