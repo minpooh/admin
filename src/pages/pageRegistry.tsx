@@ -102,9 +102,11 @@ registerPage('feelmaker/homepageManagement/noticeList', NoticePage);
 import EnterpriseListPage from './feelmaker/enterpriseManagement/EnterpriseListPage';
 import EnterpriseOrderListPage from './feelmaker/enterpriseManagement/EnterpriseOrderListPage';
 import EnterpriseInvoicePage from './feelmaker/enterpriseManagement/EnterpriseInvoicePage';
+import EnterpriseInquiryPage from './feelmaker/enterpriseManagement/EnterpriseInquiryPage';
 registerPage('feelmaker/enterpriseManagement/enterpriseList', EnterpriseListPage);
 registerPage('feelmaker/enterpriseManagement/enterpriseOrderList', EnterpriseOrderListPage);
 registerPage('feelmaker/enterpriseManagement/enterpriseInvoice', EnterpriseInvoicePage);
+registerPage('feelmaker/enterpriseManagement/enterpriseInquiry', EnterpriseInquiryPage);
 
 // 크리에이터관리
 import CreatorListPage from './feelmaker/creatorManagement/CreatorListPage';
