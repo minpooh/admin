@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import ListSelect from '../../../components/ListSelect';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
@@ -186,9 +187,18 @@ function applyFilters(rows: FeelframeOrderCancelItem[], search: AppliedSearch | 
   });
 }
 
+function formatCancelRowCustomerCopyText(row: FeelframeOrderCancelItem): string {
+  return [
+    `이름: ${row.customerName}`,
+    `아이디: ${row.customerId}`,
+    `전화번호: ${row.customerPhone}`,
+    `주문번호: ${row.orderNo}`,
+  ].join('\n');
+}
+
 export default function FeelframeOrderCancelPage() {
   const [rows, setRows] = useState<FeelframeOrderCancelItem[]>(() => getInitialCancelRows());
-  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterExpanded, setFilterExpanded] = useState(true);
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -511,6 +521,7 @@ export default function FeelframeOrderCancelPage() {
           <table className="admin-table admin-table--min-w-800">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th>주문번호</th>
                 <th>주문정보</th>
                 <th>고객정보</th>
@@ -526,6 +537,12 @@ export default function FeelframeOrderCancelPage() {
             <tbody>
               {paginatedRows.map((row) => (
                 <tr key={row.id}>
+                  <td className="col-center">
+                    <ListRowCopyButton
+                      text={formatCancelRowCustomerCopyText(row)}
+                      ariaLabel="이름·아이디·전화번호·주문번호 복사"
+                    />
+                  </td>
                   <td>{row.orderNo}</td>
                   <td>{row.orderInfo}</td>
                   <td>
@@ -569,7 +586,7 @@ export default function FeelframeOrderCancelPage() {
               ))}
               {paginatedRows.length === 0 && (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={11} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>

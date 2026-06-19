@@ -208,7 +208,7 @@ export default function GroupListPage() {
   const [groupEndDate, setGroupEndDate] = useState<Date | null>(null);
   const [detailSearchType, setDetailSearchType] = useState<DetailSearchType>('전체');
   const [keyword, setKeyword] = useState('');
-  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterExpanded, setFilterExpanded] = useState(true);
   const [closeDateRange, setCloseDateRange] = useState('');
   const [closeStartDate, setCloseStartDate] = useState<Date | null>(null);
   const [closeEndDate, setCloseEndDate] = useState<Date | null>(null);

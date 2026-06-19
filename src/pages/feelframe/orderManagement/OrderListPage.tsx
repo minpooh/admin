@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import ListSelect from '../../../components/ListSelect';
+import ListRowCopyButton from '../../../components/ListRowCopyButton';
 import Modal from '../../../components/Modal';
 import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
@@ -89,6 +90,13 @@ type AppliedChipKey =
   | 'progressStatus'
   | 'amount';
 
+type OrderDetailPreviewItem = {
+  id: string;
+  thumbnailLabel: string;
+  productName: string;
+  optionLabel: string;
+};
+
 function getDateRangeByPreset(preset: string): { start: Date; end: Date } {
   const today = new Date();
   const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -139,6 +147,24 @@ function formatYmd(date: Date | null) {
   const mm = String(date.getMonth() + 1).padStart(2, '0');
   const dd = String(date.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
+}
+
+function getOrderDetailPreviewItems(order: FeelframeOrderListItem): OrderDetailPreviewItem[] {
+  const sourceProducts = order.orderInfo
+    .split('+')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const totalCount = Math.max(1, order.purchaseCount);
+
+  return Array.from({ length: totalCount }, (_, idx) => {
+    const productName = sourceProducts[idx] ?? sourceProducts[sourceProducts.length - 1] ?? order.orderInfo;
+    return {
+      id: `${order.id}-detail-${idx + 1}`,
+      thumbnailLabel: `상품 ${idx + 1}`,
+      productName,
+      optionLabel: `${order.shippingCarrierName} / ${idx + 1}번째 상품`,
+    };
+  });
 }
 
 function parseAmountInput(value: string) {
@@ -234,8 +260,17 @@ function applyOrderListFilters(orders: FeelframeOrderListItem[], search: Applied
   });
 }
 
+function formatOrderCustomerCopyText(order: FeelframeOrderListItem): string {
+  return [
+    `이름: ${order.customerName}`,
+    `아이디: ${order.customerId}`,
+    `전화번호: ${order.customerPhone}`,
+    `주문번호: ${order.orderNo}`,
+  ].join('\n');
+}
+
 export default function FeelframeOrderListPage() {
-  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterExpanded, setFilterExpanded] = useState(true);
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -260,6 +295,9 @@ export default function FeelframeOrderListPage() {
   const [memoTooltipOrderId, setMemoTooltipOrderId] = useState<string | null>(null);
   const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
   const memoTooltipAnchorRef = useRef<HTMLElement | null>(null);
+  const [orderDetailTooltipOrderId, setOrderDetailTooltipOrderId] = useState<string | null>(null);
+  const [orderDetailTooltipPosition, setOrderDetailTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const orderDetailTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [memoInput, setMemoInput] = useState('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const ITEMS_PER_PAGE = 10;
@@ -461,6 +499,68 @@ export default function FeelframeOrderListPage() {
     setMemoTooltipPosition(null);
     memoTooltipAnchorRef.current = null;
   };
+
+  const updateOrderDetailTooltipPosition = () => {
+    const anchorElement = orderDetailTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    const top = rect.bottom + 8;
+    const right = Math.max(viewportMargin, window.innerWidth - rect.right);
+    setOrderDetailTooltipPosition({ top, right });
+  };
+
+  const hideOrderDetailTooltip = () => {
+    setOrderDetailTooltipOrderId(null);
+    setOrderDetailTooltipPosition(null);
+    orderDetailTooltipAnchorRef.current = null;
+  };
+
+  const toggleOrderDetailTooltip = (orderId: string, triggerElement: HTMLElement) => {
+    if (orderDetailTooltipOrderId === orderId) {
+      hideOrderDetailTooltip();
+      return;
+    }
+    orderDetailTooltipAnchorRef.current = triggerElement;
+    setOrderDetailTooltipOrderId(orderId);
+    updateOrderDetailTooltipPosition();
+  };
+
+  useLayoutEffect(() => {
+    if (!orderDetailTooltipOrderId) return;
+    const update = () => updateOrderDetailTooltipPosition();
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [orderDetailTooltipOrderId]);
+
+  useEffect(() => {
+    if (!orderDetailTooltipOrderId) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const anchor = orderDetailTooltipAnchorRef.current;
+      if (anchor?.contains(target)) return;
+      hideOrderDetailTooltip();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      hideOrderDetailTooltip();
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [orderDetailTooltipOrderId]);
 
   const handleSearch = () => {
     const nextAppliedSearch: AppliedSearch = {
@@ -844,6 +944,7 @@ export default function FeelframeOrderListPage() {
           <table className="admin-table admin-table--min-w-800 admin-table--feelframe-order-list">
             <thead>
               <tr>
+                <th className="col-center">복사</th>
                 <th>주문번호</th>
                 <th>담당자</th>
                 <th>고객정보</th>
@@ -869,7 +970,25 @@ export default function FeelframeOrderListPage() {
                       : undefined
                   }
                 >
-                  <td>{order.orderNo}</td>
+                  <td className="col-center">
+                    <ListRowCopyButton
+                      text={formatOrderCustomerCopyText(order)}
+                      ariaLabel="이름·아이디·전화번호·주문번호 복사"
+                    />
+                  </td>
+                  <td>
+                    <div className="admin-memo-trigger">
+                      <button
+                        type="button"
+                        className="admin-link"
+                        onClick={(e) => toggleOrderDetailTooltip(order.id, e.currentTarget)}
+                        aria-expanded={orderDetailTooltipOrderId === order.id}
+                        aria-label="주문상세 보기"
+                      >
+                        {order.orderNo}
+                      </button>
+                    </div>
+                  </td>
                   <td>
                     <button
                       type="button"
@@ -899,7 +1018,17 @@ export default function FeelframeOrderListPage() {
                   <td>{order.orderedAt}</td>
                   <td>
                     <div className="cell-block">
-                      <span className="cell-line">{order.orderInfo}</span>
+                      <span className="cell-line">
+                        <button
+                          type="button"
+                          className="admin-link"
+                          onClick={(e) => toggleOrderDetailTooltip(order.id, e.currentTarget)}
+                          aria-expanded={orderDetailTooltipOrderId === order.id}
+                          aria-label="주문상세 보기"
+                        >
+                          {order.orderInfo}
+                        </button>
+                      </span>
                       <span className="cell-line cell-line--with-action">
                         <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">
                         {order.shippingCarrierName}
@@ -957,7 +1086,7 @@ export default function FeelframeOrderListPage() {
                     >
                       <button
                         type="button"
-                        className={`row-btn ${order.memoEntries.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                        className={`row-btn ${order.memoEntries.length > 0 ? 'row-btn--red' : 'row-btn--default'}`}
                         onClick={() => openMemoModal(order.id)}
                       >
                         {order.memoEntries.length > 0 ? '메모 확인' : '메모 작성'}
@@ -972,7 +1101,7 @@ export default function FeelframeOrderListPage() {
                   <td className="col-center">
                     <button
                       type="button"
-                      className="row-btn row-btn--red"
+                      className="row-btn row-btn--blue"
                       aria-label="삭제"
                       onClick={() => handleDeleteOrder(order.id)}
                     >
@@ -983,7 +1112,7 @@ export default function FeelframeOrderListPage() {
               ))}
               {paginatedOrders.length === 0 && (
                 <tr>
-                  <td colSpan={13} style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan={14} style={{ textAlign: 'center', padding: '20px' }}>
                     검색 결과가 없습니다.
                   </td>
                 </tr>
@@ -1253,6 +1382,41 @@ export default function FeelframeOrderListPage() {
                 </li>
               ))}
             </ul>
+          </div>,
+          document.body
+        );
+      })()}
+
+      {orderDetailTooltipOrderId && orderDetailTooltipPosition && (() => {
+        const order = orders.find((item) => item.id === orderDetailTooltipOrderId);
+        if (!order) return null;
+        const detailItems = getOrderDetailPreviewItems(order);
+
+        return createPortal(
+          <div
+            className="admin-order-detail-floating-tooltip"
+            role="tooltip"
+            style={{ top: orderDetailTooltipPosition.top, right: orderDetailTooltipPosition.right }}
+          >
+            <div className="admin-order-detail-tooltip">
+              <div className="admin-order-detail-tooltip__header">
+                <span>고객명: {order.customerName}</span>
+                <span>주문번호: {order.orderNo}</span>
+              </div>
+              <ul className="admin-order-detail-tooltip__list">
+                {detailItems.map((detailItem) => (
+                  <li key={detailItem.id} className="admin-order-detail-tooltip__item">
+                    <div className="admin-order-detail-tooltip__thumb" aria-hidden="true">
+                      {detailItem.thumbnailLabel}
+                    </div>
+                    <div className="admin-order-detail-tooltip__meta">
+                      <p className="admin-order-detail-tooltip__name">{detailItem.productName}</p>
+                      <p className="admin-order-detail-tooltip__option">{detailItem.optionLabel}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>,
           document.body
         );

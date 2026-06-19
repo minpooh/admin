@@ -387,7 +387,7 @@ export default function FeelframeDeliveryListPage() {
   const [courierKeyword, setCourierKeyword] = useState('');
   const [courierCarrier, setCourierCarrier] = useState<(typeof CARRIER_OPTIONS)[number]>('전체');
   const [courierPaymentMethod, setCourierPaymentMethod] = useState<(typeof COURIER_PAYMENT_METHOD_OPTIONS)[number]>('전체');
-  const [courierDetailExpanded, setCourierDetailExpanded] = useState(false);
+  const [courierDetailExpanded, setCourierDetailExpanded] = useState(true);
 
   const [pickupDateRange, setPickupDateRange] = useState('');
   const [pickupStartDate, setPickupStartDate] = useState<Date | null>(null);

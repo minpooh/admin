@@ -143,7 +143,7 @@ export default function CustomerListPage() {
   const [keyword, setKeyword] = useState('');
   const [marketingConsent, setMarketingConsent] = useState('');
   const [hasPet, setHasPet] = useState('');
-  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(true);
 
   const [appliedSearch, setAppliedSearch] = useState<CustomerAppliedSearch | null>(null);
 

@@ -482,6 +482,10 @@ export default function EnterpriseInquiryPage() {
     setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
   };
 
+  const summaryRows = appliedSearch ? filteredRows : rows;
+  const summaryTotalCount = summaryRows.length;
+  const summaryPendingCount = summaryRows.filter((row) => row.answerStatus === 'pending').length;
+
   if (subId) {
     const detailRow = rows.find((row) => row.id === subId);
     if (!detailRow) {
@@ -514,7 +518,9 @@ export default function EnterpriseInquiryPage() {
       <h1 className="page-title">엔터프라이즈문의</h1>
 
       <section className="admin-list-box" aria-label="검색 결과 요약">
-        <p className="admin-list-result">총0개의 게시물이 있습니다. 미답변건은 0개입니다.</p>
+        <p className="admin-list-result">
+          총 {summaryTotalCount.toLocaleString()}개의 게시물이 있습니다. 미답변건은 {summaryPendingCount}개입니다.
+        </p>
       </section>
 
       <section className="admin-list-box" aria-label="문의 검색 필터">

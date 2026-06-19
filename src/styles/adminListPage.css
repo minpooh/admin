@@ -456,6 +456,8 @@
   color: var(--secondary-color-500);
 }
 
+
+
 /* 아이콘 버튼 (삭제 등) */
 .row-icon-btn {
   width: 32px;
@@ -1600,6 +1602,17 @@ button.admin-link {
   pointer-events: none;
 }
 
+.admin-order-detail-floating-tooltip {
+  position: fixed;
+  z-index: 120;
+  width: 320px;
+  max-width: min(420px, calc(100vw - 24px));
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
 /* 메모 모달 */
 .admin-memo-modal__textarea {
   width: 100%;
@@ -1684,6 +1697,78 @@ button.admin-link {
   justify-content: flex-end;
 }
 
+.admin-order-detail-tooltip {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.75rem;
+}
+
+.admin-order-detail-tooltip__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.625rem;
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+.admin-order-detail-tooltip__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-order-detail-tooltip__item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.admin-order-detail-tooltip__thumb {
+  width: 52px;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f3f4f6;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+}
+
+.admin-order-detail-tooltip__meta {
+  min-width: 0;
+}
+
+.admin-order-detail-tooltip__name {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #111827;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-order-detail-tooltip__option {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* 필프레임 재수정요청 관리 */
 .admin-table.admin-table--feelframe-reupload {
   min-width: 900px;
@@ -1698,31 +1783,33 @@ button.admin-link {
 
 /* 필프레임 주문관리 전체목록 */
 .admin-table.admin-table--feelframe-order-list th:nth-child(1),
-.admin-table.admin-table--feelframe-order-list td:nth-child(1) { min-width: 125px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(1) { min-width: 40px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(2),
-.admin-table.admin-table--feelframe-order-list td:nth-child(2) { min-width: 45px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(2) { min-width: 130px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(3),
-.admin-table.admin-table--feelframe-order-list td:nth-child(3) { min-width: 145px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(3) { min-width: 40px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(4),
-.admin-table.admin-table--feelframe-order-list td:nth-child(4) { min-width: 60px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(4) { min-width: 160px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(5),
-.admin-table.admin-table--feelframe-order-list td:nth-child(5) { min-width: 125px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(5) { min-width: 60px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(6),
-.admin-table.admin-table--feelframe-order-list td:nth-child(6) { min-width: 160px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(6) { min-width: 70px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(7),
-.admin-table.admin-table--feelframe-order-list td:nth-child(7) { min-width: 30px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(7) { min-width: 160px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(8),
-.admin-table.admin-table--feelframe-order-list td:nth-child(8) { min-width: 65px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(8) { min-width: 40px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(9),
 .admin-table.admin-table--feelframe-order-list td:nth-child(9) { min-width: 60px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(10),
-.admin-table.admin-table--feelframe-order-list td:nth-child(10) { min-width: 160px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(10) { min-width: 60px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(11),
-.admin-table.admin-table--feelframe-order-list td:nth-child(11) { min-width: 50px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(11) { min-width: 60px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(12),
-.admin-table.admin-table--feelframe-order-list td:nth-child(12) { min-width: 50px; }
+.admin-table.admin-table--feelframe-order-list td:nth-child(12) { min-width: 60px; }
 .admin-table.admin-table--feelframe-order-list th:nth-child(13),
 .admin-table.admin-table--feelframe-order-list td:nth-child(13) { min-width: 50px; }
+.admin-table.admin-table--feelframe-order-list th:nth-child(14),
+.admin-table.admin-table--feelframe-order-list td:nth-child(14) { min-width: 50px; }
 
 /* 필프레임 LP 배송관리 목록 */
 .admin-table.admin-table--feelframe-lp-delivery {

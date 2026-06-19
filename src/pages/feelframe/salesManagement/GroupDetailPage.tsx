@@ -189,7 +189,7 @@ export default function GroupDetailPage({ row, listPath }: Props) {
   const [registrationStatus, setRegistrationStatus] = useState<(typeof REGISTRATION_STATUS_OPTIONS)[number]>('전체');
   const [detailSearchType, setDetailSearchType] = useState<DetailSearchType>('전체');
   const [keyword, setKeyword] = useState('');
-  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterExpanded, setFilterExpanded] = useState(true);
   const [usageStatus, setUsageStatus] = useState<(typeof USAGE_STATUS_OPTIONS)[number]>('전체');
   const [customerCheck, setCustomerCheck] = useState<(typeof CUSTOMER_CHECK_OPTIONS)[number]>('전체');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);

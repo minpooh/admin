@@ -220,7 +220,7 @@ function applyQuestionFilters(rows: FeelframeQuestionRow[], search: AppliedSearc
 export default function QuestionPage() {
   const { subId } = useParams<{ subId?: string }>();
   const [rows, setRows] = useState<FeelframeQuestionRow[]>(() => [...MOCK_FEELFRAME_QUESTIONS]);
-  const [filterExpanded, setFilterExpanded] = useState(false);
+  const [filterExpanded, setFilterExpanded] = useState(true);
   const [dateRange, setDateRange] = useState('');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
