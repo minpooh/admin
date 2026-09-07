@@ -20,10 +20,10 @@ const DETAIL_SEARCH_OPTIONS = [
   { value: '전화번호', label: '전화번호' },
   { value: '주문번호', label: '주문번호' },
 ] as const;
-const CANCEL_STATUS_OPTIONS = ['전체', '취소접수', '취소완료', '반려'] as const;
+const CANCEL_STATUS_OPTIONS = ['전체', '취소전', '취소완료', '반려'] as const;
 const PAYMENT_METHOD_OPTIONS = ['전체', '무통장입금', '카드결제', '카카오페이', '네이버페이', '실시간계좌이체'] as const;
 
-type FeelframeOrderCancelStatus = '취소접수' | '취소완료' | '반려';
+type FeelframeOrderCancelStatus = '취소전' | '취소완료' | '반려';
 type FeelframeOrderCancelItem = {
   id: string;
   requestedAt: string;
@@ -136,7 +136,7 @@ function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCance
     customerPhone: order.customerPhone,
     cancelReason,
     paymentNo,
-    cancelStatus: order.paymentStatus === '환불완료' ? '취소완료' : isRejectedCancel ? '반려' : '취소접수',
+    cancelStatus: order.paymentStatus === '환불완료' ? '취소완료' : isRejectedCancel ? '반려' : '취소전',
     rejectInfo: order.cancelRejectInfo || '-',
     bankInfo,
     manager: order.manager,
@@ -656,7 +656,7 @@ export default function FeelframeOrderCancelPage() {
               <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={closeCancelModal}>
                 닫기
               </button>
-              {row.cancelStatus === '취소접수' && (
+              {row.cancelStatus === '취소전' && (
                 <>
                   <button type="button" className="option-modal__btn option-modal__btn--danger" onClick={() => rejectCancel(row.id)}>
                     반려

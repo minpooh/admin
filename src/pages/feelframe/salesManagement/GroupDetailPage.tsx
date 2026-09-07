@@ -536,7 +536,7 @@ export default function GroupDetailPage({ row, listPath }: Props) {
                       >
                         <button
                           type="button"
-                          className={`row-btn ${participant.memo.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                          className={`row-btn ${participant.memo.length > 0 ? 'row-btn--red' : 'row-btn--default'}`}
                           onClick={() => openMemoModal(participant.id)}
                         >
                           {participant.memo.length > 0 ? '메모 확인' : '메모 작성'}
@@ -546,7 +546,7 @@ export default function GroupDetailPage({ row, listPath }: Props) {
                     <td className="col-center">
                       <button
                         type="button"
-                        className="row-btn row-btn--red"
+                        className="row-btn row-btn--blue"
                         onClick={() => setDeleteTargetId(participant.id)}
                       >
                         삭제

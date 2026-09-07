@@ -12,6 +12,7 @@ import '../../../styles/adminPage.css';
 import {
   MOCK_FEELFRAME_ORDER_LIST,
   getFeelframeOrderProgressCellDisplay,
+  type FeelframeOrderAdminPreviewImage,
   type FeelframeOrderListItem,
   type FeelframeOrderMemoEntry,
 } from './mock/orderList.mock';
@@ -298,6 +299,9 @@ export default function FeelframeOrderListPage() {
   const [orderDetailTooltipOrderId, setOrderDetailTooltipOrderId] = useState<string | null>(null);
   const [orderDetailTooltipPosition, setOrderDetailTooltipPosition] = useState<{ top: number; right: number } | null>(null);
   const orderDetailTooltipAnchorRef = useRef<HTMLElement | null>(null);
+  const [previewTooltipOrderId, setPreviewTooltipOrderId] = useState<string | null>(null);
+  const [previewTooltipPosition, setPreviewTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const previewTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [memoInput, setMemoInput] = useState('');
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const ITEMS_PER_PAGE = 10;
@@ -516,6 +520,28 @@ export default function FeelframeOrderListPage() {
     orderDetailTooltipAnchorRef.current = null;
   };
 
+  const updatePreviewTooltipPosition = () => {
+    const anchorElement = previewTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    setPreviewTooltipPosition({
+      top: rect.bottom + 8,
+      right: Math.max(viewportMargin, window.innerWidth - rect.right),
+    });
+  };
+
+  const showPreviewTooltip = (orderId: string, triggerElement: HTMLElement) => {
+    previewTooltipAnchorRef.current = triggerElement;
+    setPreviewTooltipOrderId(orderId);
+  };
+
+  const hidePreviewTooltip = () => {
+    setPreviewTooltipOrderId(null);
+    setPreviewTooltipPosition(null);
+    previewTooltipAnchorRef.current = null;
+  };
+
   const toggleOrderDetailTooltip = (orderId: string, triggerElement: HTMLElement) => {
     if (orderDetailTooltipOrderId === orderId) {
       hideOrderDetailTooltip();
@@ -537,6 +563,17 @@ export default function FeelframeOrderListPage() {
       window.removeEventListener('resize', update);
     };
   }, [orderDetailTooltipOrderId]);
+
+  useLayoutEffect(() => {
+    if (!previewTooltipOrderId) return;
+    updatePreviewTooltipPosition();
+    window.addEventListener('scroll', updatePreviewTooltipPosition, true);
+    window.addEventListener('resize', updatePreviewTooltipPosition);
+    return () => {
+      window.removeEventListener('scroll', updatePreviewTooltipPosition, true);
+      window.removeEventListener('resize', updatePreviewTooltipPosition);
+    };
+  }, [previewTooltipOrderId]);
 
   useEffect(() => {
     if (!orderDetailTooltipOrderId) return;
@@ -1030,7 +1067,7 @@ export default function FeelframeOrderListPage() {
                         </button>
                       </span>
                       <span className="cell-line cell-line--with-action">
-                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">
+                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--primary" aria-hidden="true">
                         {order.shippingCarrierName}
                         </span>
                       </span>
@@ -1062,7 +1099,7 @@ export default function FeelframeOrderListPage() {
                             <span className="progress-status__text">{progressCell.primaryLabel}</span>
                           </span>
                           {progressCell.detailLines.map((line, lineIdx) => (
-                            <span key={`${order.id}-progress-${lineIdx}`} className="cell-line">
+                            <span key={`${order.id}-progress-${lineIdx}`} className="cell-line admin-list-muted">
                               {line}
                             </span>
                           ))}
@@ -1094,9 +1131,37 @@ export default function FeelframeOrderListPage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <button type="button" className="admin-link">
-                      상세보기
-                    </button>
+                    <div className="cell-block">
+                      <button type="button" className="admin-link">
+                        상세보기
+                      </button>
+                      <div
+                        className="admin-memo-trigger"
+                        onMouseEnter={(e) => {
+                          if (order.adminPreviewImages.length === 0) return;
+                          showPreviewTooltip(order.id, e.currentTarget);
+                        }}
+                        onMouseLeave={hidePreviewTooltip}
+                        onFocus={(e) => {
+                          if (order.adminPreviewImages.length === 0) return;
+                          showPreviewTooltip(order.id, e.currentTarget);
+                        }}
+                        onBlur={hidePreviewTooltip}
+                      >
+                        <button
+                          type="button"
+                          className={`row-btn ${order.adminPreviewImages.length > 0 ? 'row-btn--primary' : 'row-btn--default'}`}
+                          disabled={order.adminPreviewImages.length === 0}
+                          aria-label={
+                            order.adminPreviewImages.length > 0
+                              ? `${order.orderNo} 미리보기`
+                              : `${order.orderNo} 미리보기 없음`
+                          }
+                        >
+                          미리보기
+                        </button>
+                      </div>
+                    </div>
                   </td>
                   <td className="col-center">
                     <button
@@ -1416,6 +1481,31 @@ export default function FeelframeOrderListPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
+
+      {previewTooltipOrderId && previewTooltipPosition && (() => {
+        const order = orders.find((item) => item.id === previewTooltipOrderId);
+        if (!order || order.adminPreviewImages.length === 0) return null;
+
+        return createPortal(
+          <div
+            className="admin-memo-floating-tooltip admin-memo-floating-tooltip--preview"
+            role="tooltip"
+            style={{ top: previewTooltipPosition.top, right: previewTooltipPosition.right }}
+          >
+            <div className="admin-preview-tooltip__inner">
+              <p className="admin-preview-tooltip__title">관리자 업로드</p>
+              <div className="admin-preview-tooltip__grid">
+                {order.adminPreviewImages.map((img: FeelframeOrderAdminPreviewImage) => (
+                  <div key={img.id} className="admin-preview-tooltip__cell">
+                    <img src={img.url} alt="" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>,
           document.body

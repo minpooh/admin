@@ -14,6 +14,12 @@ export type FeelframeOrderMemoEntry = {
   createdAt: string;
 };
 
+export type FeelframeOrderAdminPreviewImage = {
+  id: string;
+  url: string;
+  uploadedAt: string;
+};
+
 export type FeelframeOrderListItem = {
   id: string;
   orderNo: string;
@@ -62,9 +68,10 @@ export type FeelframeOrderListItem = {
   /** 배송완료 → 배송완료일 */
   progressDeliveredAt?: string;
   memoEntries: FeelframeOrderMemoEntry[];
+  adminPreviewImages: FeelframeOrderAdminPreviewImage[];
 };
 
-type FeelframeOrderListItemDraft = Omit<FeelframeOrderListItem, 'shippingCarrierName'>;
+type FeelframeOrderListItemDraft = Omit<FeelframeOrderListItem, 'shippingCarrierName' | 'adminPreviewImages'>;
 
 const MOCK_FEELFRAME_ORDER_SHIPPING_CARRIERS = [
   '방문수령',
@@ -131,6 +138,16 @@ function feelframeMockProgressDetailFields(
     default:
       return {};
   }
+}
+
+function feelframeMockOrderPreviewImages(rowId: string, idx: number): FeelframeOrderAdminPreviewImage[] {
+  if (idx % 4 === 0) return [];
+  const count = 1 + (idx % 3);
+  return Array.from({ length: count }, (_, i) => ({
+    id: `${rowId}-preview-${i}`,
+    url: `https://picsum.photos/seed/fforder-${encodeURIComponent(rowId)}-${i}/480/360`,
+    uploadedAt: `2026-04-${String(Math.max(1, 20 - (i % 6))).padStart(2, '0')} ${String(10 + i).padStart(2, '0')}:25:00`,
+  }));
 }
 
 const MOCK_FEELFRAME_ORDER_LIST_RAW: FeelframeOrderListItemDraft[] = [
@@ -869,6 +886,7 @@ export const MOCK_FEELFRAME_ORDER_LIST: FeelframeOrderListItem[] = MOCK_FEELFRAM
   return {
     ...row,
     shippingCarrierName,
+    adminPreviewImages: feelframeMockOrderPreviewImages(row.id, idx),
     ...feelframeMockProgressDetailFields(row, idx, shippingCarrierName),
   };
 });

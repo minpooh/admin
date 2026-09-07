@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
+import { createPortal } from 'react-dom';
 import { Link, useParams } from 'react-router-dom';
 import ListSelect from '../../../components/ListSelect';
 import Confirm from '../../../components/Confirm';
@@ -7,6 +8,7 @@ import '../../../styles/adminPage.css';
 import { pagePath } from '../../../routes';
 import UploadReuploadDetailPage from './UploadReuploadDetailPage';
 import {
+  getFeelframeReuploadDetailById,
   MOCK_FEELFRAME_REUPLOAD_LIST,
   type FeelframeReuploadRow,
   type FeelframeReuploadStatus,
@@ -40,6 +42,13 @@ type ConfirmDialogState = {
   cancelText?: string;
   danger?: boolean;
   onConfirm: () => void;
+};
+
+type UploadOrderDetailPreviewItem = {
+  id: string;
+  thumbnailLabel: string;
+  productName: string;
+  optionLabel: string;
 };
 
 function isAppliedSearchEmpty(search: AppliedSearch | null) {
@@ -85,6 +94,29 @@ function getStatusClassName(status: FeelframeReuploadStatus) {
   return 'progress-status progress-status--secondary';
 }
 
+function getUploadOrderDetailPreviewItems(row: FeelframeReuploadRow): UploadOrderDetailPreviewItem[] {
+  const detail = getFeelframeReuploadDetailById(row.id);
+  if (!detail) {
+    return [
+      {
+        id: `${row.id}-detail-1`,
+        thumbnailLabel: '상품 1',
+        productName: row.title,
+        optionLabel: '-',
+      },
+    ];
+  }
+
+  return [
+    {
+      id: `${row.id}-detail-1`,
+      thumbnailLabel: '상품 1',
+      productName: detail.productName,
+      optionLabel: detail.orderOptionSummary,
+    },
+  ];
+}
+
 export default function FeelframeUploadReuploadPage() {
   const { subId } = useParams<{ subId?: string }>();
   const [rows, setRows] = useState<FeelframeReuploadRow[]>(() => [...MOCK_FEELFRAME_REUPLOAD_LIST]);
@@ -94,6 +126,9 @@ export default function FeelframeUploadReuploadPage() {
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [orderDetailTooltipRowId, setOrderDetailTooltipRowId] = useState<string | null>(null);
+  const [orderDetailTooltipPosition, setOrderDetailTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const orderDetailTooltipAnchorRef = useRef<HTMLElement | null>(null);
 
   const filteredRows = useMemo(() => applyFilters(rows, appliedSearch), [rows, appliedSearch]);
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
@@ -170,6 +205,69 @@ export default function FeelframeUploadReuploadPage() {
       },
     });
   };
+
+  const updateOrderDetailTooltipPosition = () => {
+    const anchorElement = orderDetailTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    setOrderDetailTooltipPosition({
+      top: rect.bottom + 8,
+      right: Math.max(viewportMargin, window.innerWidth - rect.right),
+    });
+  };
+
+  const hideOrderDetailTooltip = () => {
+    setOrderDetailTooltipRowId(null);
+    setOrderDetailTooltipPosition(null);
+    orderDetailTooltipAnchorRef.current = null;
+  };
+
+  const toggleOrderDetailTooltip = (rowId: string, triggerElement: HTMLElement) => {
+    if (orderDetailTooltipRowId === rowId) {
+      hideOrderDetailTooltip();
+      return;
+    }
+    orderDetailTooltipAnchorRef.current = triggerElement;
+    setOrderDetailTooltipRowId(rowId);
+    updateOrderDetailTooltipPosition();
+  };
+
+  useLayoutEffect(() => {
+    if (!orderDetailTooltipRowId) return;
+    const update = () => updateOrderDetailTooltipPosition();
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [orderDetailTooltipRowId]);
+
+  useEffect(() => {
+    if (!orderDetailTooltipRowId) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const anchor = orderDetailTooltipAnchorRef.current;
+      if (anchor?.contains(target)) return;
+      hideOrderDetailTooltip();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      hideOrderDetailTooltip();
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [orderDetailTooltipRowId]);
 
   if (subId) return <UploadReuploadDetailPage />;
 
@@ -250,7 +348,19 @@ export default function FeelframeUploadReuploadPage() {
             <tbody>
               {paginatedRows.map((row) => (
                 <tr key={row.id}>
-                  <td>{row.orderNo}</td>
+                  <td>
+                    <div className="admin-memo-trigger">
+                      <button
+                        type="button"
+                        className="admin-link"
+                        onClick={(e) => toggleOrderDetailTooltip(row.id, e.currentTarget)}
+                        aria-expanded={orderDetailTooltipRowId === row.id}
+                        aria-label="주문상세 보기"
+                      >
+                        {row.orderNo}
+                      </button>
+                    </div>
+                  </td>
                   <td>{row.manager}</td>
                   <td>
                     <Link
@@ -337,6 +447,41 @@ export default function FeelframeUploadReuploadPage() {
           </div>
         </div>
       </section>
+
+      {orderDetailTooltipRowId && orderDetailTooltipPosition && (() => {
+        const row = rows.find((item) => item.id === orderDetailTooltipRowId);
+        if (!row) return null;
+        const detailItems = getUploadOrderDetailPreviewItems(row);
+
+        return createPortal(
+          <div
+            className="admin-order-detail-floating-tooltip"
+            role="tooltip"
+            style={{ top: orderDetailTooltipPosition.top, right: orderDetailTooltipPosition.right }}
+          >
+            <div className="admin-order-detail-tooltip">
+              <div className="admin-order-detail-tooltip__header">
+                <span>고객명: {row.customerName}</span>
+                <span>주문번호: {row.orderNo}</span>
+              </div>
+              <ul className="admin-order-detail-tooltip__list">
+                {detailItems.map((detailItem) => (
+                  <li key={detailItem.id} className="admin-order-detail-tooltip__item">
+                    <div className="admin-order-detail-tooltip__thumb" aria-hidden="true">
+                      {detailItem.thumbnailLabel}
+                    </div>
+                    <div className="admin-order-detail-tooltip__meta">
+                      <p className="admin-order-detail-tooltip__name">{detailItem.productName}</p>
+                      <p className="admin-order-detail-tooltip__option">{detailItem.optionLabel}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
 
       <Confirm
         open={Boolean(confirmDialog)}

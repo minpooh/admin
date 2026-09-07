@@ -1,6 +1,7 @@
 /** 필프레임 · 업로드관리 · 액자 업로드 목록 더미 데이터 */
 export type FeelframeUploadFrameProgress =
   | '고객업로드'
+  | '시안작업중'
   | '관리자업로드'
   | '수정요청'
   | '시안확정'
@@ -64,7 +65,8 @@ type FeelframeUploadFrameLegacyProgress = '작업전' | '작업중' | '시안전
 
 function feelframeMapLegacyUploadFrameProgress(legacy: FeelframeUploadFrameLegacyProgress): FeelframeUploadFrameProgress {
   if (legacy === '작업전') return '고객업로드';
-  if (legacy === '작업중' || legacy === '시안전달') return '관리자업로드';
+  if (legacy === '작업중') return '시안작업중';
+  if (legacy === '시안전달') return '관리자업로드';
   if (legacy === '발주완료') return '상품준비중';
   return legacy;
 }

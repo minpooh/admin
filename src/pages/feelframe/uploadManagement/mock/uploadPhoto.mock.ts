@@ -1,6 +1,7 @@
 /** 필프레임 · 업로드관리 · 보정 업로드 목록 더미 데이터 */
 export type FeelframeUploadPhotoProgress =
   | '고객업로드'
+  | '시안작업중'
   | '관리자업로드'
   | '수정요청'
   | '시안확정';
@@ -444,7 +445,7 @@ export const MOCK_FEELFRAME_UPLOAD_PHOTO_LIST: FeelframeUploadPhotoRow[] = [
     customerPhone: '010-9112-6641',
     photoCount: 19,
     correctionIntensity: '보통',
-    progressStatus: '고객업로드',
+    progressStatus: '시안작업중',
     confirmedAt: '',
     firstImageLabel: 'IMG',
     memo: [],

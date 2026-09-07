@@ -1112,7 +1112,7 @@ export default function FeelframeDeliveryListPage() {
                         >
                           <button
                             type="button"
-                            className={`row-btn ${row.memo.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                            className={`row-btn ${row.memo.length > 0 ? 'row-btn--red' : 'row-btn--default'}`}
                             onClick={() => openMemoModal(row.id)}
                           >
                             {row.memo.length > 0 ? '메모 확인' : '메모 작성'}
@@ -1398,7 +1398,7 @@ export default function FeelframeDeliveryListPage() {
                         >
                           <button
                             type="button"
-                            className={`row-btn ${row.memo.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                            className={`row-btn ${row.memo.length > 0 ? 'row-btn--red' : 'row-btn--default'}`}
                             onClick={() => openMemoModal(row.id)}
                           >
                             {row.memo.length > 0 ? '메모 확인' : '메모 작성'}

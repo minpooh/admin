@@ -29,6 +29,7 @@ const DETAIL_SEARCH_OPTIONS = [
 const PROGRESS_FILTER_OPTIONS = [
   '전체',
   '고객업로드',
+  '시안작업중',
   '관리자업로드',
   '수정요청',
   '시안확정',
@@ -63,6 +64,13 @@ type ConfirmDialogState = {
   cancelText?: string;
   danger?: boolean;
   onConfirm: () => void;
+};
+
+type UploadOrderDetailPreviewItem = {
+  id: string;
+  thumbnailLabel: string;
+  productName: string;
+  optionLabel: string;
 };
 
 function formatYmd(date: Date | null) {
@@ -155,8 +163,8 @@ function applyFilters(rows: FeelframeUploadFrameRow[], search: AppliedSearch | n
 }
 
 function getProgressClassName(status: FeelframeUploadFrameProgress) {
-  if (status === '수정요청') return 'progress-status progress-status--danger';
-  if (status === '고객업로드') return 'progress-status progress-status--warning';
+  if (status === '수정요청' || status === '시안작업중') return 'progress-status progress-status--danger';
+  if (status === '고객업로드' || status === '상품준비중') return 'progress-status progress-status--warning';
   if (status === '관리자업로드') return 'progress-status progress-status--blue';
   return 'progress-status progress-status--secondary';
 }
@@ -192,6 +200,21 @@ function getCorrectionIntensityBadgeClass(label: string) {
   return '';
 }
 
+function getUploadOrderDetailPreviewItems(row: FeelframeUploadFrameRow): UploadOrderDetailPreviewItem[] {
+  const sourceProducts = row.productInfo
+    .split('+')
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const totalCount = Math.max(1, sourceProducts.length);
+
+  return Array.from({ length: totalCount }, (_, idx) => ({
+    id: `${row.id}-detail-${idx + 1}`,
+    thumbnailLabel: `상품 ${idx + 1}`,
+    productName: sourceProducts[idx] ?? sourceProducts[sourceProducts.length - 1] ?? row.productInfo,
+    optionLabel: `${row.shippingCarrierName} / ${idx + 1}번째 상품`,
+  }));
+}
+
 export default function FeelframeUploadFramePage() {
   const [rows, setRows] = useState<FeelframeUploadFrameRow[]>(() => [...MOCK_FEELFRAME_UPLOAD_FRAME_LIST]);
   const [dateRange, setDateRange] = useState('');
@@ -212,6 +235,9 @@ export default function FeelframeUploadFramePage() {
   const [previewTooltipRowId, setPreviewTooltipRowId] = useState<string | null>(null);
   const [previewTooltipPosition, setPreviewTooltipPosition] = useState<{ top: number; right: number } | null>(null);
   const previewTooltipAnchorRef = useRef<HTMLElement | null>(null);
+  const [orderDetailTooltipRowId, setOrderDetailTooltipRowId] = useState<string | null>(null);
+  const [orderDetailTooltipPosition, setOrderDetailTooltipPosition] = useState<{ top: number; right: number } | null>(null);
+  const orderDetailTooltipAnchorRef = useRef<HTMLElement | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const headerCheckboxRef = useRef<HTMLInputElement>(null);
 
@@ -299,6 +325,42 @@ export default function FeelframeUploadFramePage() {
     };
   }, [previewTooltipRowId]);
 
+  useLayoutEffect(() => {
+    if (!orderDetailTooltipRowId) return;
+    const update = () => updateOrderDetailTooltipPosition();
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [orderDetailTooltipRowId]);
+
+  useEffect(() => {
+    if (!orderDetailTooltipRowId) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      const anchor = orderDetailTooltipAnchorRef.current;
+      if (anchor?.contains(target)) return;
+      hideOrderDetailTooltip();
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      hideOrderDetailTooltip();
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('mousedown', handleOutsideClick);
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [orderDetailTooltipRowId]);
+
   const showMemoTooltip = (rowId: string, triggerElement: HTMLElement) => {
     memoTooltipAnchorRef.current = triggerElement;
     setMemoTooltipRowId(rowId);
@@ -319,6 +381,33 @@ export default function FeelframeUploadFramePage() {
     setPreviewTooltipRowId(null);
     setPreviewTooltipPosition(null);
     previewTooltipAnchorRef.current = null;
+  };
+
+  const updateOrderDetailTooltipPosition = () => {
+    const anchorElement = orderDetailTooltipAnchorRef.current;
+    if (!anchorElement) return;
+    const rect = anchorElement.getBoundingClientRect();
+    const viewportMargin = 12;
+    setOrderDetailTooltipPosition({
+      top: rect.bottom + 8,
+      right: Math.max(viewportMargin, window.innerWidth - rect.right),
+    });
+  };
+
+  const hideOrderDetailTooltip = () => {
+    setOrderDetailTooltipRowId(null);
+    setOrderDetailTooltipPosition(null);
+    orderDetailTooltipAnchorRef.current = null;
+  };
+
+  const toggleOrderDetailTooltip = (rowId: string, triggerElement: HTMLElement) => {
+    if (orderDetailTooltipRowId === rowId) {
+      hideOrderDetailTooltip();
+      return;
+    }
+    orderDetailTooltipAnchorRef.current = triggerElement;
+    setOrderDetailTooltipRowId(rowId);
+    updateOrderDetailTooltipPosition();
   };
 
   const closeMemoModal = () => {
@@ -651,13 +740,35 @@ export default function FeelframeUploadFramePage() {
                       />
                     </label>
                   </td>
-                  <td>{row.orderNo}</td>
+                  <td>
+                    <div className="admin-memo-trigger">
+                      <button
+                        type="button"
+                        className="admin-link"
+                        onClick={(e) => toggleOrderDetailTooltip(row.id, e.currentTarget)}
+                        aria-expanded={orderDetailTooltipRowId === row.id}
+                        aria-label="주문상세 보기"
+                      >
+                        {row.orderNo}
+                      </button>
+                    </div>
+                  </td>
                   <td>{row.manager}</td>
                   <td>
                     <div className="cell-block">
-                      <span className="cell-line">{row.productInfo}</span>
+                      <span className="cell-line">
+                        <button
+                          type="button"
+                          className="admin-link"
+                          onClick={(e) => toggleOrderDetailTooltip(row.id, e.currentTarget)}
+                          aria-expanded={orderDetailTooltipRowId === row.id}
+                          aria-label="주문상세 보기"
+                        >
+                          {row.productInfo}
+                        </button>
+                      </span>
                       <span className="cell-line cell-line--with-action">
-                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--private" aria-hidden="true">
+                        <span className="badge-square badge-square--inline badge-square--no-transition badge-square--primary" aria-hidden="true">
                           {row.shippingCarrierName}
                         </span>
                       </span>
@@ -712,7 +823,7 @@ export default function FeelframeUploadFramePage() {
                     >
                       <button
                         type="button"
-                        className={`row-btn ${row.memo.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                        className={`row-btn ${row.memo.length > 0 ? 'row-btn--red' : 'row-btn--default'}`}
                         onClick={() => openMemoModal(row.id)}
                       >
                         {row.memo.length > 0 ? '메모 확인' : '메모 작성'}
@@ -735,7 +846,7 @@ export default function FeelframeUploadFramePage() {
                     >
                       <button
                         type="button"
-                        className={`row-btn ${row.adminPreviewImages.length > 0 ? 'row-btn--blue' : 'row-btn--default'}`}
+                        className={`row-btn ${row.adminPreviewImages.length > 0 ? 'row-btn--primary' : 'row-btn--default'}`}
                         disabled={row.adminPreviewImages.length === 0}
                         aria-label={
                           row.adminPreviewImages.length > 0
@@ -748,7 +859,11 @@ export default function FeelframeUploadFramePage() {
                     </div>
                   </td>
                   <td className="col-center">
-                    <button type="button" className="row-btn row-btn--red" onClick={() => handleDelete(row.id)}>
+                    <button
+                      type="button"
+                      className="row-btn row-btn--blue"
+                      onClick={() => handleDelete(row.id)}
+                    >
                       삭제
                     </button>
                   </td>
@@ -913,6 +1028,41 @@ export default function FeelframeUploadFramePage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
+
+      {orderDetailTooltipRowId && orderDetailTooltipPosition && (() => {
+        const row = rows.find((item) => item.id === orderDetailTooltipRowId);
+        if (!row) return null;
+        const detailItems = getUploadOrderDetailPreviewItems(row);
+
+        return createPortal(
+          <div
+            className="admin-order-detail-floating-tooltip"
+            role="tooltip"
+            style={{ top: orderDetailTooltipPosition.top, right: orderDetailTooltipPosition.right }}
+          >
+            <div className="admin-order-detail-tooltip">
+              <div className="admin-order-detail-tooltip__header">
+                <span>고객명: {row.customerName}</span>
+                <span>주문번호: {row.orderNo}</span>
+              </div>
+              <ul className="admin-order-detail-tooltip__list">
+                {detailItems.map((detailItem) => (
+                  <li key={detailItem.id} className="admin-order-detail-tooltip__item">
+                    <div className="admin-order-detail-tooltip__thumb" aria-hidden="true">
+                      {detailItem.thumbnailLabel}
+                    </div>
+                    <div className="admin-order-detail-tooltip__meta">
+                      <p className="admin-order-detail-tooltip__name">{detailItem.productName}</p>
+                      <p className="admin-order-detail-tooltip__option">{detailItem.optionLabel}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>,
           document.body

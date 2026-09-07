@@ -34,6 +34,11 @@
   background: var(--primary-color-100);
 }
 
+.badge-square--primary {
+  color: var(--primary-color-500);
+  background: var(--primary-color-100);
+}
+
 .badge-square--open:hover {
   background: var(--primary-color-200);
 }
