@@ -380,6 +380,13 @@ export type RichTextEditorProps = {
   showActions?: boolean;
   cancelLabel?: string;
   saveLabel?: string;
+  /**
+   * 이미지 첨부 시 호출. 파일을 받아 업로드한 뒤 절대 URL 을 반환.
+   * 지정되지 않으면 base64 data URL 을 그대로 본문에 임베드 (소량/임시용).
+   */
+  imageUploader?: (file: File) => Promise<string>;
+  /** imageUploader 실패 시 호출 (alert 표시 등) */
+  onImageUploadError?: (err: unknown) => void;
 };
 
 export function RichTextEditor({
@@ -391,6 +398,8 @@ export function RichTextEditor({
   showActions = true,
   cancelLabel = '취소',
   saveLabel = '저장',
+  imageUploader,
+  onImageUploadError,
 }: RichTextEditorProps) {
   const initialHtml = initialBodyToEditorHtml(initialBody);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -485,13 +494,17 @@ export function RichTextEditor({
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const dataUrl = await readFileAsDataUrl(file);
+      const src = imageUploader
+        ? await imageUploader(file)
+        : await readFileAsDataUrl(file);
       const insertPos = editor.state.selection.to;
       editor
         .chain()
         .focus()
-        .insertContentAt(insertPos, { type: 'image', attrs: { src: dataUrl, alt: file.name || '첨부 이미지' } })
+        .insertContentAt(insertPos, { type: 'image', attrs: { src, alt: file.name || '첨부 이미지' } })
         .run();
+    } catch (err) {
+      onImageUploadError?.(err);
     } finally {
       e.target.value = '';
     }

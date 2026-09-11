@@ -407,6 +407,25 @@
   white-space: pre-wrap;
 }
 
+.faq-answer--rich {
+  white-space: normal;
+}
+
+.faq-answer--rich p {
+  margin: 0 0 0.5rem;
+}
+
+.faq-answer--rich p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-answer--rich img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5rem auto;
+}
+
 .faq-edit-input,
 .faq-edit-textarea {
   width: 100%;

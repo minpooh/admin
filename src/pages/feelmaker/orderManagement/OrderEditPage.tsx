@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
-import { Download, Mail, Trash2 } from 'lucide-react';
+import { CircleDollarSign, Clock3, Download, Image as ImageIcon, Mail, ShoppingBag, Trash2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -257,6 +257,23 @@ export default function OrderEditPage() {
 
   const filteredOrders = useMemo(() => applyFilters(orders, appliedSearch), [orders, appliedSearch]);
 
+  const filteredOrderAmount = useMemo(
+    () => filteredOrders.reduce((sum, order) => sum + (order.amount ?? 0), 0),
+    [filteredOrders]
+  );
+  const filteredUnpaidCount = useMemo(
+    () => filteredOrders.filter((order) => order.paymentStatus !== '결제완료').length,
+    [filteredOrders]
+  );
+  const filteredPhotoLength = useMemo(
+    () =>
+      filteredOrders.reduce((sum, order) => {
+        const match = order.productName.match(/(\d+)\s*컷/);
+        return sum + (match ? Number(match[1]) : 0);
+      }, 0),
+    [filteredOrders]
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
@@ -472,8 +489,42 @@ export default function OrderEditPage() {
     <div className="admin-list-page admin-list-page--edit">
       <h1 className="page-title">보정 주문 목록</h1>
 
-      <section className="admin-list-box">
-        <p className="admin-list-result">총 {filteredOrders.length}개의 보정 주문이 검색되었습니다.</p>
+      {/* 요약 카드 */}
+      <section className="admin-stat-cards-wrap admin-stat-section" aria-label="보정 주문 요약">
+        <div className="admin-stat-cards admin-stat-cards--4">
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--primary" aria-hidden>
+              <ShoppingBag size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">총 주문 수</p>
+            <p className="admin-stat-value">{filteredOrders.length.toLocaleString('ko-KR')}<span className="admin-stat-value__suffix">건</span></p>
+            <p className="admin-stat-hint">{appliedSearch ? '현재 검색 기준' : '전체 주문'}</p>
+          </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--gray" aria-hidden>
+              <ImageIcon size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">총 사진 장수</p>
+            <p className="admin-stat-value">{filteredPhotoLength.toLocaleString('ko-KR')}<span className="admin-stat-value__suffix">장</span></p>
+            <p className="admin-stat-hint">{appliedSearch ? '현재 검색 기준' : '전체 합계'}</p>
+          </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--success" aria-hidden>
+              <CircleDollarSign size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">총 구매금액</p>
+            <p className="admin-stat-value">{filteredOrderAmount.toLocaleString('ko-KR')}<span className="admin-stat-value__suffix">원</span></p>
+            <p className="admin-stat-hint">{appliedSearch ? '현재 검색 기준' : '전체 합계'}</p>
+          </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--warning" aria-hidden>
+              <Clock3 size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">미결제 건수</p>
+            <p className="admin-stat-value admin-stat-value--warning">{filteredUnpaidCount.toLocaleString('ko-KR')}<span className="admin-stat-value__suffix">건</span></p>
+            <p className="admin-stat-hint">결제 대기 중</p>
+          </div>
+        </div>
       </section>
 
       <section className="admin-list-box">

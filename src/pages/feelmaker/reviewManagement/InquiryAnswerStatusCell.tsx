@@ -1,13 +1,23 @@
-export function InquiryAnswerStatusCell({ answeredAt }: { answeredAt: string | null }) {
-  const answered = answeredAt !== null;
+export type InquiryAnswerStatus = '답변완료' | '미답변' | '댓글추가됨';
+
+export function InquiryAnswerStatusCell({
+  status,
+  answeredAt,
+}: {
+  status?: InquiryAnswerStatus;
+  /** @deprecated 호환용 — status 가 우선 */
+  answeredAt?: string | null;
+}) {
+  const resolved: InquiryAnswerStatus =
+    status ?? (answeredAt != null ? '답변완료' : '미답변');
   return (
     <span
       className={[
         'admin-status-pill',
-        answered ? 'admin-status-pill--답변완료' : 'admin-status-pill--미답변',
+        `admin-status-pill--${resolved}`,
       ].join(' ')}
     >
-      {answered ? '답변완료' : '미답변'}
+      {resolved}
     </span>
   );
 }

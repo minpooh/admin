@@ -176,6 +176,33 @@
   background: #fff;
   color: #374151;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+  /* <a> 태그로 사용될 때 링크 기본 밑줄/색상 제거 */
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+a.filter-btn,
+a.filter-btn:hover,
+a.filter-btn:visited,
+a.filter-btn:active {
+  text-decoration: none;
+}
+
+a.filter-btn--primary,
+a.filter-btn--primary:hover,
+a.filter-btn--primary:visited,
+a.filter-btn--primary:active {
+  color: #fff;
+}
+
+a.filter-btn--outline,
+a.filter-btn--outline:hover,
+a.filter-btn--outline:visited,
+a.filter-btn--outline:active {
+  color: #374151;
 }
 
 .filter-btn:hover {

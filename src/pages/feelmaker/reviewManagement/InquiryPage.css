@@ -25,20 +25,26 @@
 
 .admin-list-page--inquiry .admin-table th:nth-child(5),
 .admin-list-page--inquiry .admin-table td:nth-child(5) {
-  min-width: 220px; /* 이메일 */
+  min-width: 120px; /* 아이디 */
 }
 
 .admin-list-page--inquiry .admin-table th:nth-child(6),
 .admin-list-page--inquiry .admin-table td:nth-child(6) {
-  min-width: 110px; /* 답변자 */
+  min-width: 120px; /* 연락처 */
 }
 
 .admin-list-page--inquiry .admin-table th:nth-child(7),
 .admin-list-page--inquiry .admin-table td:nth-child(7) {
-  min-width: 140px; /* 답변일 */
+  min-width: 110px; /* 답변자 */
 }
 
 .admin-list-page--inquiry .admin-table th:nth-child(8),
 .admin-list-page--inquiry .admin-table td:nth-child(8) {
+  min-width: 140px; /* 답변일 */
+}
+
+.admin-list-page--inquiry .admin-table th:nth-child(9),
+.admin-list-page--inquiry .admin-table td:nth-child(9) {
   min-width: 72px; /* 삭제 */
 }
+

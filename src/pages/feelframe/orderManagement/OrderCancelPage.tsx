@@ -116,7 +116,7 @@ function isAppliedSearchEmpty(search: AppliedSearch | null) {
 }
 
 function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCancelItem | null {
-  if (order.paymentStatus !== '결제취소' && order.paymentStatus !== '환불완료') return null;
+  if (order.paymentStatus !== '결제취소' && order.paymentStatus !== '취소신청') return null;
   const latestMemo = [...order.memoEntries].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const requestedAt = order.cancelRequestedAt || latestMemo?.createdAt || order.orderedAt;
   const cancelReason = order.cancelReason || latestMemo?.content || '고객 요청 취소';
@@ -136,7 +136,7 @@ function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCance
     customerPhone: order.customerPhone,
     cancelReason,
     paymentNo,
-    cancelStatus: order.paymentStatus === '환불완료' ? '취소완료' : isRejectedCancel ? '반려' : '취소전',
+    cancelStatus: order.paymentStatus === '결제취소' ? '취소완료' : isRejectedCancel ? '반려' : '취소전',
     rejectInfo: order.cancelRejectInfo || '-',
     bankInfo,
     manager: order.manager,

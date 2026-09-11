@@ -136,6 +136,7 @@ export default function InquiryPage() {
           row.title.toLowerCase().includes(keywordTrim) ||
           row.authorName.toLowerCase().includes(keywordTrim) ||
           row.memberId.toLowerCase().includes(keywordTrim) ||
+          row.phone.toLowerCase().includes(keywordTrim) ||
           row.email.toLowerCase().includes(keywordTrim) ||
           row.content.toLowerCase().includes(keywordTrim);
         const scope = appliedSearch.searchScope;
@@ -145,7 +146,7 @@ export default function InquiryPage() {
           if (!row.authorName.toLowerCase().includes(keywordTrim)) return false;
         } else if (scope === 'phone') {
           // 문의 데이터에는 별도 전화번호 필드가 없어, 숫자 포함 텍스트에서 전화번호 패턴을 검색한다.
-          const phoneHaystack = [row.title, row.content, row.memberId, row.email].join(' ');
+          const phoneHaystack = [row.title, row.content, row.memberId, row.phone, row.email].join(' ');
           const normalizedPhoneHaystack = phoneHaystack.replace(/[^0-9]/g, '');
           if (!normalizedKeyword || !normalizedPhoneHaystack.includes(normalizedKeyword)) return false;
         } else if (scope === 'title') {
@@ -632,6 +633,7 @@ export default function InquiryPage() {
                 <th scope="col">답변 여부</th>
                 <th scope="col">작성자</th>
                 <th scope="col">아이디</th>
+                <th scope="col">연락처</th>
                 <th scope="col">답변자</th>
                 <th scope="col">답변일</th>
                 <th scope="col">삭제</th>
@@ -651,6 +653,7 @@ export default function InquiryPage() {
                   </td>
                   <td>{row.authorName}</td>
                   <td>{row.memberId}</td>
+                  <td>{row.phone}</td>
                   <td>{row.answeredBy ?? '—'}</td>
                   <td>{row.answeredAt ?? '—'}</td>
                   <td>

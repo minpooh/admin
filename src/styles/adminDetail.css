@@ -148,18 +148,18 @@
 }
 
 .admin-status-pill--대기 {
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--warning-color-100);
+  color: var(--warning-color-500);
 }
 
 .admin-status-pill--처리중 {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--blue-color-100);
+  color: var(--blue-color-700);
 }
 
 .admin-status-pill--답변완료 {
-  background: #d1fae5;
-  color: #047857;
+  background: var(--secondary-color-100);
+  color: var(--secondary-color-500);
 }
 
 .admin-status-pill--미답변 {
@@ -171,6 +171,23 @@
 .admin-status-pill--답변전 {
   background: var(--warning-color-100);
   color: var(--warning-color-500);
+}
+
+/* 답변 이후 고객이 추가 댓글 남긴 상태: 강조 톤 */
+.admin-status-pill--댓글추가됨 {
+  background: var(--danger-color-100);
+  color: var(--danger-color-500);
+}
+
+/* 이벤트 진행 상태 */
+.admin-status-pill--진행중 {
+  background: var(--primary-color-100);
+  color: var(--primary-color-500);
+}
+
+.admin-status-pill--종료 {
+  background: var(--gray-100);
+  color: var(--gray-500);
 }
 /* 상세: 뱃지 + 제목 한 줄 */
 .admin-detail-title-row {
@@ -416,8 +433,8 @@
 }
 
 .inquiry-thread-item--admin {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+  background: var(--secondary-color-50);
+  border-color: var(--secondary-color-200);
 }
 
 .inquiry-thread-item__head {
@@ -439,8 +456,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #047857;
-  background: #d1fae5;
+  color: var(--secondary-color-500);
+  background: var(--secondary-color-100);
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
 }
@@ -470,18 +487,29 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  border: 1px solid #bbf7d0;
+  border: 1px solid var(--secondary-color-200);
   border-radius: 8px;
   background: #fff;
-  color: #047857;
+  color: var(--secondary-color-500);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .inquiry-thread-item__edit-btn:hover {
-  background: #ecfdf5;
-  border-color: #6ee7b7;
-  color: #065f46;
+  background: var(--secondary-color-50);
+  border-color: var(--secondary-color-300);
+  color: var(--secondary-color-500);
+}
+
+.inquiry-thread-item__delete-btn {
+  border-color: var(--danger-color-200);
+  color: var(--danger-color-500);
+}
+
+.inquiry-thread-item__delete-btn:hover {
+  background: var(--danger-color-50);
+  border-color: var(--danger-color-300);
+  color: var(--danger-color-500);
 }
 
 .inquiry-thread-item__body {

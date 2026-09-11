@@ -1,0 +1,24 @@
+/**
+ * 텍스트 유틸리티 클래스 — color 변수 기반
+ * 인라인 `style={{ color: '...' }}` 대신 사용
+ */
+
+.text-danger {
+  color: var(--danger-color-500);
+}
+
+.text-muted {
+  color: var(--gray-500);
+}
+
+.text-info {
+  color: var(--blue-color-500);
+}
+
+.text-success {
+  color: var(--secondary-color-500);
+}
+
+.text-warning {
+  color: var(--warning-color-500);
+}

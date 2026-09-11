@@ -107,3 +107,9 @@
   font-size: 0.78rem;
   color: var(--gray-500);
 }
+
+.login-error {
+  color: #c0392b;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}

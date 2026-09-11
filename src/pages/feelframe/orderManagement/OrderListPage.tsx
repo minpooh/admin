@@ -30,7 +30,7 @@ const DETAIL_SEARCH_OPTIONS = [
 
 const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6개월'] as const;
 const PRODUCT_OPTIONS = ['전체', '액자', '보정', '기타'] as const;
-const PAYMENT_STATUS_OPTIONS = ['전체', '결제전', '결제완료', '결제취소', '환불완료'] as const;
+const PAYMENT_STATUS_OPTIONS = ['전체', '결제전', '결제완료', '결제취소'] as const;
 const PAYMENT_METHOD_OPTIONS = [
   '전체',
   '무통장입금',
@@ -736,7 +736,7 @@ export default function FeelframeOrderListPage() {
       <h1 className="page-title">주문 관리</h1>
 
       <section className="admin-list-box">
-        <p className="admin-list-result">선택기간 주문건수는 {selectedPeriodOrderCount}건 입니다.</p>
+        <p className="admin-list-result">선택기간 주문건수는 {selectedPeriodOrderCount.toLocaleString('ko-KR')}건 입니다.</p>
       </section>
 
       <section className="admin-list-box" aria-label="검색 필터">

@@ -49,6 +49,15 @@ input.admin-checkbox[type='checkbox']:focus-visible {
   box-shadow: 0 0 0 3px var(--gray-100);
 }
 
+/* .date-range-wrap 안에서도 16x16 유지 (date-picker input 강제 스타일 회피) */
+.date-range-wrap input.admin-checkbox[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 6px;
+}
+
 input.admin-checkbox[type='checkbox']:checked {
   background-color: var(--gray-900);
   border-color: var(--gray-900);
@@ -56,4 +65,21 @@ input.admin-checkbox[type='checkbox']:checked {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 12px 12px;
+}
+
+/* disabled 상태: 흐린 회색 + 클릭 차단 표시 */
+input.admin-checkbox[type='checkbox']:disabled {
+  background-color: var(--gray-100);
+  border-color: var(--gray-200);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+input.admin-checkbox[type='checkbox']:disabled:hover {
+  border-color: var(--gray-200);
+}
+
+input.admin-checkbox[type='checkbox']:disabled:checked {
+  background-color: var(--gray-300);
+  border-color: var(--gray-300);
 }

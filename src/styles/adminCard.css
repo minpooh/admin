@@ -371,11 +371,9 @@
 
 .admin-stat-cards--review-summary > .admin-stat-card--rating,
 .admin-stat-cards--review-summary > .admin-stat-card--chart {
-  border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 1rem 1.1rem;
   min-height: 170px;
-  box-shadow: none;
 }
 
 .admin-stat-card--rating {

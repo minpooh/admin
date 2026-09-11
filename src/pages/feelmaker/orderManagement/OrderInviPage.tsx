@@ -145,11 +145,29 @@ const URL_STATUS_OPTIONS = [
 const INVITE_TYPE_LABEL: Record<InviteType, string> = {
   wedding: '웨딩청첩장',
   baby: '돌잔치초대장',
+  meeting: '상견례',
+  bridal: '브라이덜샤워',
+};
+
+const INVITE_TYPE_ARIA: Record<InviteType, string> = {
+  wedding: '웨딩 초대장',
+  baby: '베이비 초대장',
+  meeting: '상견례 초대장',
+  bridal: '브라이덜샤워 초대장',
+};
+
+/** 모바일초대장 타입별 뱃지 (w=웨딩/open, b=돌잔치/warning, i=상견례/secondary, s=브샤/danger) */
+const TYPE_BADGES: Record<InviteType, { label: string; variant: 'open' | 'warning' | 'secondary' | 'danger' }> = {
+  wedding: { label: 'w', variant: 'open' },
+  baby: { label: 'b', variant: 'warning' },
+  meeting: { label: 'i', variant: 'secondary' },
+  bridal: { label: 's', variant: 'danger' },
 };
 
 function normalizeTypeBySubId(subId?: string): InviteType | undefined {
-  if (subId === 'wedding') return 'wedding';
-  if (subId === 'baby') return 'baby';
+  if (subId === 'wedding' || subId === 'baby' || subId === 'meeting' || subId === 'bridal') {
+    return subId;
+  }
   return undefined;
 }
 
@@ -465,11 +483,10 @@ export default function OrderInviPage() {
 
   return (
     <div className="admin-list-page admin-list-page--invi">
-      <h1 className="page-title">{title}</h1>
-
-      <section className="admin-list-box">
-        <p className="admin-list-result">총 {filteredOrders.length}개의 모바일초대장 주문이 검색되었습니다.</p>
-      </section>
+      <h1 className="page-title">
+        {title}
+        <span className="page-title-count">({filteredOrders.length.toLocaleString('ko-KR')}건)</span>
+      </h1>
 
       <section className="admin-list-box">
         <div className="filter-top-row">
@@ -871,14 +888,10 @@ export default function OrderInviPage() {
                         <span className="cell-line">
                           <span className="list-label">스킨</span>{' '}
                           <span
-                            className={`badge-square order-invi-badge order-invi-badge--inline ${
-                              order.inviteType === 'wedding'
-                                ? 'badge-square--open'
-                                : 'badge-square--private'
-                            } ${order.inviteType === 'baby' ? 'order-invi-badge--baby' : ''}`}
-                            aria-label={order.inviteType === 'wedding' ? '웨딩 초대장' : '베이비 초대장'}
+                            className={`badge-square order-invi-badge order-invi-badge--inline badge-square--${TYPE_BADGES[order.inviteType].variant}`}
+                            aria-label={INVITE_TYPE_ARIA[order.inviteType]}
                           >
-                            {order.inviteType === 'wedding' ? 'w' : 'b'}
+                            {TYPE_BADGES[order.inviteType].label}
                           </span>{' '}
                           <span className="list-value">{order.skinType}</span>
                         </span>

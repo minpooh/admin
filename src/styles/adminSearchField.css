@@ -51,3 +51,49 @@
   height: 38px;
   min-height: 38px;
 }
+
+/* 변형: 돋보기 아이콘이 박스 안쪽에 들어간 형태 (사이드바 panel-search 와 동일 레이아웃, 색상/focus 는 본 클래스 유지) */
+.admin-search-field--with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 38px;
+  padding: 0 0.5rem 0 0.625rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  width: auto;
+}
+
+.admin-search-field--with-icon:focus-within {
+  outline: none;
+  border-color: var(--gray-300);
+  box-shadow: 0 0 0 3px var(--gray-100);
+}
+
+.admin-search-field--with-icon .admin-search-field__icon {
+  flex-shrink: 0;
+  color: var(--text-muted, #9ca3af);
+  display: flex;
+  align-items: center;
+  margin-right: 0.4rem;
+}
+
+.admin-search-field--with-icon input {
+  border: none;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  font-size: 0.8125rem;
+  flex: 1;
+  min-width: 0;
+  outline: none;
+}
+
+.admin-search-field--with-icon input:focus,
+.admin-search-field--with-icon input:focus-visible {
+  border: none;
+  box-shadow: none;
+}

@@ -233,6 +233,15 @@ export default function OrderEditStorePage() {
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
 
   const filteredOrders = useMemo(() => applyFilters(orders, appliedSearch), [orders, appliedSearch]);
+
+  const filteredPhotoLength = useMemo(
+    () =>
+      filteredOrders.reduce((sum, order) => {
+        const match = order.productName.match(/(\d+)\s*컷/);
+        return sum + (match ? Number(match[1]) : 0);
+      }, 0),
+    [filteredOrders]
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ITEMS_PER_PAGE));
@@ -416,7 +425,9 @@ export default function OrderEditStorePage() {
       <h1 className="page-title">스토어팜 보정 주문 목록</h1>
 
       <section className="admin-list-box">
-        <p className="admin-list-result">총 {filteredOrders.length}개의 스토어팜 보정 주문이 검색되었습니다.</p>
+        <p className="admin-list-result">
+          {`총 ${filteredOrders.length.toLocaleString()}건 / 총 ${filteredPhotoLength.toLocaleString()}장의 스토어팜 보정 주문이 검색되었습니다.`}
+        </p>
       </section>
 
       <section className="admin-list-box">

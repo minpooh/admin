@@ -50,6 +50,8 @@ export const ORDER_MANAGEMENT = [
     subItems: [
       { id: 'wedding', label: '웨딩청첩장' },
       { id: 'baby', label: '돌잔치초대장' },
+      { id: 'meeting', label: '상견례' },
+      { id: 'bridal', label: '브라이덜샤워' },
     ],
   },
   {
@@ -72,7 +74,7 @@ export const CRAWLING = [
 ];
 
 export const ERROR_MANAGEMENT = [
-  { id: 'storefarmError', icon: HiBuildingStorefront, label: '스팜 오류(필요한지 확인)' },
+  { id: 'storefarmError', icon: HiBuildingStorefront, label: '스팜 오류' },
   { id: 'orderError', icon: HiCircleStack, label: '주문 오류' },
   { id: 'delayError', icon: HiClock, label: '제작 지연' },
 ];

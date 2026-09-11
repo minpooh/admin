@@ -11,6 +11,7 @@ import {
   HiChevronRight,
   HiMagnifyingGlass,
   HiUser,
+  HiArrowRightOnRectangle,
 } from 'react-icons/hi2';
 import type { FeelMakerSectionId } from './sidebarFeelMakerConfig';
 import {
@@ -182,6 +183,11 @@ export default function Sidebar() {
     navigate(pagePath({ navId: activeNavId, sectionId, itemId: targetSubId }));
   };
 
+  const handleLogout = () => {
+    if (!window.confirm('로그아웃 하시겠습니까?')) return;
+    navigate('/', { replace: true });
+  };
+
   return (
     <div
       className={`sidebar ${!isPanelOpen ? 'panel-collapsed' : ''} ${isMainHub ? 'sidebar--hub' : ''}`}
@@ -215,6 +221,14 @@ export default function Sidebar() {
         <div className="sidebar-footer">
           <button type="button" className="sidebar-nav-item" aria-label="Settings">
             <HiCog6Tooth size={16} />
+          </button>
+          <button
+            type="button"
+            className="sidebar-nav-item"
+            aria-label="로그아웃"
+            onClick={handleLogout}
+          >
+            <HiArrowRightOnRectangle size={16} />
           </button>
           <button type="button" className="sidebar-user" aria-label="User">
             <HiUser size={16} />

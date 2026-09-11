@@ -81,6 +81,16 @@
   bottom: calc(100% + 0.35rem);
 }
 
+/**
+ * 포털(document.body)로 렌더링되는 메뉴: overflow가 있는 모달 본문·테이블 컨테이너에
+ * 가려지지 않도록 트리거 기준 fixed 위치로 띄운다. left/width/top|bottom은 인라인 스타일로 지정.
+ */
+.listselect__menu--portal {
+  position: fixed;
+  right: auto;
+  z-index: 1000;
+}
+
 .listselect__item {
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;

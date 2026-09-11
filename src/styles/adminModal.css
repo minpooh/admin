@@ -187,9 +187,7 @@ select.admin-modal-field-control {
   background: #fff;
 }
 
-.listselect.listselect--modal .listselect__menu {
-  z-index: 20;
-}
+/* 메뉴는 document.body로 포털 렌더되어 모달 본문 overflow에 가려지지 않음 (.listselect__menu--portal에서 z-index 처리) */
 
 .admin-modal-field-row > .listselect.listselect--modal,
 .option-modal__status-row > .listselect.listselect--modal {

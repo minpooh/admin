@@ -168,22 +168,15 @@ function BadgePill({ kind }: { kind: FeelframeProductBadgeKind }) {
   return <span className={cfg.className}>{cfg.label}</span>;
 }
 
-function BadgeCell({ badges }: { badges: FeelframeProductBadgeKind[] }) {
+function ProductNameBadges({ badges }: { badges: FeelframeProductBadgeKind[] }) {
   const list = badges.slice(0, 2);
-  if (list.length === 0) {
-    return <span className="admin-list-muted">—</span>;
-  }
-  if (list.length === 1) {
-    return <BadgePill kind={list[0]} />;
-  }
+  if (list.length === 0) return null;
   return (
-    <div className="cell-block">
+    <span className="feelframe-product-name-line__badges">
       {list.map((kind, idx) => (
-        <span key={`${kind}-${idx}`} className="cell-line">
-          <BadgePill kind={kind} />
-        </span>
+        <BadgePill key={`${kind}-${idx}`} kind={kind} />
       ))}
-    </div>
+    </span>
   );
 }
 
@@ -232,6 +225,7 @@ export default function FeelframeProductListPage() {
   const [appliedSearch, setAppliedSearch] = useState<AppliedProductSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [toggleTarget, setToggleTarget] = useState<{ id: string; field: 'display' | 'soldOut' } | null>(null);
 
   const filteredRows = useMemo(() => applyProductFilters(rows, appliedSearch), [rows, appliedSearch]);
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
@@ -315,6 +309,41 @@ export default function FeelframeProductListPage() {
     () => (deleteTargetId ? rows.find((r) => r.id === deleteTargetId) ?? null : null),
     [deleteTargetId, rows]
   );
+
+  const toggleTargetRow = useMemo(
+    () => (toggleTarget ? rows.find((r) => r.id === toggleTarget.id) ?? null : null),
+    [toggleTarget, rows]
+  );
+
+  const toggleConfirmInfo = useMemo(() => {
+    if (!toggleTarget || !toggleTargetRow) return null;
+    if (toggleTarget.field === 'display') {
+      const nextOn = toggleTargetRow.displayYn !== 'T';
+      return {
+        title: '진열 상태 변경',
+        nextLabel: nextOn ? '진열중' : '미진열',
+      };
+    }
+    const nextOn = toggleTargetRow.soldOutYn !== 'T';
+    return {
+      title: '품절 상태 변경',
+      nextLabel: nextOn ? '품절' : '판매중',
+    };
+  }, [toggleTarget, toggleTargetRow]);
+
+  const confirmToggle = useCallback(() => {
+    if (!toggleTarget) return;
+    setRows((prev) =>
+      prev.map((r) => {
+        if (r.id !== toggleTarget.id) return r;
+        if (toggleTarget.field === 'display') {
+          return { ...r, displayYn: r.displayYn === 'T' ? 'F' : 'T' };
+        }
+        return { ...r, soldOutYn: r.soldOutYn === 'T' ? 'F' : 'T' };
+      })
+    );
+    setToggleTarget(null);
+  }, [toggleTarget]);
 
   if (subId) {
     if (subId === PRODUCT_CREATE_SUB_ID) {
@@ -466,7 +495,6 @@ export default function FeelframeProductListPage() {
           <table className="admin-table admin-table--feelframe-product-list">
             <thead>
               <tr>
-                <th className="col-center">뱃지</th>
                 <th className="col-center">진열/품절</th>
                 <th className="col-center">공급사</th>
                 <th className="col-center">상품타입</th>
@@ -484,7 +512,7 @@ export default function FeelframeProductListPage() {
             <tbody>
               {paginatedRows.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="admin-table-empty-cell">
+                  <td colSpan={12} className="admin-table-empty-cell">
                     데이터가 없습니다.
                   </td>
                 </tr>
@@ -492,16 +520,23 @@ export default function FeelframeProductListPage() {
                 paginatedRows.map((row) => (
                   <tr key={row.id}>
                     <td className="col-center">
-                      <BadgeCell badges={row.badges} />
-                    </td>
-                    <td className="col-center">
                       <div className="cell-block">
-                        <span className={`row-btn ${row.displayYn === 'T' ? 'row-btn--blue' : 'row-btn--red'}`}>
+                        <button
+                          type="button"
+                          className={`row-btn ${row.displayYn === 'T' ? 'row-btn--blue' : 'row-btn--red'}`}
+                          onClick={() => setToggleTarget({ id: row.id, field: 'display' })}
+                          aria-label={`진열 상태 변경: 현재 ${row.displayYn === 'T' ? '진열중' : '미진열'}`}
+                        >
                           {row.displayYn === 'T' ? '진열중' : '미진열'}
-                        </span>
-                        <span className={`row-btn ${row.soldOutYn === 'T' ? 'row-btn--red' : 'row-btn--blue'}`}>
+                        </button>
+                        <button
+                          type="button"
+                          className={`row-btn ${row.soldOutYn === 'T' ? 'row-btn--red' : 'row-btn--blue'}`}
+                          onClick={() => setToggleTarget({ id: row.id, field: 'soldOut' })}
+                          aria-label={`품절 상태 변경: 현재 ${row.soldOutYn === 'T' ? '품절' : '판매중'}`}
+                        >
                           {row.soldOutYn === 'T' ? '품절' : '판매중'}
-                        </span>
+                        </button>
                       </div>
                     </td>
                     <td className="col-center">{formatFeelframeProductSupplier(row.supplier)}</td>
@@ -509,7 +544,8 @@ export default function FeelframeProductListPage() {
                     <td>{row.category}</td>
                     <td className="admin-table-col-title">
                       <div className="cell-block">
-                        <span className="cell-line">
+                        <span className="cell-line feelframe-product-name-line">
+                          <ProductNameBadges badges={row.badges} />
                           <Link
                             to={productEditPath(row.id)}
                             className="admin-link admin-table-title-link"
@@ -643,6 +679,25 @@ export default function FeelframeProductListPage() {
         danger
         onClose={() => setDeleteTargetId(null)}
         onConfirm={confirmDeleteRow}
+      />
+
+      <Confirm
+        open={!!toggleTargetRow && !!toggleConfirmInfo}
+        title={toggleConfirmInfo?.title ?? ''}
+        message={
+          toggleTargetRow && toggleConfirmInfo ? (
+            <>
+              <strong>{toggleTargetRow.name}</strong> 상품을{' '}
+              <strong>{toggleConfirmInfo.nextLabel}</strong>(으)로 변경하시겠습니까?
+            </>
+          ) : (
+            ''
+          )
+        }
+        confirmText="변경"
+        cancelText="취소"
+        onClose={() => setToggleTarget(null)}
+        onConfirm={confirmToggle}
       />
     </div>
   );

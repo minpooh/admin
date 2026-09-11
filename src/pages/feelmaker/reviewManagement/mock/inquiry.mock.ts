@@ -1,4 +1,4 @@
-export type InquiryStatus = '대기' | '처리중' | '답변완료';
+export type InquiryStatus = '대기' | '처리중' | '답변완료' | '댓글추가됨';
 
 /** 문의 본문 아래 타임라인 (작성자=댓글, 관리자=답변) */
 export type InquiryThreadEntry = {
@@ -14,6 +14,7 @@ export type InquiryRow = {
   title: string;
   authorId: string;
   memberId: string;
+  phone: string;
   authorName: string;
   email: string;
   category: string;
@@ -32,6 +33,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '영상 제작 일정 문의드립니다',
     authorId: 'user_mhk12',
     memberId: 'user_mhk12',
+    phone: '010-1234-5678',
     authorName: '김민희',
     email: 'minhee.kim@example.com',
     category: '주문',
@@ -47,6 +49,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '결제 취소 요청',
     authorId: 'user_jh88',
     memberId: 'user_jh88',
+    phone: '010-1234-5679',
     authorName: '이준호',
     email: 'junho.lee@example.com',
     category: '결제',
@@ -61,6 +64,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '체험영상 다운로드가 안 됩니다',
     authorId: 'user_sy41',
     memberId: 'user_sy41',
+    phone: '010-1234-5680',
     authorName: '박소영',
     email: 'soyoung.park@example.com',
     category: '기술',
@@ -76,6 +80,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '배송지 변경 가능한가요?',
     authorId: 'user_ch07',
     memberId: 'user_ch07',
+    phone: '010-1234-5681',
     authorName: '최현우',
     email: 'hyunwoo.choi@example.com',
     category: '주문',
@@ -90,6 +95,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '회원 탈퇴 후 재가입 문의',
     authorId: 'user_jm33',
     memberId: 'user_jm33',
+    phone: '010-1234-5682',
     authorName: '정미라',
     email: 'mira.jung@example.com',
     category: '계정',
@@ -104,6 +110,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '세금계산서 발행 요청',
     authorId: 'user_ks19',
     memberId: 'user_ks19',
+    phone: '010-1234-5683',
     authorName: '강수진',
     email: 'sujin.kang@example.com',
     category: '결제',
@@ -118,6 +125,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '앱 로그인 오류 (iOS)',
     authorId: 'user_yj64',
     memberId: 'user_yj64',
+    phone: '010-1234-5684',
     authorName: '윤재민',
     email: 'jaemin.yoon@example.com',
     category: '기술',
@@ -132,6 +140,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '파트너 입점 절차 알려주세요',
     authorId: 'user_hr51',
     memberId: 'user_hr51',
+    phone: '010-1234-5685',
     authorName: '한루리',
     email: 'ruri.han@example.com',
     category: '기타',
@@ -146,6 +155,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '쿠폰 적용이 안 됩니다',
     authorId: 'user_dw92',
     memberId: 'user_dw92',
+    phone: '010-1234-5686',
     authorName: '도원재',
     email: 'wonjae.do@example.com',
     category: '결제',
@@ -160,6 +170,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '샘플 영상 퀄리티 문의',
     authorId: 'user_sh26',
     memberId: 'user_sh26',
+    phone: '010-1234-5687',
     authorName: '송하은',
     email: 'haeun.song@example.com',
     category: '주문',
@@ -174,6 +185,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '고객센터 운영 시간',
     authorId: 'user_bj44',
     memberId: 'user_bj44',
+    phone: '010-1234-5688',
     authorName: '배지훈',
     email: 'jihoon.bae@example.com',
     category: '기타',
@@ -188,6 +200,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '영상 수정 요청 건 follow-up',
     authorId: 'user_ny15',
     memberId: 'user_ny15',
+    phone: '010-1234-5689',
     authorName: '남유진',
     email: 'yujin.nam@example.com',
     category: '주문',
@@ -202,6 +215,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '환불 기간 문의',
     authorId: 'user_oh58',
     memberId: 'user_oh58',
+    phone: '010-1234-5690',
     authorName: '오승기',
     email: 'seunggi.oh@example.com',
     category: '결제',
@@ -216,6 +230,7 @@ export const MOCK_INQUIRIES: InquiryRow[] = [
     title: '프로필 이미지 변경 문의',
     authorId: 'user_lw39',
     memberId: 'user_lw39',
+    phone: '010-1234-5691',
     authorName: '임우진',
     email: 'woojin.lim@example.com',
     category: '계정',
