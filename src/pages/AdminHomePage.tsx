@@ -1,4 +1,4 @@
-import { HiDevicePhoneMobile, HiSquares2X2, HiUsers, HiVideoCamera } from 'react-icons/hi2';
+import { HiSparkles, HiSquares2X2, HiUsers, HiVideoCamera } from 'react-icons/hi2';
 import type { IconType } from 'react-icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -108,11 +108,11 @@ const HOME_MENU_CARDS: HomeMenuCard[] = [
     weeklyStats: buildWeeklyStats([14, 16, 21, 24, 26], [7, 8, 11, 13, 14]),
   },
   {
-    title: '필카드',
-    subtitle: '모바일초대장',
-    buttonLabel: '필카드 이동',
-    path: '/feelmotion',
-    icon: HiDevicePhoneMobile,
+    title: '필AI',
+    subtitle: 'AI 관리',
+    buttonLabel: '필AI 이동',
+    path: '/feelai',
+    icon: HiSparkles,
     weeklyStats: buildWeeklyStats([10, 12, 18, 20, 28], [8, 9, 14, 15, 19]),
   },
   {

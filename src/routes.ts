@@ -1,4 +1,4 @@
-export type NavId = 'feelmaker' | 'feelframe' | 'feelmotion' | 'admins';
+export type NavId = 'feelmaker' | 'feelframe' | 'feelai' | 'admins';
 
 export type PageParams = {
   navId: NavId;

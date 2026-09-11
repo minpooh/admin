@@ -4,7 +4,7 @@ import type { IconType } from 'react-icons';
 import {
   HiFilm,
   HiSquares2X2,
-  HiPhoto,
+  HiSparkles,
   HiUsers,
   HiCog6Tooth,
   HiChevronLeft,
@@ -23,24 +23,29 @@ import {
   FEELFRAME_SECTION_IDS,
   FEELFRAME_SECTION_CONFIG,
 } from './sidebarFeelFrameConfig';
+import type { FeelAiSectionId } from './sidebarFeelAiConfig';
+import {
+  FEELAI_SECTION_IDS,
+  FEELAI_SECTION_CONFIG,
+} from './sidebarFeelAiConfig';
 import { pagePath, isItemActive, type NavId } from '../../routes';
 import './Sidebar.css';
 import logo from '../../assets/FEEL_logo.png';
 
 /** feelmaker / feelframe 패널에서 공통으로 쓰는 섹션 ID 타입 */
-type SectionId = FeelMakerSectionId | FeelFrameSectionId;
+type SectionId = FeelMakerSectionId | FeelFrameSectionId | FeelAiSectionId;
 
 const SIDEBAR_NAV: { id: NavId; icon: IconType; label: string }[] = [
   { id: 'feelmaker', icon: HiFilm, label: 'Maker' },
   { id: 'feelframe', icon: HiSquares2X2, label: 'Frame' },
-  { id: 'feelmotion', icon: HiPhoto, label: 'Motion' },
+  { id: 'feelai', icon: HiSparkles, label: 'AI' },
   { id: 'admins', icon: HiUsers, label: 'Admins' },
 ];
 
 const PANEL_TITLES: Record<NavId, string> = {
-  feelmaker: '필메이커',
-  feelframe: '필프레임',
-  feelmotion: '필모션',
+  feelmaker: 'FEEL maker',
+  feelframe: 'FEEL frame',
+  feelai: 'FEEL AI',
   admins: '관리자 관리',
 };
 
@@ -50,6 +55,7 @@ const PANEL_SECTIONS_CONFIG: Partial<
 > = {
   feelmaker: { sectionIds: FEELMAKER_SECTION_IDS, sectionConfig: FEELMAKER_SECTION_CONFIG },
   feelframe: { sectionIds: FEELFRAME_SECTION_IDS, sectionConfig: FEELFRAME_SECTION_CONFIG },
+  feelai: { sectionIds: FEELAI_SECTION_IDS, sectionConfig: FEELAI_SECTION_CONFIG },
 };
 
 function LogoIcon() {
@@ -106,6 +112,7 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   deliveryManagement: false,
   salesManagement: false,
   questionManagement: false,
+  aiManagement: false,
 };
 
 export default function Sidebar() {
