@@ -20,10 +20,11 @@ const DETAIL_SEARCH_OPTIONS = [
   { value: '전화번호', label: '전화번호' },
   { value: '주문번호', label: '주문번호' },
 ] as const;
-const CANCEL_STATUS_OPTIONS = ['전체', '취소전', '취소완료', '반려'] as const;
+const CANCEL_STATUS_OPTIONS = ['전체', '취소전', '취소완료', '취소반려'] as const;
 const PAYMENT_METHOD_OPTIONS = ['전체', '무통장입금', '카드결제', '카카오페이', '네이버페이', '실시간계좌이체'] as const;
 
-type FeelframeOrderCancelStatus = '취소전' | '취소완료' | '반려';
+type FeelframeOrderCancelStatus = '취소신청' | '취소완료' | '취소반려';
+type FeelframeOrderDepositStatus = '입금전' | '입금완료';
 type FeelframeOrderCancelItem = {
   id: string;
   requestedAt: string;
@@ -35,6 +36,7 @@ type FeelframeOrderCancelItem = {
   cancelReason: string;
   paymentNo: string;
   cancelStatus: FeelframeOrderCancelStatus;
+  depositStatus: FeelframeOrderDepositStatus;
   rejectInfo: string;
   bankInfo: string;
   manager: string;
@@ -115,8 +117,30 @@ function isAppliedSearchEmpty(search: AppliedSearch | null) {
   );
 }
 
+function getDepositStatus(paymentStatus: FeelframeOrderListItem['paymentStatus']): FeelframeOrderDepositStatus {
+  return paymentStatus === '결제전' ? '입금전' : '입금완료';
+}
+
+function getCancelStatusFromOrder(order: FeelframeOrderListItem): FeelframeOrderCancelStatus {
+  const isRejectedCancel = Boolean(order.cancelRejectInfo && order.cancelRejectInfo !== '-');
+  if (isRejectedCancel) return '취소반려';
+  if (order.paymentStatus === '결제취소' || order.paymentStatus === '환불완료') return '취소완료';
+  return '취소신청';
+}
+
+function matchesCancelStatusFilter(row: FeelframeOrderCancelItem, filter: string) {
+  if (filter === '전체') return true;
+  if (filter === '취소전') return row.cancelStatus === '취소신청';
+  return row.cancelStatus === filter;
+}
+
+function getCancelStatusListLabel(row: FeelframeOrderCancelItem) {
+  if (row.cancelStatus === '취소신청') return `취소신청(${row.depositStatus})`;
+  return row.cancelStatus;
+}
+
 function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCancelItem | null {
-  if (order.paymentStatus !== '결제취소' && order.paymentStatus !== '취소신청') return null;
+  if (!order.cancelRequestedAt && !order.cancelReason) return null;
   const latestMemo = [...order.memoEntries].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
   const requestedAt = order.cancelRequestedAt || latestMemo?.createdAt || order.orderedAt;
   const cancelReason = order.cancelReason || latestMemo?.content || '고객 요청 취소';
@@ -124,7 +148,6 @@ function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCance
   const bankInfo =
     order.cancelBankInfo ||
     (order.paymentMethod === '무통장입금' && order.depositor ? `무통장입금 (${order.depositor})` : '-');
-  const isRejectedCancel = Boolean(order.cancelRejectInfo && order.cancelRejectInfo !== '-');
 
   return {
     id: order.id,
@@ -136,7 +159,8 @@ function mapOrderToCancelRow(order: FeelframeOrderListItem): FeelframeOrderCance
     customerPhone: order.customerPhone,
     cancelReason,
     paymentNo,
-    cancelStatus: order.paymentStatus === '결제취소' ? '취소완료' : isRejectedCancel ? '반려' : '취소전',
+    cancelStatus: getCancelStatusFromOrder(order),
+    depositStatus: getDepositStatus(order.paymentStatus),
     rejectInfo: order.cancelRejectInfo || '-',
     bankInfo,
     manager: order.manager,
@@ -181,7 +205,7 @@ function applyFilters(rows: FeelframeOrderCancelItem[], search: AppliedSearch | 
       if (!fieldMap[search.detailSearchType].includes(keyword)) return false;
     }
 
-    if (search.cancelStatus !== '전체' && row.cancelStatus !== search.cancelStatus) return false;
+    if (!matchesCancelStatusFilter(row, search.cancelStatus)) return false;
     if (search.paymentMethod !== '전체' && row.paymentMethod !== search.paymentMethod) return false;
     return true;
   });
@@ -317,13 +341,13 @@ export default function FeelframeOrderCancelPage() {
 
   const getCancelStatusButtonClassName = (status: FeelframeOrderCancelItem['cancelStatus']) => {
     if (status === '취소완료') return 'row-btn row-btn--status-secondary';
-    if (status === '반려') return 'row-btn row-btn--status-danger';
+    if (status === '취소반려') return 'row-btn row-btn--status-danger';
     return 'row-btn row-btn--status-warning';
   };
 
   const getCancelStatusProgressClassName = (status: FeelframeOrderCancelItem['cancelStatus']) => {
     if (status === '취소완료') return 'progress-status progress-status--secondary';
-    if (status === '반려') return 'progress-status progress-status--danger';
+    if (status === '취소반려') return 'progress-status progress-status--danger';
     return 'progress-status progress-status--warning';
   };
 
@@ -342,7 +366,7 @@ export default function FeelframeOrderCancelPage() {
     setRows((prev) =>
       prev.map((row) =>
         row.id === orderId
-          ? { ...row, cancelStatus: '반려', rejectInfo: row.rejectInfo === '-' ? '관리자 반려 처리' : row.rejectInfo }
+          ? { ...row, cancelStatus: '취소반려', rejectInfo: row.rejectInfo === '-' ? '관리자 반려 처리' : row.rejectInfo }
           : row
       )
     );
@@ -565,7 +589,7 @@ export default function FeelframeOrderCancelPage() {
                     >
                       <span className={getCancelStatusProgressClassName(row.cancelStatus)}>
                         <span className="progress-status__dot" aria-hidden="true" />
-                        <span className="progress-status__text">{row.cancelStatus}</span>
+                        <span className="progress-status__text">{getCancelStatusListLabel(row)}</span>
                       </span>
                     </button>
                   </td>
@@ -656,7 +680,7 @@ export default function FeelframeOrderCancelPage() {
               <button type="button" className="option-modal__btn option-modal__btn--ghost" onClick={closeCancelModal}>
                 닫기
               </button>
-              {row.cancelStatus === '취소전' && (
+              {row.cancelStatus === '취소신청' && (
                 <>
                   <button type="button" className="option-modal__btn option-modal__btn--danger" onClick={() => rejectCancel(row.id)}>
                     반려
@@ -666,7 +690,7 @@ export default function FeelframeOrderCancelPage() {
                   </button>
                 </>
               )}
-              {row.cancelStatus === '반려' && (
+              {row.cancelStatus === '취소반려' && (
                 <button type="button" className="option-modal__btn option-modal__btn--primary" onClick={() => approveCancel(row.id)}>
                   취소승인
                 </button>
