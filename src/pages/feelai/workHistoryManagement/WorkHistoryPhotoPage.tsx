@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CircleDollarSign, Download, Eye, PlayCircle, ShoppingBag } from 'lucide-react';
+import { CircleDollarSign, Download, PlayCircle, ShoppingBag } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
