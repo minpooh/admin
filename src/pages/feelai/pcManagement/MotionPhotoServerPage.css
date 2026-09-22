@@ -1,0 +1,136 @@
+.admin-stat-cards--motion-photo-server {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-list-page--motion-photo-server .admin-stat-value {
+  white-space: nowrap;
+}
+
+.admin-list-page--motion-photo-server .admin-stat-value__suffix {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
+.admin-list-page--motion-photo-server .admin-stat-rank-list {
+  margin-top: 0.75rem;
+  margin-right: -1.75rem;
+  max-height: 148px;
+}
+
+.admin-list-page--motion-photo-server .admin-stat-running-item + .admin-stat-running-item {
+  margin-top: 0.75rem;
+}
+
+.admin-list-page--motion-photo-server .admin-stat-running-item .admin-stat-hint {
+  margin: 0.35rem 0 0.45rem;
+}
+
+.admin-list-page--motion-photo-server .admin-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-list-page--motion-photo-server .admin-progress-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gray-100);
+  overflow: hidden;
+}
+
+.admin-list-page--motion-photo-server .admin-progress-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary-color-500);
+}
+
+.admin-list-page--motion-photo-server .admin-progress-row .list-value {
+  min-width: 2.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+}
+
+.admin-list-page--motion-photo-server .admin-stat-rank-row .row-btn {
+  flex-shrink: 0;
+}
+
+.admin-list-page--motion-photo-server .admin-table {
+  min-width: 1080px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(1),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(1) {
+  min-width: 96px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(2),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(2) {
+  min-width: 140px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(3),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(3) {
+  min-width: 168px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(4),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(4) {
+  min-width: 148px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(5),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(5) {
+  min-width: 110px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(6),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(6) {
+  min-width: 88px;
+}
+
+.admin-list-page--motion-photo-server .admin-table th:nth-child(7),
+.admin-list-page--motion-photo-server .admin-table td:nth-child(7) {
+  min-width: 108px;
+}
+
+.admin-list-page--motion-photo-server .row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.admin-list-page--motion-photo-server .account-action-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.admin-list-page--motion-photo-server .account-action-badges .badge-square {
+  margin-right: 0;
+  cursor: pointer;
+}
+
+.admin-list-page--motion-photo-server .request-image-btn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-list-page--motion-photo-server .request-image-btn:focus-visible {
+  outline: 2px solid var(--primary-color-500);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .admin-stat-cards--motion-photo-server {
+    grid-template-columns: 1fr;
+  }
+}

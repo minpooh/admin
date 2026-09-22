@@ -1,0 +1,189 @@
+.admin-stat-cards--intro-wan22 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-list-page--intro-wan22 .admin-stat-value {
+  white-space: nowrap;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-value__suffix {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider {
+  margin-top: 0.75rem;
+  margin-right: -1.75rem;
+  min-width: 0;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__viewport {
+  overflow: hidden;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.25s ease;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__track.is-instant {
+  transition: none;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-running-item .admin-stat-hint {
+  margin: 0.35rem 0 0.45rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__navs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__nav {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--gray-100);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--gray-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__nav:hover:not(:disabled) {
+  background: var(--gray-100);
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-producing-slider__count {
+  min-width: 2.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-list-page--intro-wan22 .admin-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-list-page--intro-wan22 .admin-progress-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gray-100);
+  overflow: hidden;
+}
+
+.admin-list-page--intro-wan22 .admin-progress-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary-color-500);
+}
+
+.admin-list-page--intro-wan22 .admin-progress-row .list-value {
+  min-width: 2.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+}
+
+.admin-list-page--intro-wan22 .admin-stat-rank-row .row-btn {
+  flex-shrink: 0;
+}
+
+.admin-list-page--intro-wan22 .admin-table {
+  min-width: 1280px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(1),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(1) {
+  min-width: 140px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(2),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(2) {
+  min-width: 140px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(3),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(3) {
+  min-width: 72px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(4),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(4) {
+  min-width: 88px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(5),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(5) {
+  min-width: 110px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(6),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(6) {
+  min-width: 160px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(7),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(7) {
+  min-width: 108px;
+}
+
+.admin-list-page--intro-wan22 .admin-table th:nth-child(8),
+.admin-list-page--intro-wan22 .admin-table td:nth-child(8) {
+  min-width: 148px;
+}
+
+.admin-list-page--intro-wan22 .row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.admin-list-page--intro-wan22 .request-image-btn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-list-page--intro-wan22 .request-image-btn:focus-visible {
+  outline: 2px solid var(--primary-color-500);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .admin-stat-cards--intro-wan22 {
+    grid-template-columns: 1fr;
+  }
+}

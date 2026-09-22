@@ -202,3 +202,29 @@ import FeelframeSocialReviewPage from './feelframe/reviewManagement/SocialReview
 registerPage('feelframe/reviewManagement/review', FeelframeReviewPage);
 registerPage('feelframe/reviewManagement/socialReview', FeelframeSocialReviewPage);
 // 필프레임 페이지 끝 --------------------------------------------------------------
+
+// 필AI 페이지 시작 --------------------------------------------------------------
+import FeelaiDashboardPage from './feelai/DashboardPage';
+registerPage('feelai', FeelaiDashboardPage);
+
+import FeelaiTokenStorePage from './feelai/tokenManagement/TokenStorePage';
+import FeelaiTokenMakerPage from './feelai/tokenManagement/TokenMakerPage';
+import FeelaiTokenPricePage from './feelai/tokenManagement/TokenPricePage';
+registerPage('feelai/tokenManagement/tokenStore', FeelaiTokenStorePage);
+registerPage('feelai/tokenManagement/tokenMaker', FeelaiTokenMakerPage);
+registerPage('feelai/tokenManagement/tokenPrice', FeelaiTokenPricePage);
+
+// 작업내역 관리
+import FeelaiWorkHistoryIntroPage from './feelai/workHistoryManagement/WorkHistoryIntroPage';
+import FeelaiWorkHistoryRetouchPage from './feelai/workHistoryManagement/WorkHistoryRetouchPage';
+import FeelaiWorkHistoryPhotoPage from './feelai/workHistoryManagement/WorkHistoryPhotoPage';
+registerPage('feelai/workHistoryManagement/workHistoryIntro', FeelaiWorkHistoryIntroPage);
+registerPage('feelai/workHistoryManagement/workHistoryRetouch', FeelaiWorkHistoryRetouchPage);
+registerPage('feelai/workHistoryManagement/workHistoryPhoto', FeelaiWorkHistoryPhotoPage);
+
+// PC 관리
+import FeelaiMotionPhotoServerPage from './feelai/pcManagement/MotionPhotoServerPage';
+import FeelaiIntroWan22Page from './feelai/pcManagement/IntroWan22Page';
+registerPage('feelai/pcManagement/motionPhotoServer', FeelaiMotionPhotoServerPage);
+registerPage('feelai/pcManagement/introWan22', FeelaiIntroWan22Page);
+// 필AI 페이지 끝 --------------------------------------------------------------

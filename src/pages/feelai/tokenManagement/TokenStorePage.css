@@ -1,0 +1,143 @@
+.admin-stat-cards--token-store {
+  grid-template-columns: repeat(3, minmax(0, 0.9fr)) minmax(280px, 1.4fr);
+}
+
+.admin-list-page--token-store .admin-stat-value {
+  white-space: nowrap;
+}
+
+.admin-list-page--token-store .admin-stat-value__suffix {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
+.admin-list-page--token-store .admin-stat-cards-wrap .admin-stat-card--chart {
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0.85rem 1.1rem;
+  min-height: 0;
+}
+
+.admin-list-page--token-store .admin-stat-card--chart .admin-stat-card__body {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.admin-list-page--token-store .admin-stat-card--chart .admin-stat-card__chart {
+  width: 58%;
+  min-width: 200px;
+  height: 136px;
+}
+
+.admin-list-page--token-store .admin-stat-card--chart .admin-stat-hint {
+  margin-top: 0.44rem;
+}
+
+.admin-list-page--token-store .admin-stat-card__chart-tooltip-value {
+  display: flex;
+}
+
+.admin-list-page--token-store .admin-stat-card__chart-tooltip-value + .admin-stat-card__chart-tooltip-value {
+  margin-top: 0.2rem;
+}
+
+.token-store-chart-legend {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  justify-content: start;
+  gap: 0.35rem 0.7rem;
+  margin-top: 0.5rem;
+  min-width: 0;
+}
+
+.token-store-chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  color: var(--gray-500);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.token-store-chart-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.admin-list-page--token-store .admin-table-wrap {
+  min-height: 220px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(1),
+.admin-list-page--token-store .admin-table td:nth-child(1) {
+  min-width: 140px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(2),
+.admin-list-page--token-store .admin-table td:nth-child(2) {
+  min-width: 180px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(3),
+.admin-list-page--token-store .admin-table td:nth-child(3) {
+  min-width: 120px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(4),
+.admin-list-page--token-store .admin-table td:nth-child(4) {
+  min-width: 110px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(5),
+.admin-list-page--token-store .admin-table td:nth-child(5) {
+  min-width: 130px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(6),
+.admin-list-page--token-store .admin-table td:nth-child(6) {
+  min-width: 90px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(7),
+.admin-list-page--token-store .admin-table td:nth-child(7) {
+  min-width: 150px;
+}
+
+.admin-list-page--token-store .admin-table th:nth-child(8),
+.admin-list-page--token-store .admin-table td:nth-child(8) {
+  min-width: 150px;
+}
+
+.token-purchase-history-table {
+  min-width: 860px;
+}
+
+.token-purchase-history-modal .option-modal__body {
+  max-height: min(72vh, 760px);
+  overflow: auto;
+}
+
+.admin-stat-cards--token-purchase {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+@media (max-width: 1280px) {
+  .admin-stat-cards--token-store {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-stat-cards--token-store > .admin-stat-card--chart {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-stat-cards--token-store {
+    grid-template-columns: 1fr;
+  }
+}

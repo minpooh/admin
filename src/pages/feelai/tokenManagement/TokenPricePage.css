@@ -1,0 +1,81 @@
+.admin-list-page--token-price .admin-list-page-header {
+  margin-bottom: 0.375rem;
+}
+
+.token-price-page__hint {
+  margin: 0 0 1.5rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.admin-list-page--token-price .admin-table {
+  min-width: 720px;
+  table-layout: fixed;
+}
+
+.admin-list-page--token-price .admin-table th:nth-child(1),
+.admin-list-page--token-price .admin-table td:nth-child(1) {
+  width: auto;
+  min-width: 220px;
+}
+
+.admin-list-page--token-price .admin-table th:nth-child(2),
+.admin-list-page--token-price .admin-table td:nth-child(2) {
+  width: 88px;
+  min-width: 88px;
+}
+
+.admin-list-page--token-price .admin-table th:nth-child(3),
+.admin-list-page--token-price .admin-table td:nth-child(3) {
+  width: 140px;
+  min-width: 140px;
+}
+
+.admin-list-page--token-price .admin-table th:nth-child(4),
+.admin-list-page--token-price .admin-table td:nth-child(4) {
+  width: 180px;
+  min-width: 180px;
+}
+
+.token-price-input-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.token-price-input-wrap .token-price-input {
+  width: 88px;
+  max-width: 88px;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.token-price-input-wrap .token-price-input::-webkit-outer-spin-button,
+.token-price-input-wrap .token-price-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.token-price-input-wrap .token-price-input.token-price-input--free {
+  border-color: var(--secondary-color-400);
+  background: var(--secondary-color-50);
+  color: var(--secondary-color-500);
+}
+
+.token-price-input-wrap .token-price-input.token-price-input--free:focus,
+.token-price-input-wrap .token-price-input.token-price-input--free:focus-visible {
+  border-color: var(--secondary-color-400);
+  box-shadow: 0 0 0 3px var(--secondary-color-100);
+}
+
+.token-price-input-wrap .token-price-free-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+}

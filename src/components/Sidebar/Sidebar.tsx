@@ -112,7 +112,9 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   deliveryManagement: false,
   salesManagement: false,
   questionManagement: false,
-  aiManagement: false,
+  tokenManagement: false,
+  workHistoryManagement: false,
+  pcManagement: false,
 };
 
 export default function Sidebar() {

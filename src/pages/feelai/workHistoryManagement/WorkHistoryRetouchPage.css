@@ -1,0 +1,170 @@
+.admin-list-page--work-history-retouch .admin-stat-value {
+  white-space: nowrap;
+}
+
+.admin-list-page--work-history-retouch .admin-stat-value__suffix {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
+.admin-list-page--work-history-retouch .admin-stat-card__dual {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.admin-list-page--work-history-retouch .admin-stat-card__dual .admin-stat-label {
+  margin-bottom: 0.2rem;
+}
+
+.admin-list-page--work-history-retouch .admin-stat-card__dual .admin-stat-value {
+  font-size: 1.35rem;
+}
+
+.admin-list-page--work-history-retouch .admin-table-empty-cell {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #9ca3af;
+}
+
+.admin-list-page--work-history-retouch .admin-table .cell-block .badge-square {
+  align-self: flex-start;
+}
+
+.admin-list-page--work-history-retouch .cell-line--token-split {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.admin-list-page--work-history-retouch .cell-line--token-split .list-label {
+  min-width: 0;
+  margin-right: 0.1rem;
+}
+
+.admin-list-page--work-history-retouch button.admin-product-pick-card {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.admin-list-page--work-history-retouch .admin-product-pick-card__body {
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-list-page--work-history-retouch .admin-product-pick-card .admin-stat-hint {
+  margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+}
+
+.admin-list-page--work-history-retouch .admin-product-pick-card .admin-stat-hint .list-label {
+  min-width: 0;
+  margin-right: 0.2rem;
+}
+
+@media (max-width: 420px) {
+  .admin-list-page--work-history-retouch .admin-product-pick-card__body {
+    flex: 1 1 auto;
+  }
+}
+
+.option-modal__panel.retouch-work-modal {
+  max-height: min(90vh, calc(100dvh - 48px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.retouch-work-modal .option-modal__body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.retouch-work-modal__compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.retouch-work-modal__compare-item .list-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.retouch-work-modal__compare-frame {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+.retouch-work-modal__compare-frame img {
+  height: 300px;
+  width: auto;
+  max-width: none;
+  aspect-ratio: auto;
+  object-fit: unset;
+  object-position: center;
+  display: block;
+}
+
+.retouch-work-modal .admin-table-wrap {
+  width: 100%;
+}
+
+.retouch-work-modal .admin-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.retouch-work-modal .admin-table th:nth-child(1),
+.retouch-work-modal .admin-table td:nth-child(1) {
+  width: 10.5rem;
+  white-space: nowrap;
+}
+
+.retouch-work-modal .admin-table th:nth-child(3),
+.retouch-work-modal .admin-table td:nth-child(3) {
+  width: 8rem;
+}
+
+.retouch-work-modal .admin-table tbody tr {
+  cursor: pointer;
+}
+
+.retouch-work-modal .admin-table tbody tr.is-selected {
+  background: var(--primary-color-50);
+}
+
+.retouch-work-modal__prompt {
+  white-space: normal;
+}
+
+.retouch-work-modal__prompt .list-value {
+  white-space: normal;
+}
+
+.retouch-work-modal__status {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (max-width: 640px) {
+  .retouch-work-modal__compare {
+    grid-template-columns: 1fr;
+  }
+}

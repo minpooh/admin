@@ -1,0 +1,238 @@
+export const MOTION_PHOTO_SERVER_CHANNELS = ['필메이커', '스토어팜'] as const;
+export type MotionPhotoServerChannel = (typeof MOTION_PHOTO_SERVER_CHANNELS)[number];
+
+export const MOTION_PHOTO_SERVER_STATUSES = ['작업중', '대기중', '완료'] as const;
+export type MotionPhotoServerStatus = (typeof MOTION_PHOTO_SERVER_STATUSES)[number];
+
+export type MotionPhotoServerItem = {
+  id: string;
+  taskId: string;
+  accountId: string;
+  channel: MotionPhotoServerChannel;
+  requestedAt: string;
+  completedAt: string | null;
+  status: MotionPhotoServerStatus;
+  progress: number;
+  estimatedSeconds: number | null;
+  gpuIndex: number | null;
+  startedAtMs: number | null;
+  requestImageUrl: string | null;
+  downloadUrl: string | null;
+  isAdminTrial: boolean;
+  isBlocked: boolean;
+};
+
+const BRIDE = '/feelai/workHistory/intro/cast/bride.png';
+const GROOM = '/feelai/workHistory/intro/cast/groom.png';
+const FAMILY = '/feelai/workHistory/intro/cast/family.png';
+const SCENE_01 = '/feelai/workHistory/intro/scenes/scene-01.png';
+const SCENE_02 = '/feelai/workHistory/intro/scenes/scene-02.png';
+const SCENE_03 = '/feelai/workHistory/intro/scenes/scene-03.png';
+const DOWNLOAD = '/feelai/workHistory/intro/disney-couple-final.mp4';
+
+export const MOCK_MOTION_PHOTO_SERVER_ITEMS: MotionPhotoServerItem[] = [
+  {
+    id: 'mps-1',
+    taskId: 'PW6xmlajK2n8',
+    accountId: 'feelai_mj',
+    channel: '필메이커',
+    requestedAt: '2026-09-22 13:12:08',
+    completedAt: null,
+    status: '작업중',
+    progress: 44,
+    estimatedSeconds: 60,
+    gpuIndex: 0,
+    startedAtMs: Date.now() - 26_572,
+    requestImageUrl: BRIDE,
+    downloadUrl: null,
+    isAdminTrial: true,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-2',
+    taskId: 'QK91nvd4Lm2c',
+    accountId: 'kimcs',
+    channel: '스토어팜',
+    requestedAt: '2026-09-22 13:14:21',
+    completedAt: null,
+    status: '대기중',
+    progress: 0,
+    estimatedSeconds: 60,
+    gpuIndex: null,
+    startedAtMs: null,
+    requestImageUrl: GROOM,
+    downloadUrl: null,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-3',
+    taskId: 'TR80wqz1Bn7p',
+    accountId: 'park_yh',
+    channel: '필메이커',
+    requestedAt: '2026-09-22 13:15:03',
+    completedAt: null,
+    status: '대기중',
+    progress: 0,
+    estimatedSeconds: 60,
+    gpuIndex: null,
+    startedAtMs: null,
+    requestImageUrl: FAMILY,
+    downloadUrl: null,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-4',
+    taskId: 'AB12cde8Xy4k',
+    accountId: 'lee_ds',
+    channel: '필메이커',
+    requestedAt: '2026-09-22 11:08:44',
+    completedAt: '2026-09-22 11:09:51',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 60,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: SCENE_01,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: true,
+  },
+  {
+    id: 'mps-5',
+    taskId: 'CD34fgh9Za1m',
+    accountId: 'choi_hn',
+    channel: '스토어팜',
+    requestedAt: '2026-09-22 10:22:17',
+    completedAt: '2026-09-22 10:23:09',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 55,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: SCENE_02,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-6',
+    taskId: 'EF56ijk0Bc2n',
+    accountId: 'jung_sw',
+    channel: '필메이커',
+    requestedAt: '2026-09-21 18:41:02',
+    completedAt: '2026-09-21 18:42:11',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 60,
+    gpuIndex: 1,
+    startedAtMs: null,
+    requestImageUrl: SCENE_03,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-7',
+    taskId: 'GH78lmn1De3p',
+    accountId: 'han_jy',
+    channel: '스토어팜',
+    requestedAt: '2026-09-20 09:15:33',
+    completedAt: '2026-09-20 09:16:28',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 50,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: BRIDE,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-8',
+    taskId: 'IJ90opq2Fg4q',
+    accountId: 'oh_mr',
+    channel: '필메이커',
+    requestedAt: '2026-09-18 16:03:51',
+    completedAt: '2026-09-18 16:04:48',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 60,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: GROOM,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-9',
+    taskId: 'KL12rst3Hi5r',
+    accountId: 'yoon_kj',
+    channel: '스토어팜',
+    requestedAt: '2026-09-15 13:27:09',
+    completedAt: '2026-09-15 13:28:02',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 58,
+    gpuIndex: 1,
+    startedAtMs: null,
+    requestImageUrl: FAMILY,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-10',
+    taskId: 'MN34uvw4Jk6s',
+    accountId: 'seo_hj',
+    channel: '필메이커',
+    requestedAt: '2026-09-10 08:11:40',
+    completedAt: '2026-09-10 08:12:33',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 60,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: SCENE_01,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-11',
+    taskId: 'OP56xyz5Lm7t',
+    accountId: 'baek_sj',
+    channel: '스토어팜',
+    requestedAt: '2026-08-27 20:44:18',
+    completedAt: '2026-08-27 20:45:09',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 52,
+    gpuIndex: 0,
+    startedAtMs: null,
+    requestImageUrl: SCENE_02,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+  {
+    id: 'mps-12',
+    taskId: 'QR78abc6No8u',
+    accountId: 'kwon_th',
+    channel: '필메이커',
+    requestedAt: '2026-08-19 12:01:55',
+    completedAt: '2026-08-19 12:02:50',
+    status: '완료',
+    progress: 100,
+    estimatedSeconds: 60,
+    gpuIndex: 1,
+    startedAtMs: null,
+    requestImageUrl: SCENE_03,
+    downloadUrl: DOWNLOAD,
+    isAdminTrial: false,
+    isBlocked: false,
+  },
+];
