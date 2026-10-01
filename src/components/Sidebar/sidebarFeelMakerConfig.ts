@@ -31,6 +31,7 @@ import {
   HiArchiveBox,
   HiHome,
   HiBriefcase,
+  HiUserGroup,
 } from 'react-icons/hi2';
 
 export const ORDER_MANAGEMENT = [
@@ -119,6 +120,7 @@ export const CREATOR_MANAGEMENT = [
 
 export const MARKETING_MANAGEMENT = [
   { id: 'editorList', icon: HiPencil, label: '에디터 리스트' },
+  { id: 'experienceApply', icon: HiUserGroup, label: '체험단적용' },
 ];
 
 export type FeelMakerSectionId =

@@ -120,7 +120,9 @@ registerPage('feelmaker/creatorManagement/creatorBoard', CreatorBoardPage);
 
 // 마케팅관리
 import EditorListPage from './feelmaker/marketingManagement/EditorListPage';
+import ExperienceApplyPage from './feelmaker/marketingManagement/ExperienceApplyPage';
 registerPage('feelmaker/marketingManagement/editorList', EditorListPage);
+registerPage('feelmaker/marketingManagement/experienceApply', ExperienceApplyPage);
 
 
 // 필메이커 페이지 끝 --------------------------------------------------------------
