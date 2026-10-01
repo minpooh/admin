@@ -13,6 +13,14 @@ export type WorkHistoryIntroCategory = (typeof WORK_HISTORY_INTRO_CATEGORIES)[nu
 export const WORK_HISTORY_INTRO_RATIOS = ['16:9', '9:16', '1:1'] as const;
 export type WorkHistoryIntroRatio = (typeof WORK_HISTORY_INTRO_RATIOS)[number];
 
+export const WORK_HISTORY_INTRO_MODES = ['easy', 'pro'] as const;
+export type WorkHistoryIntroMode = (typeof WORK_HISTORY_INTRO_MODES)[number];
+
+/** 최초 이지 → 현재 프로만 전환으로 집계. 프로 → 이지 전환은 없음. */
+export function isIntroProModeConverted(item: Pick<WorkHistoryIntroItem, 'initialMode' | 'currentMode'>) {
+  return item.initialMode === 'easy' && item.currentMode === 'pro';
+}
+
 export type WorkHistoryIntroProgress = {
   current: number;
   total: number;
@@ -26,6 +34,11 @@ export type WorkHistoryIntroItem = {
   customerId: string;
   customerName: string;
   customerPhone: string;
+  tokenBalance: number;
+  /** 작업 시작 시 선택한 영상제작모드. 프로에서 이지로 되돌릴 수 없음. */
+  initialMode: WorkHistoryIntroMode;
+  /** 현재 영상제작모드. 이지에서만 프로로 전환 가능. */
+  currentMode: WorkHistoryIntroMode;
   category: WorkHistoryIntroCategory;
   style: WorkHistoryIntroStyle;
   ratio: WorkHistoryIntroRatio;
@@ -51,6 +64,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'feelai_mj',
     customerName: '이민정',
     customerPhone: '010-1111-2222',
+    tokenBalance: 1420,
+    initialMode: 'easy',
+    currentMode: 'pro',
     category: '웨딩',
     style: '지브리',
     ratio: '16:9',
@@ -71,6 +87,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'kimcs',
     customerName: '김철수',
     customerPhone: '010-1234-5678',
+    tokenBalance: 80,
+    initialMode: 'easy',
+    currentMode: 'easy',
     category: '베이비',
     style: '픽사',
     ratio: '9:16',
@@ -91,6 +110,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'park_yh',
     customerName: '박영희',
     customerPhone: '010-2222-3333',
+    tokenBalance: 5600,
+    initialMode: 'pro',
+    currentMode: 'pro',
     category: '고희연',
     style: '디즈니',
     ratio: '1:1',
@@ -111,6 +133,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'lee_ds',
     customerName: '이동수',
     customerPhone: '010-3333-4444',
+    tokenBalance: 210,
+    initialMode: 'easy',
+    currentMode: 'pro',
     category: '웨딩',
     style: '치비',
     ratio: '16:9',
@@ -131,6 +156,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'choi_hn',
     customerName: '최하나',
     customerPhone: '010-5555-6666',
+    tokenBalance: 0,
+    initialMode: 'easy',
+    currentMode: 'easy',
     category: '베이비',
     style: '지브리',
     ratio: '9:16',
@@ -151,6 +179,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'jung_sw',
     customerName: '정수원',
     customerPhone: '010-7777-8888',
+    tokenBalance: 980,
+    initialMode: 'easy',
+    currentMode: 'easy',
     category: '웨딩',
     style: '픽사',
     ratio: '16:9',
@@ -171,6 +202,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'han_jy',
     customerName: '한지윤',
     customerPhone: '010-8888-9999',
+    tokenBalance: 340,
+    initialMode: 'pro',
+    currentMode: 'pro',
     category: '고희연',
     style: '치비',
     ratio: '1:1',
@@ -191,6 +225,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'oh_ms',
     customerName: '오민서',
     customerPhone: '010-1010-2020',
+    tokenBalance: 2210,
+    initialMode: 'easy',
+    currentMode: 'pro',
     category: '베이비',
     style: '디즈니',
     ratio: '9:16',
@@ -211,6 +248,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'yoon_dh',
     customerName: '윤도현',
     customerPhone: '010-3030-4040',
+    tokenBalance: 150,
+    initialMode: 'easy',
+    currentMode: 'pro',
     category: '웨딩',
     style: '지브리',
     ratio: '16:9',
@@ -231,6 +271,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'kang_ej',
     customerName: '강은지',
     customerPhone: '010-4040-5050',
+    tokenBalance: 760,
+    initialMode: 'easy',
+    currentMode: 'easy',
     category: '고희연',
     style: '픽사',
     ratio: '1:1',
@@ -251,6 +294,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'seo_jw',
     customerName: '서지우',
     customerPhone: '010-6060-7070',
+    tokenBalance: 4300,
+    initialMode: 'pro',
+    currentMode: 'pro',
     category: '베이비',
     style: '치비',
     ratio: '9:16',
@@ -271,6 +317,9 @@ export const MOCK_WORK_HISTORY_INTRO_ITEMS: WorkHistoryIntroItem[] = [
     customerId: 'baek_sh',
     customerName: '백서현',
     customerPhone: '010-8080-9090',
+    tokenBalance: 300,
+    initialMode: 'easy',
+    currentMode: 'easy',
     category: '웨딩',
     style: '디즈니',
     ratio: '16:9',

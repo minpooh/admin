@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
-import { CircleDollarSign, ClipboardList, Film } from 'lucide-react';
+import { CircleDollarSign, ClipboardList, Film, Sparkles } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,7 +10,9 @@ import Confirm from '../../../components/Confirm';
 import '../../../styles/adminPage.css';
 import '../../feelmaker/orderManagement/OrderListPage.css';
 import './WorkHistoryIntroPage.css';
+import TokenAdjustModal, { applyTokenAdjust } from '../tokenManagement/TokenAdjustModal';
 import {
+  isIntroProModeConverted,
   MOCK_WORK_HISTORY_INTRO_ITEMS,
   WORK_HISTORY_INTRO_CATEGORIES,
   WORK_HISTORY_INTRO_STATUSES,
@@ -254,6 +256,8 @@ export default function WorkHistoryIntroPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState<WorkHistoryIntroItem[]>(() => [...MOCK_WORK_HISTORY_INTRO_ITEMS]);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [tokenAdjustItemId, setTokenAdjustItemId] = useState<string | null>(null);
+  const tokenAdjustTarget = tokenAdjustItemId ? items.find((item) => item.id === tokenAdjustItemId) : undefined;
 
   const filteredItems = useMemo(() => applyFilters(items, appliedSearch), [items, appliedSearch]);
   const summarySourceHint = appliedSearch ? '현재 검색 기준' : '총 누적';
@@ -275,6 +279,7 @@ export default function WorkHistoryIntroPage() {
 
     return {
       totalCount: filteredItems.length,
+      proModeConvertedCount: filteredItems.filter(isIntroProModeConverted).length,
       totalApiCost,
       todayApiCost,
       statusCounts,
@@ -425,6 +430,17 @@ export default function WorkHistoryIntroPage() {
             </div>
             <p className="admin-stat-label">총 작업 수</p>
             <p className="admin-stat-value">{filteredSummary.totalCount.toLocaleString('ko-KR')}</p>
+            <p className="admin-stat-hint">{summarySourceHint}</p>
+          </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--warning" aria-hidden>
+              <Sparkles size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">프로모드 전환 수</p>
+            <p className="admin-stat-value">
+              {filteredSummary.proModeConvertedCount.toLocaleString('ko-KR')}
+              <span className="admin-stat-value__suffix">건</span>
+            </p>
             <p className="admin-stat-hint">{summarySourceHint}</p>
           </div>
           <div className="admin-stat-card">
@@ -687,13 +703,14 @@ export default function WorkHistoryIntroPage() {
             <thead>
               <tr>
                 <th className="col-center">썸네일</th>
+                <th>영상제작모드</th>
                 <th>작업아이디</th>
                 <th className="col-center">고객정보</th>
                 <th>구분</th>
                 <th>진행</th>
                 <th className="col-center">상태</th>
-                <th>실패</th>
                 <th>비용</th>
+                <th className="col-center">토큰지급/회수</th>
                 <th className="col-center">최종영상</th>
                 <th>등록일</th>
               </tr>
@@ -710,6 +727,18 @@ export default function WorkHistoryIntroPage() {
                         alt={`${item.workId} 썸네일`}
                         className="admin-product-thumb admin-product-thumb--sm"
                       />
+                    </td>
+                    <td>
+                      <div className="cell-block">
+                        <span className="cell-line">
+                          <span className="list-label">현재</span>
+                          <span className="list-value">{item.currentMode}</span>
+                        </span>
+                        <span className="cell-line">
+                          <span className="list-label">최초</span>
+                          <span className="list-value">{item.initialMode}</span>
+                        </span>
+                      </div>
                     </td>
                     <td>
                       <div className="cell-block cell-block--product-with-badge">
@@ -737,6 +766,10 @@ export default function WorkHistoryIntroPage() {
                         <span className="cell-line">{item.customerId}</span>
                         <span className="cell-line">{item.customerName}</span>
                         <span className="cell-line">{item.customerPhone}</span>
+                        <span className="cell-line">
+                          <span className="list-label">현재</span>{' '}
+                          <span className="list-value">{item.tokenBalance.toLocaleString('ko-KR')}tk</span>
+                        </span>
                       </div>
                     </td>
                     <td>
@@ -770,13 +803,6 @@ export default function WorkHistoryIntroPage() {
                       </button>
                     </td>
                     <td>
-                      {item.failReason ? (
-                        <span className="cell-line cell-line--danger">{item.failReason}</span>
-                      ) : (
-                        <span className="admin-cell-issue--empty">-</span>
-                      )}
-                    </td>
-                    <td>
                       <div className="cell-block">
                         <span className="cell-line">
                           <span className="list-label">토큰</span>{' '}
@@ -786,6 +812,17 @@ export default function WorkHistoryIntroPage() {
                           <span className="list-label">API</span>{' '}
                           <span className="amount-red">{item.apiCost.toLocaleString('ko-KR')}원</span>
                         </span>
+                      </div>
+                    </td>
+                    <td className="col-center">
+                      <div className="cell-block">
+                        <button
+                          type="button"
+                          className="row-btn row-btn--warning"
+                          onClick={() => setTokenAdjustItemId(item.id)}
+                        >
+                          토큰지급/회수
+                        </button>
                       </div>
                     </td>
                     <td className="col-center">
@@ -881,6 +918,35 @@ export default function WorkHistoryIntroPage() {
         onConfirm={() => {
           confirmDialog?.onConfirm();
           setConfirmDialog(null);
+        }}
+      />
+
+      <TokenAdjustModal
+        open={Boolean(tokenAdjustTarget)}
+        onClose={() => setTokenAdjustItemId(null)}
+        customerLabel={
+          tokenAdjustTarget ? `${tokenAdjustTarget.customerName} (${tokenAdjustTarget.customerId})` : undefined
+        }
+        currentBalance={tokenAdjustTarget?.tokenBalance}
+        onGrant={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'grant') } : item,
+            ),
+          );
+        }}
+        onRecover={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId
+                ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'recover') }
+                : item,
+            ),
+          );
         }}
       />
     </div>

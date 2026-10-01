@@ -1,6 +1,9 @@
 export type WorkHistoryRetouchItem = {
   id: string;
   accountId: string;
+  customerName: string;
+  customerPhone: string;
+  tokenBalance: number;
   photoCount: number;
   photoOpenCount: number;
   savedRetouchCount: number;
@@ -15,6 +18,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-1',
     accountId: 'feelai_mj',
+    customerName: '이민정',
+    customerPhone: '010-1111-2222',
+    tokenBalance: 1420,
     photoCount: 60,
     photoOpenCount: 48,
     savedRetouchCount: 48,
@@ -27,6 +33,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-2',
     accountId: 'kimcs',
+    customerName: '김철수',
+    customerPhone: '010-1234-5678',
+    tokenBalance: 80,
     photoCount: 12,
     photoOpenCount: 9,
     savedRetouchCount: 8,
@@ -39,6 +48,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-3',
     accountId: 'park_yh',
+    customerName: '박영희',
+    customerPhone: '010-2222-3333',
+    tokenBalance: 5600,
     photoCount: 8,
     photoOpenCount: 6,
     savedRetouchCount: 6,
@@ -51,6 +63,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-4',
     accountId: 'choi_dn',
+    customerName: '최하나',
+    customerPhone: '010-5555-6666',
+    tokenBalance: 0,
     photoCount: 20,
     photoOpenCount: 16,
     savedRetouchCount: 14,
@@ -63,6 +78,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-5',
     accountId: 'lee_hr',
+    customerName: '이하린',
+    customerPhone: '010-3333-4444',
+    tokenBalance: 210,
     photoCount: 16,
     photoOpenCount: 12,
     savedRetouchCount: 12,
@@ -75,6 +93,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-6',
     accountId: 'kang_ej',
+    customerName: '강은지',
+    customerPhone: '010-4040-5050',
+    tokenBalance: 760,
     photoCount: 10,
     photoOpenCount: 4,
     savedRetouchCount: 4,
@@ -87,6 +108,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-7',
     accountId: 'seo_jw',
+    customerName: '서지우',
+    customerPhone: '010-6060-7070',
+    tokenBalance: 4300,
     photoCount: 28,
     photoOpenCount: 24,
     savedRetouchCount: 22,
@@ -99,6 +123,9 @@ export const MOCK_WORK_HISTORY_RETOUCH_ITEMS: WorkHistoryRetouchItem[] = [
   {
     id: 'retouch-8',
     accountId: 'baek_sh',
+    customerName: '백서현',
+    customerPhone: '010-8080-9090',
+    tokenBalance: 300,
     photoCount: 6,
     photoOpenCount: 0,
     savedRetouchCount: 0,

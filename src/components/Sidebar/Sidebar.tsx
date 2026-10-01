@@ -113,6 +113,7 @@ const INITIAL_OPEN_SECTIONS: Record<SectionId, boolean> = {
   salesManagement: false,
   questionManagement: false,
   tokenManagement: false,
+  inquiryManagement: false,
   workHistoryManagement: false,
   pcManagement: false,
 };

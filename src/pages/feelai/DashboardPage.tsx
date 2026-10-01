@@ -272,7 +272,7 @@ export default function FeelaiDashboardPage() {
       id: `retouch-${item.id}`,
       type: '사진보정',
       workNo: item.accountId,
-      customer: item.accountId,
+      customer: item.customerName,
       status: `${item.savedRetouchCount}/${item.photoCount}장`,
       statusClass: 'row-btn--status-secondary',
       at: item.lastActivityAt,

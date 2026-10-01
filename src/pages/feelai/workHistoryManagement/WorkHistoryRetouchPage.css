@@ -2,6 +2,11 @@
   white-space: nowrap;
 }
 
+.admin-list-page--work-history-retouch .admin-table th:nth-child(1),
+.admin-list-page--work-history-retouch .admin-table td:nth-child(1) {
+  min-width: 168px;
+}
+
 .admin-list-page--work-history-retouch .admin-stat-value__suffix {
   font-size: 0.95rem;
   font-weight: 600;

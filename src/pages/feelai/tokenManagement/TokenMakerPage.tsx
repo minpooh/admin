@@ -20,6 +20,7 @@ import {
   type TokenMakerPaymentStatus,
   type TokenMakerTokenAccrualStatus,
 } from './mock/tokenMaker.mock';
+import TokenAdjustModal, { applyTokenAdjust } from './TokenAdjustModal';
 import TokenPurchaseHistoryModal from './TokenPurchaseHistoryModal';
 import { formatPurchaseCountLabel, getTokenPurchaseModalDataFromMaker } from './tokenPurchaseHistory';
 import { buildWeeklyStatusStats } from './weeklyStatusStats';
@@ -270,6 +271,7 @@ export default function TokenMakerPage() {
   const phoneMessagesRef = useRef<HTMLDivElement | null>(null);
   const [paymentModalOrderId, setPaymentModalOrderId] = useState<string | null>(null);
   const [purchaseModalOrderId, setPurchaseModalOrderId] = useState<string | null>(null);
+  const [tokenAdjustOrderId, setTokenAdjustOrderId] = useState<string | null>(null);
   const [memoModalOrderId, setMemoModalOrderId] = useState<string | null>(null);
   const [memoTooltipOrderId, setMemoTooltipOrderId] = useState<string | null>(null);
   const [memoTooltipPosition, setMemoTooltipPosition] = useState<{ top: number; right: number } | null>(null);
@@ -344,6 +346,8 @@ export default function TokenMakerPage() {
 
   const closePaymentModal = () => setPaymentModalOrderId(null);
   const closePurchaseModal = () => setPurchaseModalOrderId(null);
+  const closeTokenAdjustModal = () => setTokenAdjustOrderId(null);
+  const tokenAdjustTarget = tokenAdjustOrderId ? orders.find((item) => item.id === tokenAdjustOrderId) : undefined;
 
   const confirmPayment = (orderId: string) => {
     setOrders((prev) =>
@@ -845,12 +849,13 @@ export default function TokenMakerPage() {
               <tr>
                 <th>주문번호</th>
                 <th>주문일/결제일</th>
+                <th className="col-center">토큰적립현황</th>
                 <th className="col-center">고객정보</th>
                 <th className="col-center">누적구매수</th>
                 <th className="col-center">등급/충전량</th>
                 <th className="col-center">결제현황</th>
                 <th>결제금액</th>
-                <th className="col-center">토큰적립현황</th>
+                <th className="col-center">토큰지급/회수</th>
                 <th>작업아이디</th>
                 <th className="col-center">메모</th>
               </tr>
@@ -880,6 +885,14 @@ export default function TokenMakerPage() {
                       </div>
                     </td>
                     <td className="col-center">
+                      <div className="cell-block">
+                          <span className={['progress-status', accrualClasses.progress].join(' ')}>
+                            <span className="progress-status__dot" aria-hidden="true" />
+                            <span className="progress-status__text">{order.tokenAccrualStatus}</span>
+                          </span>
+                      </div>
+                    </td>
+                    <td className="col-center">
                       <div className="admin-cell-triple">
                         <span className="cell-line">{order.customerName}</span>
                         <span className="cell-line">{order.customerId}</span>
@@ -900,7 +913,7 @@ export default function TokenMakerPage() {
                         </div>
                         <span className="cell-line">
                           <span className="list-label">현재</span>{' '}
-                          <span className="list-value">{order.tokenBalance.toLocaleString('ko-KR')}토큰</span>
+                          <span className="list-value">{order.tokenBalance.toLocaleString('ko-KR')}tk</span>
                         </span>
                       </div>
                     </td>
@@ -918,8 +931,8 @@ export default function TokenMakerPage() {
                     <td className="col-center">
                       <div className="cell-block">
                         <span className="cell-line">{getChargeGradeShortName(order.chargeGrade)}</span>
-                        <span className="badge-square badge-square--inline badge-square--warning badge-square--no-transition badge-square--no-margin">
-                          {order.chargeTokenAmount.toLocaleString('ko-KR')}토큰
+                        <span className="text-warning">
+                          {order.chargeTokenAmount.toLocaleString('ko-KR')} tk
                         </span>
                       </div>
                     </td>
@@ -942,11 +955,12 @@ export default function TokenMakerPage() {
                     </td>
                     <td className="col-center">
                       <div className="cell-block">
-                        <button type="button" className={['row-btn', accrualClasses.rowBtn].join(' ')}>
-                          <span className={['progress-status', accrualClasses.progress].join(' ')}>
-                            <span className="progress-status__dot" aria-hidden="true" />
-                            <span className="progress-status__text">{order.tokenAccrualStatus}</span>
-                          </span>
+                        <button
+                          type="button"
+                          className="row-btn row-btn--warning"
+                          onClick={() => setTokenAdjustOrderId(order.id)}
+                        >
+                          토큰지급/회수
                         </button>
                       </div>
                     </td>
@@ -1203,6 +1217,35 @@ export default function TokenMakerPage() {
             />
           );
         })()}
+
+      <TokenAdjustModal
+        open={Boolean(tokenAdjustTarget)}
+        onClose={closeTokenAdjustModal}
+        customerLabel={
+          tokenAdjustTarget ? `${tokenAdjustTarget.customerName} (${tokenAdjustTarget.customerId})` : undefined
+        }
+        currentBalance={tokenAdjustTarget?.tokenBalance}
+        onGrant={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setOrders((prev) =>
+            prev.map((item) =>
+              item.id === targetId ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'grant') } : item,
+            ),
+          );
+        }}
+        onRecover={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setOrders((prev) =>
+            prev.map((item) =>
+              item.id === targetId
+                ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'recover') }
+                : item,
+            ),
+          );
+        }}
+      />
 
       {memoModalOrderId &&
         (() => {

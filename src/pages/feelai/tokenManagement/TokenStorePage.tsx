@@ -16,6 +16,7 @@ import {
   type TokenStoreChargeStatus,
   type TokenStoreOrderItem,
 } from './mock/tokenStore.mock';
+import TokenAdjustModal, { applyTokenAdjust } from './TokenAdjustModal';
 import TokenPurchaseHistoryModal from './TokenPurchaseHistoryModal';
 import { formatPurchaseCountLabel, getTokenPurchaseModalDataFromStore } from './tokenPurchaseHistory';
 import { buildWeeklyStatusStats } from './weeklyStatusStats';
@@ -213,6 +214,8 @@ export default function TokenStorePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [smsModalOrderId, setSmsModalOrderId] = useState<string | null>(null);
   const [purchaseModalOrderId, setPurchaseModalOrderId] = useState<string | null>(null);
+  const [tokenAdjustOrderId, setTokenAdjustOrderId] = useState<string | null>(null);
+  const [tokenBalanceByOrderId, setTokenBalanceByOrderId] = useState<Record<string, number>>({});
   const [smsText, setSmsText] = useState('');
   const [smsHistoryByOrderId, setSmsHistoryByOrderId] = useState<Record<string, string[]>>({});
   const phoneMessagesRef = useRef<HTMLDivElement | null>(null);
@@ -260,6 +263,13 @@ export default function TokenStorePage() {
     setSmsText('');
   };
   const closePurchaseModal = () => setPurchaseModalOrderId(null);
+  const closeTokenAdjustModal = () => setTokenAdjustOrderId(null);
+  const tokenAdjustTarget = tokenAdjustOrderId ? orders.find((item) => item.id === tokenAdjustOrderId) : undefined;
+
+  const getStoreTokenBalance = (order: TokenStoreOrderItem) => {
+    if (tokenBalanceByOrderId[order.id] != null) return tokenBalanceByOrderId[order.id];
+    return getTokenPurchaseModalDataFromStore(order).profile.tokenBalance;
+  };
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
@@ -645,6 +655,7 @@ export default function TokenStorePage() {
                 <th className="col-center">누적구매수</th>
                 <th>옵션/토큰</th>
                 <th>주문금액</th>
+                <th className="col-center">토큰지급/회수</th>
                 <th>충전상태</th>
                 <th className="col-center">충전계정</th>
               </tr>
@@ -693,22 +704,31 @@ export default function TokenStorePage() {
                     <td>
                       <div className="cell-block">
                         <span className="cell-line">{order.optionName}</span>
-                        <span className="badge-square badge-square--inline badge-square--warning badge-square--no-transition badge-square--no-margin">
-                          {order.tokenAmount.toLocaleString('ko-KR')}토큰
+                        <span className="text-warning">
+                          {order.tokenAmount.toLocaleString('ko-KR')} tk
                         </span>
                       </div>
                     </td>
                     <td>
                       <span className="amount-red">{order.amount.toLocaleString('ko-KR')}원</span>
                     </td>
+                    <td className="col-center">
+                      <div className="cell-block">
+                        <button
+                          type="button"
+                          className="row-btn row-btn--warning"
+                          onClick={() => setTokenAdjustOrderId(order.id)}
+                        >
+                          토큰지급/회수
+                        </button>
+                      </div>
+                    </td>
                     <td>
                       <div className="cell-block">
-                        <button type="button" className={['row-btn', chargeClasses.rowBtn].join(' ')}>
-                          <span className={['progress-status', chargeClasses.progress].join(' ')}>
-                            <span className="progress-status__dot" aria-hidden="true" />
-                            <span className="progress-status__text">{order.chargeStatus}</span>
-                          </span>
-                        </button>
+                        <span className={['progress-status', chargeClasses.progress].join(' ')}>
+                          <span className="progress-status__dot" aria-hidden="true" />
+                          <span className="progress-status__text">{order.chargeStatus}</span>
+                        </span>
                         <span className="cell-line">{order.completedAt ?? '-'}</span>
                       </div>
                     </td>
@@ -898,6 +918,35 @@ export default function TokenStorePage() {
             />
           );
         })()}
+
+      <TokenAdjustModal
+        open={Boolean(tokenAdjustTarget)}
+        onClose={closeTokenAdjustModal}
+        customerLabel={
+          tokenAdjustTarget
+            ? `${tokenAdjustTarget.chargeAccountName} (${tokenAdjustTarget.chargeAccountId})`
+            : undefined
+        }
+        currentBalance={tokenAdjustTarget ? getStoreTokenBalance(tokenAdjustTarget) : undefined}
+        onGrant={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          const current = getStoreTokenBalance(tokenAdjustTarget);
+          setTokenBalanceByOrderId((prev) => ({
+            ...prev,
+            [targetId]: applyTokenAdjust(current, amount, 'grant'),
+          }));
+        }}
+        onRecover={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          const current = getStoreTokenBalance(tokenAdjustTarget);
+          setTokenBalanceByOrderId((prev) => ({
+            ...prev,
+            [targetId]: applyTokenAdjust(current, amount, 'recover'),
+          }));
+        }}
+      />
     </div>
   );
 }

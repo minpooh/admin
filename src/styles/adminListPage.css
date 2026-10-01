@@ -717,6 +717,11 @@
   display: block;
 }
 
+.admin-cell-triple .list-label,
+.admin-cell-triple .list-value {
+  display: inline-block;
+}
+
 .admin-table .col-center .admin-cell-triple {
   align-items: center;
   margin-inline: auto;

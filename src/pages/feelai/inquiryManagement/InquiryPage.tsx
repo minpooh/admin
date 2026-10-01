@@ -1,0 +1,734 @@
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_PAGES } from '../../../utils/pagination';
+import { Link, useParams } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
+import { BarChart3, Clock3, MessageSquareText, Trash2 } from 'lucide-react';
+import ListSelect from '../../../components/ListSelect';
+import '../../../styles/adminPage.css';
+import Confirm from '../../../components/Confirm';
+import './InquiryPage.css';
+import { InquiryAnswerStatusCell } from './InquiryAnswerStatusCell';
+import InquiryDetailPage from './InquiryDetailPage';
+import type { FeelaiInquiryRow } from './mock/inquiry.mock';
+import { MOCK_FEELAI_INQUIRIES } from './mock/inquiry.mock';
+import { inquiryDetailPath } from './inquiryPaths';
+
+const SEARCH_SCOPE_OPTIONS = [
+  { value: 'all', label: '전체' },
+  { value: 'name', label: '이름' },
+  { value: 'phone', label: '전화번호' },
+  { value: 'title', label: '제목' },
+];
+
+type AnswerFilterValue = '' | '미답변' | '답변완료';
+
+const TOOLTIP_TRANSITION_MS = 180;
+
+function keywordStatsFromRows(rows: FeelaiInquiryRow[]) {
+  const map = new Map<string, number>();
+  for (const row of rows) {
+    const cat = row.category?.trim();
+    if (cat) map.set(cat, (map.get(cat) ?? 0) + 1);
+    for (const part of row.title.split(/[\s,，]+/)) {
+      const w = part.trim();
+      if (w.length < 2) continue;
+      map.set(w, (map.get(w) ?? 0) + 1);
+    }
+  }
+  return [...map.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([word, count]) => ({ word, count }));
+}
+
+function extractSnippet(text: string, keyword: string, radius = 45) {
+  const safeKeyword = keyword.trim();
+  if (!safeKeyword) return '';
+
+  const lowerText = text.toLowerCase();
+  const lowerKeyword = safeKeyword.toLowerCase();
+  const idx = lowerText.indexOf(lowerKeyword);
+  if (idx < 0) return text.length > radius * 2 ? `${text.slice(0, radius * 2)}...` : text;
+
+  const start = Math.max(0, idx - radius);
+  const end = Math.min(text.length, idx + lowerKeyword.length + radius);
+  const prefix = start > 0 ? '...' : '';
+  const suffix = end < text.length ? '...' : '';
+  return `${prefix}${text.slice(start, end)}${suffix}`;
+}
+
+export default function InquiryPage() {
+  const { subId } = useParams<{ subId?: string }>();
+
+  const [dateRange, setDateRange] = useState('');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [searchScope, setSearchScope] = useState('all');
+  const [keyword, setKeyword] = useState('');
+  const [answerFilter, setAnswerFilter] = useState<AnswerFilterValue>('');
+  const [inquiryRows, setInquiryRows] = useState<FeelaiInquiryRow[]>(() => [...MOCK_FEELAI_INQUIRIES]);
+  const [deleteTargetInquiryId, setDeleteTargetInquiryId] = useState<string | null>(null);
+
+  const [appliedSearch, setAppliedSearch] = useState<{
+    dateRange: string;
+    startDate: Date | null;
+    endDate: Date | null;
+    searchScope: string;
+    keyword: string;
+    answerFilter: AnswerFilterValue;
+  } | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredRows = useMemo(() => {
+    if (!appliedSearch) return inquiryRows;
+
+    const keywordTrim = appliedSearch.keyword.trim().toLowerCase();
+    const startBoundary = appliedSearch.startDate
+      ? new Date(
+          appliedSearch.startDate.getFullYear(),
+          appliedSearch.startDate.getMonth(),
+          appliedSearch.startDate.getDate(),
+          0,
+          0,
+          0,
+          0,
+        )
+      : null;
+    const endBoundary = appliedSearch.endDate
+      ? new Date(
+          appliedSearch.endDate.getFullYear(),
+          appliedSearch.endDate.getMonth(),
+          appliedSearch.endDate.getDate(),
+          23,
+          59,
+          59,
+          999,
+        )
+      : null;
+
+    return inquiryRows.filter((row) => {
+      const createdAt = new Date(row.createdAt.replace(' ', 'T'));
+      if (startBoundary && createdAt < startBoundary) return false;
+      if (endBoundary && createdAt > endBoundary) return false;
+
+      if (!startBoundary && !endBoundary && appliedSearch.dateRange) {
+        const now = new Date();
+        const diffDays = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+        if (appliedSearch.dateRange === '당일' && createdAt.toDateString() !== now.toDateString()) return false;
+        if (appliedSearch.dateRange === '3일' && !(diffDays >= 0 && diffDays < 3)) return false;
+        if (appliedSearch.dateRange === '1주' && !(diffDays >= 0 && diffDays < 7)) return false;
+        if (appliedSearch.dateRange === '2주' && !(diffDays >= 0 && diffDays < 14)) return false;
+        if (appliedSearch.dateRange === '1개월' && !(diffDays >= 0 && diffDays < 30)) return false;
+      }
+
+      if (appliedSearch.answerFilter === '미답변' && row.answeredAt !== null) return false;
+      if (appliedSearch.answerFilter === '답변완료' && row.answeredAt === null) return false;
+
+      if (keywordTrim) {
+        const normalizedKeyword = keywordTrim.replace(/[^0-9]/g, '');
+        const matchAll =
+          row.title.toLowerCase().includes(keywordTrim) ||
+          row.authorName.toLowerCase().includes(keywordTrim) ||
+          row.memberId.toLowerCase().includes(keywordTrim) ||
+          row.phone.toLowerCase().includes(keywordTrim) ||
+          row.email.toLowerCase().includes(keywordTrim) ||
+          row.content.toLowerCase().includes(keywordTrim);
+        const scope = appliedSearch.searchScope;
+        if (scope === 'all') {
+          if (!matchAll) return false;
+        } else if (scope === 'name') {
+          if (!row.authorName.toLowerCase().includes(keywordTrim)) return false;
+        } else if (scope === 'phone') {
+          const phoneHaystack = [row.title, row.content, row.memberId, row.phone, row.email].join(' ');
+          const normalizedPhoneHaystack = phoneHaystack.replace(/[^0-9]/g, '');
+          if (!normalizedKeyword || !normalizedPhoneHaystack.includes(normalizedKeyword)) return false;
+        } else if (scope === 'title') {
+          if (!row.title.toLowerCase().includes(keywordTrim)) return false;
+        }
+      }
+
+      return true;
+    });
+  }, [appliedSearch, inquiryRows]);
+
+  const ITEMS_PER_PAGE = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / ITEMS_PER_PAGE));
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredRows.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredRows, currentPage]);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setCurrentPage(1);
+    });
+  }, [appliedSearch]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      queueMicrotask(() => {
+        setCurrentPage(totalPages);
+      });
+    }
+  }, [currentPage, totalPages]);
+
+  const handleSearch = () => {
+    setAppliedSearch({
+      dateRange,
+      startDate,
+      endDate,
+      searchScope,
+      keyword,
+      answerFilter,
+    });
+  };
+
+  const handleDeleteRow = (id: string) => {
+    setDeleteTargetInquiryId(id);
+  };
+
+  const formatYmd = (d: Date | null) => {
+    if (!d) return '';
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  type AppliedChipKey = 'date' | 'keyword' | 'answer';
+  const isAppliedSearchEmpty = (s: typeof appliedSearch) => {
+    if (!s) return true;
+    return !s.dateRange && s.startDate == null && s.endDate == null && !s.keyword.trim() && !s.answerFilter;
+  };
+
+  const clearAppliedFilter = (key: AppliedChipKey) => {
+    if (!appliedSearch) return;
+    const next = { ...appliedSearch };
+    if (key === 'date') {
+      setDateRange('');
+      setStartDate(null);
+      setEndDate(null);
+      next.dateRange = '';
+      next.startDate = null;
+      next.endDate = null;
+    } else if (key === 'keyword') {
+      setKeyword('');
+      next.keyword = '';
+    } else if (key === 'answer') {
+      setAnswerFilter('');
+      next.answerFilter = '';
+    }
+    setAppliedSearch(isAppliedSearchEmpty(next) ? null : next);
+  };
+
+  const scopeLabel = (scope: string) => SEARCH_SCOPE_OPTIONS.find((o) => o.value === scope)?.label ?? scope;
+
+  const appliedChips: Array<{ key: AppliedChipKey; label: string }> = useMemo(() => {
+    if (!appliedSearch) return [];
+    const chips: Array<{ key: AppliedChipKey; label: string }> = [];
+    if (appliedSearch.startDate || appliedSearch.endDate) {
+      const start = formatYmd(appliedSearch.startDate);
+      const end = formatYmd(appliedSearch.endDate);
+      chips.push({ key: 'date', label: `작성일: ${start}${start && end ? ' ~ ' : ''}${end}` });
+    } else if (appliedSearch.dateRange) {
+      chips.push({ key: 'date', label: `작성일: ${appliedSearch.dateRange}` });
+    }
+    if (appliedSearch.keyword.trim()) {
+      chips.push({
+        key: 'keyword',
+        label: `검색: ${scopeLabel(appliedSearch.searchScope)} ${appliedSearch.keyword}`,
+      });
+    }
+    if (appliedSearch.answerFilter) {
+      chips.push({ key: 'answer', label: `답변여부: ${appliedSearch.answerFilter}` });
+    }
+    return chips;
+  }, [appliedSearch]);
+
+  const unansweredCount = useMemo(
+    () => filteredRows.filter((row) => row.answeredAt === null).length,
+    [filteredRows],
+  );
+
+  const keywordStats = useMemo(() => keywordStatsFromRows(filteredRows), [filteredRows]);
+
+  const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const keywordPanelRef = useRef<HTMLDivElement | null>(null);
+  const [keywordArrowX, setKeywordArrowX] = useState(0);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const tooltipCloseTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setSelectedKeyword((prev) => {
+      if (!prev) return prev;
+      if (keywordStats.some((k) => k.word === prev)) return prev;
+
+      setTooltipOpen(false);
+      if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
+      tooltipCloseTimerRef.current = window.setTimeout(() => setSelectedKeyword(null), TOOLTIP_TRANSITION_MS);
+      return prev;
+    });
+  }, [keywordStats]);
+
+  useEffect(() => {
+    return () => {
+      if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!tooltipOpen) return;
+
+    const onDocMouseDown = (e: MouseEvent) => {
+      const panel = keywordPanelRef.current;
+      if (!panel) return;
+      const target = e.target as Node | null;
+      if (!target) return;
+      if (!panel.contains(target)) {
+        setTooltipOpen(false);
+        if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
+        tooltipCloseTimerRef.current = window.setTimeout(() => setSelectedKeyword(null), TOOLTIP_TRANSITION_MS);
+      }
+    };
+
+    document.addEventListener('mousedown', onDocMouseDown);
+    return () => document.removeEventListener('mousedown', onDocMouseDown);
+  }, [tooltipOpen]);
+
+  useEffect(() => {
+    if (!selectedKeyword) return;
+    const panel = keywordPanelRef.current;
+    if (!panel) return;
+
+    const escaped = selectedKeyword.replace(/"/g, '\\"');
+    const btn = panel.querySelector(`.admin-stat-keyword-button[data-keyword="${escaped}"]`) as HTMLElement | null;
+    if (!btn) return;
+
+    const panelRect = panel.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    setKeywordArrowX(btnRect.left - panelRect.left + btnRect.width / 2);
+  }, [selectedKeyword, keywordStats]);
+
+  const selectedKeywordDetails = useMemo(() => {
+    if (!selectedKeyword) return [];
+    const lower = selectedKeyword.toLowerCase();
+
+    return filteredRows
+      .filter((row) => {
+        return (
+          row.title.toLowerCase().includes(lower) ||
+          row.category.toLowerCase().includes(lower) ||
+          row.content.toLowerCase().includes(lower)
+        );
+      })
+      .slice(0, 6)
+      .map((row) => {
+        const source = row.content.toLowerCase().includes(lower)
+          ? row.content
+          : row.title.toLowerCase().includes(lower)
+            ? row.title
+            : `${row.category} ${row.title}`;
+        return {
+          id: row.id,
+          title: row.title,
+          snippet: extractSnippet(source, selectedKeyword),
+        };
+      });
+  }, [filteredRows, selectedKeyword]);
+
+  const deleteTargetInquiry = useMemo(
+    () => (deleteTargetInquiryId ? (inquiryRows.find((row) => row.id === deleteTargetInquiryId) ?? null) : null),
+    [deleteTargetInquiryId, inquiryRows],
+  );
+
+  if (subId) return <InquiryDetailPage />;
+
+  return (
+    <div className="admin-list-page admin-list-page--inquiry admin-list-page--feelai-inquiry">
+      <h1 className="page-title">1:1 문의</h1>
+
+      <section className="admin-stat-cards-wrap admin-stat-section" aria-label="문의 요약">
+        <div className="admin-stat-cards admin-stat-cards--1-1-2">
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--primary" aria-hidden>
+              <MessageSquareText size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">총 문의 수</p>
+            <p className="admin-stat-value">{filteredRows.length}</p>
+            <p className="admin-stat-hint">현재 필터 기준</p>
+          </div>
+          <div className="admin-stat-card">
+            <div className="admin-stat-card__icon admin-stat-card__icon--warning" aria-hidden>
+              <Clock3 size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">미답변</p>
+            <p className="admin-stat-value admin-stat-value--warning">{unansweredCount}</p>
+            <p className="admin-stat-hint">답변 대기 건수</p>
+          </div>
+          <div className="admin-stat-card admin-stat-card--auto">
+            <div className="admin-stat-card__icon admin-stat-card__icon--success" aria-hidden>
+              <BarChart3 size={20} strokeWidth={2} />
+            </div>
+            <p className="admin-stat-label">키워드 분석</p>
+            {keywordStats.length === 0 ? (
+              <p className="admin-stat-empty">표시할 키워드가 없습니다.</p>
+            ) : (
+              <div className="admin-stat-keyword-panel" ref={keywordPanelRef}>
+                <div className="admin-stat-keyword-buttons" role="list">
+                  {keywordStats.map(({ word, count }) => (
+                    <button
+                      key={word}
+                      type="button"
+                      data-keyword={word}
+                      className={[
+                        'admin-stat-keyword-button',
+                        selectedKeyword === word ? 'admin-stat-keyword-button--active' : '',
+                      ].join(' ')}
+                      onClick={(e) => {
+                        const panel = keywordPanelRef.current;
+                        const currentTarget = e.currentTarget as HTMLElement;
+                        if (panel) {
+                          const panelRect = panel.getBoundingClientRect();
+                          const btnRect = currentTarget.getBoundingClientRect();
+                          setKeywordArrowX(btnRect.left - panelRect.left + btnRect.width / 2);
+                        }
+                        if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
+                        setTooltipOpen(false);
+                        setSelectedKeyword(word);
+                        requestAnimationFrame(() => setTooltipOpen(true));
+                      }}
+                      aria-pressed={selectedKeyword === word}
+                    >
+                      {word}
+                      <span className="admin-stat-keyword-button__count">{count}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {selectedKeyword ? (
+                  <div
+                    className={['admin-stat-keyword-tooltip', tooltipOpen ? 'admin-stat-keyword-tooltip--open' : ''].join(
+                      ' ',
+                    )}
+                    role="status"
+                    aria-live="polite"
+                    style={
+                      {
+                        ['--admin-stat-keyword-arrow-x' as string]: `${keywordArrowX}px`,
+                      } as CSSProperties
+                    }
+                  >
+                    <div className="admin-stat-keyword-tooltip__head">
+                      <span className="admin-stat-keyword-tooltip__label">"{selectedKeyword}" 포함 내용</span>
+                      <button
+                        type="button"
+                        className="admin-stat-keyword-tooltip__close"
+                        onClick={() => {
+                          if (tooltipCloseTimerRef.current) window.clearTimeout(tooltipCloseTimerRef.current);
+                          setTooltipOpen(false);
+                          tooltipCloseTimerRef.current = window.setTimeout(
+                            () => setSelectedKeyword(null),
+                            TOOLTIP_TRANSITION_MS,
+                          );
+                        }}
+                        aria-label="툴팁 닫기"
+                      >
+                        닫기
+                      </button>
+                    </div>
+
+                    {selectedKeywordDetails.length === 0 ? (
+                      <p className="admin-stat-keyword-tooltip__empty">해당 키워드를 포함한 내용이 없습니다.</p>
+                    ) : (
+                      <ul className="admin-stat-keyword-tooltip__list">
+                        {selectedKeywordDetails.map((item) => (
+                          <li key={item.id}>
+                            <div className="admin-stat-keyword-tooltip__item-title">{item.title}</div>
+                            <div className="admin-stat-keyword-tooltip__item-snippet">{item.snippet}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ) : (
+                  <p className="admin-stat-keyword-helper">키워드를 클릭하면 해당 내용이 표시됩니다.</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="admin-list-box">
+        <div className="filter-top-row admin-filter-row--equal-4">
+          <div className="filter-section">
+            <span className="filter-label">작성일</span>
+            <div className="date-range-wrap">
+              <ListSelect
+                ariaLabel="작성일 프리셋"
+                className="listselect--date-range"
+                value={dateRange}
+                onChange={(next) => {
+                  if (!next) {
+                    setDateRange('');
+                    setStartDate(null);
+                    setEndDate(null);
+                    return;
+                  }
+                  setDateRange(next);
+                  const today = new Date();
+                  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                  const start = new Date(end);
+                  if (next === '3일') start.setDate(start.getDate() - 2);
+                  if (next === '1주') start.setDate(start.getDate() - 6);
+                  if (next === '2주') start.setDate(start.getDate() - 13);
+                  if (next === '1개월') start.setDate(start.getDate() - 29);
+                  if (next === '3개월') start.setDate(start.getDate() - 89);
+                  if (next === '6개월') start.setDate(start.getDate() - 179);
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+                options={[
+                  { value: '', label: '미선택' },
+                  { value: '당일', label: '당일' },
+                  { value: '3일', label: '3일' },
+                  { value: '1주', label: '1주' },
+                  { value: '2주', label: '2주' },
+                  { value: '1개월', label: '1개월' },
+                  { value: '3개월', label: '3개월' },
+                  { value: '6개월', label: '6개월' },
+                ]}
+              />
+              <div className="date-range-pickers">
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date: Date | null) => {
+                    setStartDate(date);
+                    setDateRange('');
+                  }}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  placeholderText="시작일"
+                  dateFormat="yyyy-MM-dd"
+                  locale={ko}
+                  className="date-picker-input"
+                  isClearable={!!startDate}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="scroll"
+                  maxDate={new Date()}
+                />
+                <span className="date-sep">~</span>
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date: Date | null) => {
+                    setEndDate(date);
+                    setDateRange('');
+                  }}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate ?? undefined}
+                  placeholderText="종료일"
+                  dateFormat="yyyy-MM-dd"
+                  locale={ko}
+                  className="date-picker-input"
+                  isClearable={!!endDate}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="scroll"
+                  maxDate={new Date()}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="filter-section">
+            <span className="filter-label">상세검색</span>
+            <div className="admin-search-field">
+              <ListSelect
+                ariaLabel="검색 조건"
+                className="listselect--condition-type"
+                value={searchScope}
+                onChange={setSearchScope}
+                options={SEARCH_SCOPE_OPTIONS}
+              />
+              <input
+                type="search"
+                placeholder="검색어 입력"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                aria-label="문의 검색"
+              />
+            </div>
+          </div>
+
+          <div className="filter-section">
+            <span className="filter-label">답변여부</span>
+            <ListSelect
+              ariaLabel="답변여부"
+              value={answerFilter}
+              onChange={(next) => setAnswerFilter(next as AnswerFilterValue)}
+              options={[
+                { value: '', label: '전체' },
+                { value: '미답변', label: '미답변' },
+                { value: '답변완료', label: '답변완료' },
+              ]}
+            />
+          </div>
+
+          <div className="filter-section filter-section--search-btn">
+            <button type="button" className="filter-btn filter-btn--primary" onClick={handleSearch}>
+              검색
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="admin-list-box admin-list-box--table">
+        {appliedChips.length > 0 && (
+          <section className="admin-applied-filters">
+            <div className="admin-applied-filters__left">
+              <div className="admin-applied-filters__list">
+                {appliedChips.map((chip) => (
+                  <div key={chip.key} className="admin-filter-chip">
+                    <span className="admin-filter-chip__text">{chip.label}</span>
+                    <button
+                      type="button"
+                      className="admin-filter-chip__x"
+                      aria-label={`${chip.label} 해제`}
+                      onClick={() => clearAppliedFilter(chip.key)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+        <div className="admin-table-wrap">
+          <table className="admin-table admin-table--min-w-800 admin-table--status-col-3">
+            <thead>
+              <tr>
+                <th scope="col" className="col-center">
+                  번호
+                </th>
+                <th scope="col">작성일</th>
+                <th scope="col">제목</th>
+                <th scope="col">답변 여부</th>
+                <th scope="col">작성자</th>
+                <th scope="col">아이디</th>
+                <th scope="col">연락처</th>
+                <th scope="col">답변자</th>
+                <th scope="col">답변일</th>
+                <th scope="col">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedRows.map((row) => (
+                <tr key={row.id}>
+                  <td className="col-center">#{row.no}</td>
+                  <td>{row.createdAt}</td>
+                  <td className="admin-table-col-title">
+                    <Link to={inquiryDetailPath(row.id)} className="admin-link admin-table-title-link">
+                      {row.title}
+                    </Link>
+                  </td>
+                  <td>
+                    <InquiryAnswerStatusCell answeredAt={row.answeredAt} />
+                  </td>
+                  <td>{row.authorName}</td>
+                  <td>{row.memberId}</td>
+                  <td>{row.phone}</td>
+                  <td>{row.answeredBy ?? '—'}</td>
+                  <td>{row.answeredAt ?? '—'}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="row-icon-btn row-icon-btn--danger"
+                      onClick={() => handleDeleteRow(row.id)}
+                      aria-label={`${row.title} 문의 삭제`}
+                      title="삭제"
+                    >
+                      <Trash2 size={18} aria-hidden="true" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {paginatedRows.length === 0 && (
+                <tr>
+                  <td colSpan={10} className="admin-table-empty-cell">
+                    데이터가 없습니다.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="admin-list-table-footer">
+          <div className="admin-table-pagination">
+            <div className="pagination-inner">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => jumpPageBack(p))}
+                disabled={currentPage <= 1}
+                aria-label={`${PAGINATION_JUMP_PAGES}페이지 이전`}
+              >
+                &laquo;
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                aria-label="이전 페이지"
+              >
+                &lsaquo;
+              </button>
+              {getVisiblePageNumbers(totalPages, currentPage).map((page) => (
+                <button key={page} type="button" className={currentPage === page ? 'active' : ''} onClick={() => setCurrentPage(page)}>
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage >= totalPages}
+                aria-label="다음 페이지"
+              >
+                &rsaquo;
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((p) => jumpPageForward(p, totalPages))}
+                disabled={currentPage >= totalPages}
+                aria-label={`${PAGINATION_JUMP_PAGES}페이지 다음`}
+              >
+                &raquo;
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Confirm
+        open={Boolean(deleteTargetInquiry)}
+        title="문의 삭제"
+        message={deleteTargetInquiry ? `"${deleteTargetInquiry.title}" 문의를 삭제할까요?` : ''}
+        confirmText="삭제"
+        danger
+        onClose={() => setDeleteTargetInquiryId(null)}
+        onConfirm={() => {
+          if (!deleteTargetInquiryId) return;
+          setInquiryRows((prev) => prev.filter((row) => row.id !== deleteTargetInquiryId));
+          setDeleteTargetInquiryId(null);
+        }}
+      />
+    </div>
+  );
+}

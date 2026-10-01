@@ -157,12 +157,14 @@
   color: var(--blue-color-700);
 }
 
-.admin-status-pill--답변완료 {
+.admin-status-pill--답변완료,
+.admin-status-pill--처리완료 {
   background: var(--secondary-color-100);
   color: var(--secondary-color-500);
 }
 
-.admin-status-pill--미답변 {
+.admin-status-pill--미답변,
+.admin-status-pill--대기중 {
   background: var(--warning-color-100);
   color: var(--warning-color-500);
 }

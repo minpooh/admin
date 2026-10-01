@@ -20,6 +20,7 @@ export type WorkHistoryPhotoItem = {
   customerId: string;
   customerName: string;
   customerPhone: string;
+  tokenBalance: number;
   /** 해당 고객의 모션포토 누적 사용 횟수 */
   cumulativeUsage: number;
   /** 이번 주문 사용 금액(원) — 요약 카드용 */
@@ -47,6 +48,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'feelai_mj',
     customerName: '이민정',
     customerPhone: '010-1111-2222',
+    tokenBalance: 1420,
     cumulativeUsage: 8,
     amount: 9900,
     usedTokens: 123,
@@ -65,6 +67,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'kimcs',
     customerName: '김철수',
     customerPhone: '010-1234-5678',
+    tokenBalance: 80,
     cumulativeUsage: 3,
     amount: 4900,
     usedTokens: 61,
@@ -83,6 +86,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'park_yh',
     customerName: '박영희',
     customerPhone: '010-2222-3333',
+    tokenBalance: 5600,
     cumulativeUsage: 12,
     amount: 12900,
     usedTokens: 161,
@@ -101,6 +105,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'lee_ds',
     customerName: '이동수',
     customerPhone: '010-3333-4444',
+    tokenBalance: 210,
     cumulativeUsage: 2,
     amount: 4900,
     usedTokens: 61,
@@ -119,6 +124,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'choi_hn',
     customerName: '최하나',
     customerPhone: '010-5555-6666',
+    tokenBalance: 0,
     cumulativeUsage: 5,
     amount: 3900,
     usedTokens: 48,
@@ -137,6 +143,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'jung_sw',
     customerName: '정수원',
     customerPhone: '010-7777-8888',
+    tokenBalance: 980,
     cumulativeUsage: 1,
     amount: 9900,
     usedTokens: 123,
@@ -155,6 +162,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'han_jy',
     customerName: '한지윤',
     customerPhone: '010-8888-9999',
+    tokenBalance: 340,
     cumulativeUsage: 15,
     amount: 14900,
     usedTokens: 186,
@@ -173,6 +181,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'oh_mr',
     customerName: '오미라',
     customerPhone: '010-1010-2020',
+    tokenBalance: 2210,
     cumulativeUsage: 4,
     amount: 9900,
     usedTokens: 123,
@@ -191,6 +200,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'yoon_kj',
     customerName: '윤기준',
     customerPhone: '010-3030-4040',
+    tokenBalance: 150,
     cumulativeUsage: 7,
     amount: 7900,
     usedTokens: 98,
@@ -209,6 +219,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'seo_hj',
     customerName: '서현주',
     customerPhone: '010-5050-6060',
+    tokenBalance: 4300,
     cumulativeUsage: 9,
     amount: 3900,
     usedTokens: 48,
@@ -227,6 +238,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'baek_sj',
     customerName: '백소진',
     customerPhone: '010-7070-8080',
+    tokenBalance: 300,
     cumulativeUsage: 2,
     amount: 9900,
     usedTokens: 123,
@@ -245,6 +257,7 @@ export const MOCK_WORK_HISTORY_PHOTO_ITEMS: WorkHistoryPhotoItem[] = [
     customerId: 'kwon_th',
     customerName: '권태호',
     customerPhone: '010-9090-1010',
+    tokenBalance: 760,
     cumulativeUsage: 6,
     amount: 12900,
     usedTokens: 161,

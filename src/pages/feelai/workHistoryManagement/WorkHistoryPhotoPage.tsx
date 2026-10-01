@@ -10,6 +10,7 @@ import '../../../styles/adminPage.css';
 import '../../feelmaker/orderManagement/OrderListPage.css';
 import '../tokenManagement/TokenStorePage.css';
 import './WorkHistoryPhotoPage.css';
+import TokenAdjustModal, { applyTokenAdjust } from '../tokenManagement/TokenAdjustModal';
 import { buildWeeklyStatusStats } from '../tokenManagement/weeklyStatusStats';
 import {
   MOCK_WORK_HISTORY_PHOTO_ITEMS,
@@ -202,8 +203,9 @@ export default function WorkHistoryPhotoPage() {
   const [paymentStatus, setPaymentStatus] = useState<PaymentFilter>('전체');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const items = MOCK_WORK_HISTORY_PHOTO_ITEMS;
+  const [items, setItems] = useState<WorkHistoryPhotoItem[]>(() => [...MOCK_WORK_HISTORY_PHOTO_ITEMS]);
+  const [tokenAdjustItemId, setTokenAdjustItemId] = useState<string | null>(null);
+  const tokenAdjustTarget = tokenAdjustItemId ? items.find((item) => item.id === tokenAdjustItemId) : undefined;
   const filteredItems = useMemo(() => applyFilters(items, appliedSearch), [items, appliedSearch]);
   const summarySourceHint = appliedSearch ? '현재 검색 기준' : '총 누적';
 
@@ -636,10 +638,11 @@ export default function WorkHistoryPhotoPage() {
                 <th className="col-center">작업현황</th>
                 <th>생성일</th>
                 <th className="col-center">스타일</th>
-                <th>고객정보</th>
+                <th className="col-center">고객정보</th>
                 <th className="col-center">누적사용수</th>
                 <th>사용토큰</th>
                 <th>API 비용</th>
+                <th className="col-center">토큰지급/회수</th>
                 <th className="col-center">미리보기</th>
                 <th className="col-center">다운로드</th>
               </tr>
@@ -666,11 +669,15 @@ export default function WorkHistoryPhotoPage() {
                     <td className="col-center">
                       <span className="cell-line">{item.style}</span>
                     </td>
-                    <td>
+                    <td className="col-center">
                       <div className="admin-cell-triple">
                         <span className="cell-line">{item.customerId}</span>
                         <span className="cell-line">{item.customerName}</span>
                         <span className="cell-line">{item.customerPhone}</span>
+                        <span className="cell-line">
+                          <span className="list-label">현재</span>{' '}
+                          <span className="list-value">{item.tokenBalance.toLocaleString('ko-KR')}tk</span>
+                        </span>
                       </div>
                     </td>
                     <td className="col-center">
@@ -681,6 +688,17 @@ export default function WorkHistoryPhotoPage() {
                     </td>
                     <td>
                       <span className="amount-red">{item.apiCost.toLocaleString('ko-KR')}원</span>
+                    </td>
+                    <td className="col-center">
+                      <div className="cell-block">
+                        <button
+                          type="button"
+                          className="row-btn row-btn--warning"
+                          onClick={() => setTokenAdjustItemId(item.id)}
+                        >
+                          토큰지급/회수
+                        </button>
+                      </div>
                     </td>
                     <td className="col-center">
                       {item.previewUrl ? (
@@ -776,6 +794,34 @@ export default function WorkHistoryPhotoPage() {
           </div>
         </div>
       </section>
+      <TokenAdjustModal
+        open={Boolean(tokenAdjustTarget)}
+        onClose={() => setTokenAdjustItemId(null)}
+        customerLabel={
+          tokenAdjustTarget ? `${tokenAdjustTarget.customerName} (${tokenAdjustTarget.customerId})` : undefined
+        }
+        currentBalance={tokenAdjustTarget?.tokenBalance}
+        onGrant={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'grant') } : item,
+            ),
+          );
+        }}
+        onRecover={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId
+                ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'recover') }
+                : item,
+            ),
+          );
+        }}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { getVisiblePageNumbers, jumpPageBack, jumpPageForward, PAGINATION_JUMP_P
 import '../../../styles/adminPage.css';
 import '../../feelmaker/orderManagement/OrderListPage.css';
 import './WorkHistoryRetouchPage.css';
+import TokenAdjustModal, { applyTokenAdjust } from '../tokenManagement/TokenAdjustModal';
 import {
   MOCK_WORK_HISTORY_RETOUCH_ITEMS,
   type WorkHistoryRetouchItem,
@@ -20,7 +21,9 @@ const DATE_RANGES = ['당일', '3일', '1주', '2주', '1개월', '3개월', '6�
 
 const DETAIL_SEARCH_SCOPE_OPTIONS = [
   { value: '전체', label: '전체' },
-  { value: '계정 아이디', label: '계정 아이디' },
+  { value: '이름', label: '이름' },
+  { value: '연락처', label: '연락처' },
+  { value: '아이디', label: '아이디' },
 ] as const;
 type DetailSearchScope = (typeof DETAIL_SEARCH_SCOPE_OPTIONS)[number]['value'];
 
@@ -107,9 +110,21 @@ function applyFilters(items: WorkHistoryRetouchItem[], applied: AppliedSearch | 
     const keyword = applied.keyword.trim().toLowerCase();
     if (!keyword) return true;
 
-    const matchAccountId = item.accountId.toLowerCase().includes(keyword);
-    if (applied.conditionType === '계정 아이디') return matchAccountId;
-    return matchAccountId;
+    const phoneKeyword = keyword.replace(/[^0-9]/g, '');
+    const matchName = item.customerName.toLowerCase().includes(keyword);
+    const matchPhone = Boolean(phoneKeyword) && item.customerPhone.replace(/[^0-9]/g, '').includes(phoneKeyword);
+    const matchId = item.accountId.toLowerCase().includes(keyword);
+
+    switch (applied.conditionType) {
+      case '이름':
+        return matchName;
+      case '연락처':
+        return matchPhone;
+      case '아이디':
+        return matchId;
+      default:
+        return matchName || matchPhone || matchId;
+    }
   });
 }
 
@@ -145,8 +160,9 @@ export default function WorkHistoryRetouchPage() {
   const [keyword, setKeyword] = useState('');
   const [appliedSearch, setAppliedSearch] = useState<AppliedSearch | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const items = MOCK_WORK_HISTORY_RETOUCH_ITEMS;
+  const [items, setItems] = useState<WorkHistoryRetouchItem[]>(() => [...MOCK_WORK_HISTORY_RETOUCH_ITEMS]);
+  const [tokenAdjustItemId, setTokenAdjustItemId] = useState<string | null>(null);
+  const tokenAdjustTarget = tokenAdjustItemId ? items.find((item) => item.id === tokenAdjustItemId) : undefined;
   const filteredItems = useMemo(() => applyFilters(items, appliedSearch), [items, appliedSearch]);
   const summarySourceHint = appliedSearch ? '현재 검색 기준' : '총 누적';
   const filteredSummary = useMemo(() => {
@@ -468,22 +484,33 @@ export default function WorkHistoryRetouchPage() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>계정</th>
+                <th className="col-center">고객정보</th>
                 <th className="col-center">등록사진</th>
                 <th className="col-center">사진열기</th>
                 <th className="col-center">저장된 보정</th>
                 <th>사용토큰</th>
                 <th>API 비용추정</th>
+                <th className="col-center">토큰지급/회수</th>
                 <th>최근활동</th>
               </tr>
             </thead>
             <tbody>
               {paginatedItems.map((item) => (
                 <tr key={item.id}>
-                  <td>
-                    <Link to={workHistoryRetouchDetailPath(item.id)} className="admin-link cell-line">
-                      {item.accountId}
-                    </Link>
+                  <td className="col-center">
+                    <div className="admin-cell-triple">
+                      <span className="cell-line">
+                        <Link to={workHistoryRetouchDetailPath(item.id)} className="admin-link">
+                          {item.accountId}
+                        </Link>
+                      </span>
+                      <span className="cell-line">{item.customerName}</span>
+                      <span className="cell-line">{item.customerPhone}</span>
+                      <span className="cell-line">
+                        <span className="list-label">현재</span>{' '}
+                        <span className="list-value">{item.tokenBalance.toLocaleString('ko-KR')}tk</span>
+                      </span>
+                    </div>
                   </td>
                   <td className="col-center">
                     <span className="list-value">{item.photoCount.toLocaleString('ko-KR')}장</span>
@@ -503,7 +530,7 @@ export default function WorkHistoryRetouchPage() {
                   </td>
                   <td>
                     <div className="cell-block">
-                      <span className="badge-square badge-square--inline badge-square--warning badge-square--no-transition badge-square--no-margin">
+                      <span className="text-warning">
                         {item.usedTokens.toLocaleString('ko-KR')}토큰
                       </span>
                       <span className="cell-line cell-line--token-split">
@@ -520,6 +547,17 @@ export default function WorkHistoryRetouchPage() {
                   </td>
                   <td>
                     <span className="amount-red">{item.apiCost.toLocaleString('ko-KR')}원</span>
+                  </td>
+                  <td className="col-center">
+                    <div className="cell-block">
+                      <button
+                        type="button"
+                        className="row-btn row-btn--warning"
+                        onClick={() => setTokenAdjustItemId(item.id)}
+                      >
+                        토큰지급/회수
+                      </button>
+                    </div>
                   </td>
                   <td>
                     <span className="cell-line">{item.lastActivityAt}</span>
@@ -586,6 +624,34 @@ export default function WorkHistoryRetouchPage() {
           </div>
         </div>
       </section>
+      <TokenAdjustModal
+        open={Boolean(tokenAdjustTarget)}
+        onClose={() => setTokenAdjustItemId(null)}
+        customerLabel={
+          tokenAdjustTarget ? `${tokenAdjustTarget.customerName} (${tokenAdjustTarget.accountId})` : undefined
+        }
+        currentBalance={tokenAdjustTarget?.tokenBalance}
+        onGrant={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'grant') } : item,
+            ),
+          );
+        }}
+        onRecover={(amount) => {
+          if (!tokenAdjustTarget) return;
+          const targetId = tokenAdjustTarget.id;
+          setItems((prev) =>
+            prev.map((item) =>
+              item.id === targetId
+                ? { ...item, tokenBalance: applyTokenAdjust(item.tokenBalance, amount, 'recover') }
+                : item,
+            ),
+          );
+        }}
+      />
     </div>
   );
 }

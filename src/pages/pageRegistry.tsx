@@ -214,6 +214,12 @@ registerPage('feelai/tokenManagement/tokenStore', FeelaiTokenStorePage);
 registerPage('feelai/tokenManagement/tokenMaker', FeelaiTokenMakerPage);
 registerPage('feelai/tokenManagement/tokenPrice', FeelaiTokenPricePage);
 
+// 문의 관리
+import FeelaiInquiryPage from './feelai/inquiryManagement/InquiryPage';
+import FeelaiAiErrorCheckPage from './feelai/inquiryManagement/AiErrorCheckPage';
+registerPage('feelai/inquiryManagement/inquiry', FeelaiInquiryPage);
+registerPage('feelai/inquiryManagement/aiErrorCheck', FeelaiAiErrorCheckPage);
+
 // 작업내역 관리
 import FeelaiWorkHistoryIntroPage from './feelai/workHistoryManagement/WorkHistoryIntroPage';
 import FeelaiWorkHistoryRetouchPage from './feelai/workHistoryManagement/WorkHistoryRetouchPage';
